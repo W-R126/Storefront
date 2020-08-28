@@ -1,13 +1,16 @@
 import React from 'react';
 
+import { useQuery } from '@apollo/react-hooks';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
+import { GET_CATEGORIES } from '../../../../../../graphql/categories/categories-query';
 
 const CategorySideBar = () => {
   const classes = useStyles();
-
+  // const { data, loading, erro } = useQuery(GET_CATEGORIES);
+  // debugger;
   return (
     <Box className={classes.root}>
       <div className={classes.Title}>Categories</div>
