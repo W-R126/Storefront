@@ -1,4 +1,6 @@
 import moment from 'moment';
+import _ from 'lodash';
+
 import { getValueFromHHMM } from './string';
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -93,4 +95,13 @@ export const getIsShowSideCategory = (storeSetting) => {
   } catch {
     return true;
   }
+};
+
+export const getCurrency = (localisationInfo) => {
+  const store = _.get(localisationInfo, 'store', null);
+  if (store === null) return '';
+  const localisation = _.get(store, 'localisation', null);
+  if (localisation == null) return '';
+  const symbole = _.get(localisation, 'currency_symbol', '');
+  if (symbole === '&#163;') return '£';
 };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
 import { Button } from '@material-ui/core';
 
@@ -33,16 +34,19 @@ const LoginEmailPanel = ({ email, onChange, gotoPassword }) => {
     <div className={classes.root}>
       <h3 className={classes.Title}>Sign in</h3>
       <p className={classes.Description}>Enter your email address to continue</p>
-      <TextField
-        className={classes.LoginInput}
-        id="login-email"
-        label="Email"
-        fullWidth
-        value={email.value}
-        onChange={(e) => handleChangeEmail(e)}
-        error={!email.validate}
-        helperText={email.errorMsg}
-      />
+      <Box className={classes.InputWrapper}>
+        <TextField
+          className={classes.LoginInput}
+          id="login-email"
+          label="Email"
+          fullWidth
+          value={email.value}
+          onChange={(e) => handleChangeEmail(e)}
+          error={!email.validate}
+          helperText={email.errorMsg}
+          size="medium"
+        />
+      </Box>
       <Button
         variant="contained"
         color="primary"
@@ -84,11 +88,19 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: '40px 0 0 0',
       textAlign: 'center',
     },
-    LoginInput: {
+    InputWrapper: {
       marginTop: '40px',
+      minHeight: '70px',
+      width: '100%',
+    },
+    LoginInput: {
+      '& .MuiInput-input': {
+        height: '40px',
+        padding: 0,
+      },
     },
     ContinueButton: {
-      marginTop: '40px',
+      marginTop: '20px',
       height: '50px',
     },
     SignUpButton: {

@@ -1,21 +1,27 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useQuery } from '@apollo/react-hooks';
 
 import _ from 'lodash';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 
+import { getCurrency } from '../../../../../../utils/store';
 import { getProductCart } from '../../../../../../utils/product';
 import * as types from '../../../../../../actions/actionTypes';
+import { GET_CURRENCY } from '../../../../../../graphql/localisation/localisation-query';
 
 const ProductCard = ({ productInfo }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
+  const { data: currencyData } = useQuery(GET_CURRENCY);
+
   const { cartInfo } = useSelector((state) => ({
     cartInfo: state.cartReducer.cartList,
   }));
+
   const getProductImage = () => {
     const imgArr = _.get(productInfo, 'images', []);
     if (imgArr.length === 0) return '';
@@ -72,7 +78,9 @@ const ProductCard = ({ productInfo }) => {
             <div className={classes.Status}>Code: ${productInfo.bar_code}</div>
           </div>
           <div className={classes.Value}>
-            <div className={classes.Price}>{getPriceInfo()}</div>
+            <div className={classes.Price}>
+              {getCurrency(currencyData)} {getPriceInfo()}
+            </div>
             {/* <div className={classes.Stock}>10 in stock</div> */}
           </div>
         </div>
