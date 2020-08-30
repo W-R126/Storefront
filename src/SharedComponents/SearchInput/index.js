@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import _ from 'lodash';
 import { useQuery } from '@apollo/react-hooks';
@@ -13,6 +13,7 @@ import { getOrderedCategories } from '../../utils/category';
 
 const SearchInput = () => {
   const classes = useStyles();
+  const [selectedCategory, setSelectedCategory] = useState({ id: '-1', label: 'All' });
   const { data, loading, error } = useQuery(GET_CATEGORIES);
   const { loading: storeSettingLoading, error: storeSettingError, data: storeSettingData } = useQuery(
     GET_STORE_SETTING_PRODUCT
@@ -20,15 +21,19 @@ const SearchInput = () => {
 
   const getCategoryMenuItems = () => {
     const categories = getOrderedCategories(data, storeSettingData);
-    return categories.map((item) => {
-      return { id: item.id, label: item.name };
-    });
+    return [
+      { id: '-1', label: 'All' },
+      ...categories.map((item) => {
+        return { id: item.id, label: item.name };
+      }),
+    ];
   };
 
   return (
     <Box className={classes.root}>
       <DropDown
-        value={{ id: '1', label: 'All' }}
+        value={selectedCategory}
+        onChange={(selected) => setSelectedCategory({ ...selected })}
         menuList={getCategoryMenuItems()}
         wrapperStyles={{ minWidth: '105px', flex: '1 1 105px' }}
       />

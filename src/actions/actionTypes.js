@@ -4,3 +4,6 @@ export const UPDATE_USERNAME = 'Update Username';
 export const UPDATE_EMAIL = 'Update Email';
 // Cart Types
 export const UPDATE_PRODUCT_CART = 'Update product cart';
+
+// Store
+export const UPDATE_TRANS_TYPE = 'Update Trans Type';

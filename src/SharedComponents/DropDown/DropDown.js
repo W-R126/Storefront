@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
-const DropDown = ({ value, menuList, wrapperStyles, buttonStyles }) => {
+const DropDown = ({ value, onChange, menuList, wrapperStyles, buttonStyles }) => {
   const classes = useStyles();
 
   const [open, setOpen] = useState(false);
@@ -73,7 +73,14 @@ const DropDown = ({ value, menuList, wrapperStyles, buttonStyles }) => {
           <MenuList autoFocusItem={open} id="menu-list-grow">
             {menuList.map((item, idx) => {
               return (
-                <MenuItem key={idx} onClick={handleClose}>
+                <MenuItem
+                  key={idx}
+                  onClick={(e) => {
+                    onChange(item);
+                    handleClose(e);
+                  }}
+                  selected={value.id === item.id}
+                >
                   {item.label}
                 </MenuItem>
               );
@@ -110,6 +117,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
       cursor: 'pointer',
+      textTransform: 'capitalize',
     },
     ChevIcon: {
       position: 'absolute',
@@ -127,6 +135,7 @@ const useStyles = makeStyles((theme: Theme) =>
       border: `1px solid ${theme.palette.primary.border}`,
       '& .MuiMenuItem-root': {
         color: theme.palette.primary.dark,
+        textTransform: 'capitalize',
       },
     },
   })

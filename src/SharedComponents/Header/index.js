@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -16,14 +16,19 @@ import DropDown from '../DropDown';
 import LoginSignUpDlg from '../LoginSignUpDlg';
 import UserDialog from '../UserDialog';
 import { getUserAvatar } from '../../utils/auth';
+import { TRANS_TYPE } from '../../constants';
+import * as types from '../../actions/actionTypes';
 
 const Header = ({ children }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
   const [showLogin, setShowLogin] = useState(false);
   const [showUserDetail, setShowUserDetail] = useState(false);
 
-  const { authInfo } = useSelector((state) => ({
+  const { authInfo, transType } = useSelector((state) => ({
     authInfo: state.authReducer.userInfo,
+    transType: state.storeReducer.transType,
   }));
 
   const checkIsLogin = () => {
@@ -46,13 +51,20 @@ const Header = ({ children }) => {
         </MDIconButtom>
         <SearchInput />
         <DropDown
-          value={{ id: '0', label: 'Delivery' }}
+          value={{ id: transType, label: transType }}
           menuList={[
-            { id: '0', label: 'Delivery' },
-            { id: '1', label: 'Pickup' },
+            { id: TRANS_TYPE.POS, label: TRANS_TYPE.POS },
+            { id: TRANS_TYPE.DELIVERY, label: TRANS_TYPE.DELIVERY },
+            { id: TRANS_TYPE.CLICK, label: TRANS_TYPE.CLICK },
           ]}
           wrapperStyles={{ marginLeft: 'auto', width: '147px', background: '#fff', borderRadius: '2px' }}
           buttonStyles={{ background: '#fff' }}
+          onChange={(selected) => {
+            dispatch({
+              type: types.UPDATE_TRANS_TYPE,
+              payload: selected.id,
+            });
+          }}
         />
         <MDIconButtom wrapperClass={classes.CartButton} aria-label="shopping-cart">
           <ShoppingCartIcon />
