@@ -1,0 +1,96 @@
+import moment from 'moment';
+import { getValueFromHHMM } from './string';
+
+const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+export const getStoreOpenStatus = (store_openings) => {
+  let returnData = { closed: false, nextStatus: '' };
+
+  const dayIndex = new Date().getDay();
+  const dayOpenInfo = getOpenDayInfo(store_openings, dayIndex);
+  if (dayOpenInfo.closed) return { closed: true, nextStatus: '' };
+
+  const curDateValue = new Date().valueOf();
+  const curMomentOpen = moment(new Date());
+  const curMomentClose = moment(new Date());
+  const curPrevCloseMoment = moment(new Date());
+
+  let isOpen = false;
+  const opening_times = dayOpenInfo.opening_times;
+  const oneHourValue = 60 * 60 * 1000;
+
+  opening_times.forEach((item, nIndex) => {
+    if (isOpen) return;
+    const HHMMValueOpen = getValueFromHHMM(item.open);
+    curMomentOpen.set({ hour: HHMMValueOpen[0], minute: HHMMValueOpen[1], second: 0, millisecond: 0 });
+    const HHMMValueClose = getValueFromHHMM(item.close);
+    curMomentClose.set({ hour: HHMMValueClose[0], minute: HHMMValueClose[1], second: 59, millisecond: 999 });
+
+    if (nIndex >= 1) {
+      const HHMMPrevClose = getValueFromHHMM(opening_times[nIndex - 1].closed);
+      const PrevCloseMoment = curPrevCloseMoment.set({
+        hour: HHMMPrevClose[0],
+        minute: HHMMPrevClose[1],
+        second: 59,
+        millisecond: 999,
+      });
+      if (curDateValue > PrevCloseMoment.valueOf() && curDateValue < curMomentOpen.valueOf()) {
+        if (curDateValue >= curMomentOpen.valueOf() - oneHourValue)
+          returnData = {
+            closed: true,
+            nextStatus: `Opening at ${curMomentOpen.format('HH:mm A')}`,
+          };
+        else
+          returnData = {
+            closed: true,
+            nextStatus: '',
+          };
+      }
+    }
+
+    if (curMomentOpen.valueOf() <= curDateValue && curDateValue <= curMomentClose.valueOf()) {
+      if (curDateValue >= curMomentClose.valueOf())
+        returnData = {
+          closed: false,
+          nextStatus: `Closing at ${curMomentClose.format('HH:mm A')}`,
+        };
+      else
+        returnData = {
+          closed: false,
+          nextStatus: '',
+        };
+    }
+
+    if (opening_times.length === 1) {
+      if (curMomentOpen.valueOf() - oneHourValue <= curDateValue && curDateValue < curMomentOpen.valueOf())
+        returnData = {
+          closed: false,
+          nextStatus: `Opening at ${curMomentOpen.format('HH:mm A')}`,
+        };
+    }
+  });
+  return returnData;
+};
+
+export const getOpenDayInfo = (store_openings, dayIndex) => {
+  let dayName = DAY_NAMES[dayIndex];
+  return store_openings.find((item) => item.day === dayName);
+};
+
+export const getProductViewFromStoreSetting = (storeSetting) => {
+  try {
+    const digitalFront = storeSetting.store.settings.touchpoint_settings.digital_front;
+    return digitalFront.product_view;
+  } catch {
+    return null;
+  }
+};
+
+export const getIsShowSideCategory = (storeSetting) => {
+  try {
+    const digitalFront = storeSetting.store.settings.touchpoint_settings.digital_front;
+    return digitalFront.product_view.by_category;
+  } catch {
+    return true;
+  }
+};

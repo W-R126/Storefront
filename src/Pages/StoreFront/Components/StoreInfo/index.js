@@ -1,70 +1,77 @@
 import React from 'react';
+import _ from 'lodash';
 
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import CheckIcon from '@material-ui/icons/Check';
+import Avatar from '@material-ui/core/Avatar';
 
-import StoreLogoImg from '../../../../assets/img/storelogo.jpg';
+import { getStoreOpenStatus } from '../../../../utils/store';
+import OrderTypesDiv from '../OrderTypesDiv';
 
-const StoreInfo = () => {
+const StoreInfo = ({ loading, error, store }) => {
   const classes = useStyles();
+
+  const getFullAddress = () => {
+    let address = '';
+    const addressKeys = ['line1', 'line2', 'city_town', 'postcode'];
+    addressKeys.forEach((item, nIndex) => {
+      address += `${store.address[item]}`;
+      if (nIndex < addressKeys.length - 1) address += ', ';
+    });
+    return address;
+  };
+
+  const renderHoursStatus = () => {
+    const storeOpenStatus = getStoreOpenStatus(store.store_openings);
+
+    return (
+      <>
+        <span className={`${classes.StoreStatus} ${storeOpenStatus.closed ? '' : classes.StoreStatusOpen}`}>
+          {storeOpenStatus.closed ? 'Close' : 'Open'}
+        </span>
+        {storeOpenStatus.nextStatus}
+      </>
+    );
+  };
 
   return (
     <Grid container className={classes.root}>
       <Grid item md={6}>
         <Grid container>
           <Grid item md={12} className={classes.StoreLogoInfo}>
-            <img src={StoreLogoImg} alt="store logo" />
+            <Avatar className={classes.StoreLogo} src={store.merchant.logo.url} alt="store logo" />
             <div className={classes.TitleContent}>
-              <h4>SPAR Oxford</h4>
-              <p>Supermarket</p>
+              <h4>{store.name}</h4>
+              <p>{store.merchant.business_type}</p>
             </div>
           </Grid>
           <Grid item md={12} className={classes.Description}>
-            Come and shop in your local supermarket. We have great deals on groceries, tobacco and alcohol. Get Oyster,
-            National Lottery, Paypoint, Newspaper, Tobacco, Alcohol, Groceries, Soft Drink, Household, Pet food, Chilled
-            food, frozen food, Quality fresh vegetables and Food to Go.
+            {store.about_story}
           </Grid>
           <Grid item md={12}>
             <div className={classes.DetailInfoItem}>
               <div className={classes.LableName}>
                 <strong>Address:</strong>
               </div>
-              <div className={classes.LabelValue}>10 Silbury Boulevard, Milton Keynes, MK9 3HU</div>
+              <div className={classes.LabelValue}>{getFullAddress()}</div>
             </div>
             <div className={classes.DetailInfoItem}>
               <div className={classes.LableName}>
                 <strong>Hours:</strong>
               </div>
-              <div className={classes.LabelValue}>
-                <span className={classes.StoreStatus}>Open</span>
-                Closing at 11:00 PM
-              </div>
+              <div className={classes.LabelValue}>{renderHoursStatus()}</div>
             </div>
             <div className={classes.DetailInfoItem}>
               <div className={classes.LableName}>
                 <strong>Phone:</strong>
               </div>
-              <div className={classes.LabelValue}>Call</div>
+              <div className={classes.LabelValue}>{store.phone}</div>
             </div>
             <div className={classes.DetailInfoItem}>
               <div className={classes.LableName}>
                 <strong>Orders:</strong>
               </div>
-              <div className={classes.LabelValue}>
-                <div className={classes.OrderItem}>
-                  <div className={classes.IconCircle}>
-                    <CheckIcon />
-                  </div>
-                  Click & Collect
-                </div>
-                <div className={classes.OrderItem}>
-                  <div className={classes.IconCircle}>
-                    <CheckIcon />
-                  </div>
-                  Delivery
-                </div>
-              </div>
+              <OrderTypesDiv warpperClassname={classes.LabelValue} orderTypes={_.get(store, 'order_types', [])} />
             </div>
           </Grid>
         </Grid>
@@ -84,6 +91,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     StoreLogoInfo: {
       display: 'flex',
+    },
+    StoreLogo: {
+      width: '105px',
+      height: '105px',
+      borderRadius: '55px',
     },
     TitleContent: {
       display: 'flex',
@@ -126,29 +138,12 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 300,
       flex: ' 1 1 100%',
     },
-    OrderItem: {
-      marginRight: '27px',
-      display: 'flex',
-      alignItems: 'center',
-    },
-    IconCircle: {
-      width: '24px',
-      height: '24px',
-      background: 'rgba(186, 195, 201, 0.4)',
-      borderRadius: '12px',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: '13px',
-      '& .MuiSvgIcon-root': {
-        width: '20px',
-        color: '#20a044',
-      },
-    },
     StoreStatus: {
       marginRight: '20px',
-      color: '#55cc66',
       fontWeight: 600,
+    },
+    StoreStatusOpen: {
+      color: '#55cc66',
     },
   })
 );

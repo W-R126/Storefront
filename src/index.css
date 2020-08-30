@@ -5,3 +5,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: #f3f5f7;
 }
+
+.MuiButton-contained.Mui-disabled {
+  opacity: 0.6;
+  background-color: #1174f2 !important;
+  color: #fff !important;
+}

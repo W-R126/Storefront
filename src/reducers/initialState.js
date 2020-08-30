@@ -1,5 +1,11 @@
 export default {
-  count: {
-    value: 0,
+  auth: {
+    userInfo: {},
+  },
+  cart: {
+    cartList: [],
+  },
+  store: {
+    storeInfo: {},
   },
 };

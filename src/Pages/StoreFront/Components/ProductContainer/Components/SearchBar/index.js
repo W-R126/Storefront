@@ -51,12 +51,9 @@ const useStyles = makeStyles((theme: Theme) =>
       '& label.Mui-focused': {
         color: 'white',
       },
-      '& .MuiInput-underline:after': {
-        borderBottomColor: '#1174f2',
-      },
     },
     TextFocused: {
-      color: '#1174f2',
+      color: theme.palette.primary.main,
     },
     TextNormal: {
       color: theme.palette.primary.dark,

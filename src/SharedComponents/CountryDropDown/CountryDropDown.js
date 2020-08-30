@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
-const DropDown = ({ value, menuList, wrapperStyles, buttonStyles }) => {
+const CountryDropDown = ({ value, menuList, wrapperStyles, buttonStyles }) => {
   const classes = useStyles();
 
   const [open, setOpen] = useState(false);
@@ -132,4 +132,4 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default DropDown;
+export default CountryDropDown;

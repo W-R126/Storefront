@@ -1,40 +1,98 @@
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
+import _ from 'lodash';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 
-const ProductCard = () => {
+import { getProductCart } from '../../../../../../utils/product';
+import * as types from '../../../../../../actions/actionTypes';
+
+const ProductCard = ({ productInfo }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
+  const { cartInfo } = useSelector((state) => ({
+    cartInfo: state.cartReducer.cartList,
+  }));
+  const getProductImage = () => {
+    const imgArr = _.get(productInfo, 'images', []);
+    if (imgArr.length === 0) return '';
+    else return imgArr[0];
+  };
+
+  const getPriceInfo = () => {
+    const prices = _.get(productInfo, 'prices', []);
+    if (prices.length === 0) return 0;
+    const priceInfos = _.get(prices[0], 'price_infos', []);
+    if (priceInfos.length === 0) return 0;
+    return _.get(priceInfos[0], 'price', 0);
+  };
+
+  const getCartCount = () => {
+    const productCart = getProductCart(cartInfo, productInfo.id);
+    return _.get(productCart, 'qty', 0);
+  };
+
+  const updateCarts = (addNumber) => {
+    if (addNumber === 1 && _.get(getProductCart(cartInfo, productInfo.id), 'id', -1) === -1) {
+      dispatch({
+        type: types.UPDATE_PRODUCT_CART,
+        payload: [...cartInfo, { id: productInfo.id, qty: 1, price: getPriceInfo() }],
+      });
+    } else {
+      const cartList = [];
+      cartInfo.forEach((item) => {
+        if (item.id === productInfo.id) {
+          const qtyCount = item.qty + addNumber;
+          if (qtyCount > 0)
+            cartList.push({
+              ...item,
+              qty: qtyCount,
+            });
+        } else {
+          cartList.push(item);
+        }
+      });
+      dispatch({
+        type: types.UPDATE_PRODUCT_CART,
+        payload: cartList,
+      });
+    }
+  };
 
   return (
     <div className={classes.root}>
-      <div className={classes.ProductImg}></div>
+      <div className={classes.ProductImg} style={{ backgroundImage: `url(${getProductImage()})` }}></div>
       <div className={classes.ProductContent}>
         <div className={classes.TopSection}>
           <div className={classes.LeftInfo}>
-            <div className={classes.Title}>Chivas Regal</div>
-            <div className={classes.Status}>Code: 43894</div>
+            <div className={classes.Title}>{productInfo.name}</div>
+            <div className={classes.Status}>Code: ${productInfo.bar_code}</div>
           </div>
           <div className={classes.Value}>
-            <div className={classes.Price}>$180.00</div>
-            <div className={classes.Stock}>10 in stock</div>
+            <div className={classes.Price}>{getPriceInfo()}</div>
+            {/* <div className={classes.Stock}>10 in stock</div> */}
           </div>
         </div>
-        <div className={classes.Description}>
-          Lorem ipsum dolor sit amet, ut sonet disputando vim, ea solum principes pro. Pri ex possim suavitate
-        </div>
+        <div className={classes.Description}>{productInfo.short_description}</div>
         <div className={classes.Bottom}>
-          {/* <div className={classes.AddCart}>Add to cart</div> */}
-          <div className={classes.ProductCount}>
-            <div className={classes.CircleButton} role="button">
-              <RemoveIcon />
+          {getCartCount() === 0 ? (
+            <div className={classes.AddCart} onClick={() => updateCarts(1)} role="button">
+              Add to cart
             </div>
-            <div className={classes.CountValue}>20</div>
-            <div className={classes.CircleButton} role="button">
-              <AddIcon />
+          ) : (
+            <div className={classes.ProductCount}>
+              <div className={classes.CircleButton} onClick={() => updateCarts(-1)} role="button">
+                <RemoveIcon />
+              </div>
+              <div className={classes.CountValue}>{getCartCount()}</div>
+              <div className={classes.CircleButton} onClick={() => updateCarts(1)} role="button">
+                <AddIcon />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
@@ -108,7 +166,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     AddCart: {
       margin: '3px 0 0 auto',
-      color: '#1174f2',
+      color: theme.palette.primary.main,
       fontSize: '12px',
       cursor: 'pointer',
       lineHeight: 'normal',
@@ -134,7 +192,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     CountValue: {
       fontSize: '20px',
-      margin: '0 11px',
+      textAlign: 'center',
+      width: '30px',
     },
   })
 );

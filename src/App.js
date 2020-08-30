@@ -35,15 +35,18 @@ const errorLink = onError(({ graphQLErrors, networkError, forward, operation }) 
 const authorizationLink = new ApolloLink((operation, forward) => {
   const token = localStorage.getItem('token');
   // const merchant = localStorage.getItem('merchant');
+  // const storeJson = localStorage.getItem('store');
+  // const store = storeJson ? JSON.parse(storeJson) : null;
   const merchant = '4e20a0ea-9a66-4732-b53b-7e692ede0c45';
-  const storeJson = localStorage.getItem('store');
-  const store = storeJson ? JSON.parse(storeJson) : null;
+  const storeId = 'a0be564c-a982-471f-a4b5-5bdf6e29e1c2';
+
   operation.setContext({
     headers: {
       authorization: token ? `Bearer ${token}` : 'Bearer Guest',
       'Content-Type': 'application/json',
       ...(merchant && { 'X-Myda-Merchant': merchant }),
-      ...(store && { 'X-Myda-Store': store.id }),
+      // ...(store && { 'X-Myda-Store': store.id }),
+      'X-Myda-Store': storeId,
     },
   });
   return forward(operation);

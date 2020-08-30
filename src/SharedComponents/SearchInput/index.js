@@ -1,24 +1,35 @@
 import React from 'react';
 
+import _ from 'lodash';
+import { useQuery } from '@apollo/react-hooks';
 import Box from '@material-ui/core/Box';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 
 import DropDown from '../DropDown';
+import { GET_CATEGORIES } from '../../graphql/categories/categories-query';
+import { GET_STORE_SETTING_PRODUCT } from '../../graphql/store/store-query';
+import { getOrderedCategories } from '../../utils/category';
 
 const SearchInput = () => {
   const classes = useStyles();
+  const { data, loading, error } = useQuery(GET_CATEGORIES);
+  const { loading: storeSettingLoading, error: storeSettingError, data: storeSettingData } = useQuery(
+    GET_STORE_SETTING_PRODUCT
+  );
+
+  const getCategoryMenuItems = () => {
+    const categories = getOrderedCategories(data, storeSettingData);
+    return categories.map((item) => {
+      return { id: item.id, label: item.name };
+    });
+  };
 
   return (
     <Box className={classes.root}>
       <DropDown
         value={{ id: '1', label: 'All' }}
-        menuList={[
-          { id: '1', label: 'All' },
-          { id: '2', label: 'Category1' },
-          { id: '3', label: 'Category2' },
-          { id: '4', label: 'Category3' },
-        ]}
+        menuList={getCategoryMenuItems()}
         wrapperStyles={{ minWidth: '105px', flex: '1 1 105px' }}
       />
       <input className={classes.SearchField} />
@@ -60,6 +71,7 @@ const useStyles = makeStyles((theme: Theme) =>
       background: theme.palette.primary.yellow,
       outline: 'none',
       border: 'none',
+      cursor: 'pointer',
       '& .MuiSvgIcon-root': {
         color: '#fff',
       },

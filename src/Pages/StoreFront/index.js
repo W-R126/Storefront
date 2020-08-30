@@ -1,23 +1,54 @@
-import React from 'react';
-
+import React, { useState } from 'react';
+import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { useQuery } from '@apollo/react-hooks';
 
 import Header from '../../SharedComponents/Header';
 import StoreInfo from './Components/StoreInfo';
-import TopBannerImg from '../../assets/img/topbanner.jpg';
 import ProductContainer from './Components/ProductContainer';
 import Footer from '../../SharedComponents/Footer';
+import OpeningHoursModal from './Components/OpeningHoursModal';
+import { GET_STORE_DATA } from '../../graphql/store/store-query';
 
 const StoreFrontPage = () => {
   const classes = useStyles();
+  const [showOpeningHourModal, setShowOpeningHourModal] = useState(false);
+  const { loading: storeLoading, error: storeError, data: storeData } = useQuery(GET_STORE_DATA, {
+    variables: { id: 'a0be564c-a982-471f-a4b5-5bdf6e29e1c2' },
+    onCompleted: (d) => {
+      setShowOpeningHourModal(true);
+    },
+  });
+
+  const getBannerImg = () => {
+    const store = _.get(storeData, 'store', null);
+    if (store) {
+      return store.settings.touchpoint_settings.digital_front.banner.url;
+    }
+    return '';
+  };
+
+  const getStoreOpening = () => {
+    const store = _.get(storeData, 'store', {});
+    return _.get(store, 'store_openings', []);
+  };
 
   return (
     <>
       <Header />
-      <div className={classes.TopBanner} style={{ backgroundImage: `url(${TopBannerImg})` }}></div>
-      <StoreInfo />
+      <div className={classes.TopBanner} style={{ backgroundImage: `url(${getBannerImg()})` }}></div>
+      {_.get(storeData, 'store', null) !== null && (
+        <StoreInfo loading={storeLoading} error={storeError} store={_.get(storeData, 'store', {})} />
+      )}
       <ProductContainer />
       <Footer />
+      <OpeningHoursModal
+        open={showOpeningHourModal}
+        hideModal={() => {
+          setShowOpeningHourModal(false);
+        }}
+        store_openings={getStoreOpening()}
+      />
     </>
   );
 };
