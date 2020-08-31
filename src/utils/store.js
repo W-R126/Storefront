@@ -105,3 +105,9 @@ export const getCurrency = (localisationInfo) => {
   const symbole = _.get(localisation, 'currency_symbol', '');
   if (symbole === '&#163;') return '£';
 };
+
+export const getStorePos = (storeInfo) => {
+  const address = _.get(storeInfo, 'address', null);
+  if (!address) return { lat: 0, lng: 0 };
+  return { lat: parseFloat(address.lat), lng: parseFloat(address.lng) };
+};

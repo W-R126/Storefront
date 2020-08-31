@@ -17,6 +17,7 @@
     "apollo-link-error": "^1.1.13",
     "apollo-upload-client": "^14.1.1",
     "classnames": "^2.2.6",
+    "dotenv": "^8.2.0",
     "graphql": "^15.3.0",
     "lodash": "^4.17.20",
     "moment": "^2.27.0",

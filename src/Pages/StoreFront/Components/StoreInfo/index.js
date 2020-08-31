@@ -4,8 +4,10 @@ import _ from 'lodash';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
+import Box from '@material-ui/core/Box';
 
-import { getStoreOpenStatus } from '../../../../utils/store';
+import { getStoreOpenStatus, getStorePos } from '../../../../utils/store';
+import StoreMap from '../StoreMap';
 import OrderTypesDiv from '../OrderTypesDiv';
 
 const StoreInfo = ({ loading, error, store }) => {
@@ -76,7 +78,10 @@ const StoreInfo = ({ loading, error, store }) => {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item md={6}></Grid>
+      <Grid item md={6} className={classes.MapGrid}>
+        <StoreMap mapCenter={getStorePos(store)} />
+        <Box className={classes.MapOverlay}></Box>
+      </Grid>
     </Grid>
   );
 };
@@ -88,9 +93,11 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingRight: '40px',
       marginTop: '-25px',
       color: theme.palette.primary.dark,
+      backgroundColor: '#fff',
     },
     StoreLogoInfo: {
       display: 'flex',
+      marginTop: '-25px',
     },
     StoreLogo: {
       width: '105px',
@@ -144,6 +151,17 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     StoreStatusOpen: {
       color: '#55cc66',
+    },
+    MapGrid: {
+      position: 'relative',
+    },
+    MapOverlay: {
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      width: '50%',
+      height: '100%',
+      backgroundImage: 'linear-gradient(to right, #ffffff 0%, rgba(255, 255, 255, 0.1) 100%);',
     },
   })
 );

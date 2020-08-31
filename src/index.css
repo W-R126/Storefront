@@ -11,3 +11,11 @@ body {
   background-color: #1174f2 !important;
   color: #fff !important;
 }
+
+.gmnoprint {
+  display: none;
+}
+
+.gm-style-cc {
+  display: none;
+}
