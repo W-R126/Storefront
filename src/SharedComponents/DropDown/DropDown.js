@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
-
+import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -65,7 +65,7 @@ const DropDown = ({ value, onChange, menuList, wrapperStyles, buttonStyles }) =>
         className={classes.DropDownButton}
         style={buttonStyles}
       >
-        {value.label}
+        {_.get(value, 'label', '')}
         <KeyboardArrowDownIcon className={`${open ? classes.Opened : undefined} ${classes.ChevIcon}`} />
       </button>
       {open && (
@@ -79,7 +79,7 @@ const DropDown = ({ value, onChange, menuList, wrapperStyles, buttonStyles }) =>
                     onChange(item);
                     handleClose(e);
                   }}
-                  selected={value.id === item.id}
+                  selected={_.get(value, 'id', '') === item.id}
                 >
                   {item.label}
                 </MenuItem>

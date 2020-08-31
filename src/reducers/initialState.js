@@ -1,5 +1,3 @@
-import { TRANS_TYPE } from '../constants';
-
 export default {
   auth: {
     userInfo: {},
@@ -9,6 +7,6 @@ export default {
   },
   store: {
     storeInfo: {},
-    transType: TRANS_TYPE.DELIVERY,
+    transType: {},
   },
 };

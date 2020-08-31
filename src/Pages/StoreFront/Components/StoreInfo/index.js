@@ -158,9 +158,9 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'absolute',
       left: 0,
       top: 0,
-      width: '50%',
+      width: '100%',
       height: '100%',
-      backgroundImage: 'linear-gradient(to right, #ffffff 0%, rgba(255, 255, 255, 0.1) 100%);',
+      backgroundImage: 'linear-gradient(to right, #ffffff 0%, rgba(255, 255, 255, 0.1) 60%);',
     },
   })
 );

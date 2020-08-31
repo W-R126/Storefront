@@ -9,6 +9,7 @@ import ProductContainer from './Components/ProductContainer';
 import Footer from '../../SharedComponents/Footer';
 import OpeningHoursModal from './Components/OpeningHoursModal';
 import { GET_STORE_DATA } from '../../graphql/store/store-query';
+import { getOrderTypes } from '../../utils/store';
 
 const StoreFrontPage = () => {
   const classes = useStyles();
@@ -35,7 +36,7 @@ const StoreFrontPage = () => {
 
   return (
     <>
-      <Header />
+      <Header orderTypesList={getOrderTypes(storeData)} />
       <div className={classes.TopBanner} style={{ backgroundImage: `url(${getBannerImg()})` }}></div>
       {_.get(storeData, 'store', null) !== null && (
         <StoreInfo loading={storeLoading} error={storeError} store={_.get(storeData, 'store', {})} />

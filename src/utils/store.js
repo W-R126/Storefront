@@ -111,3 +111,9 @@ export const getStorePos = (storeInfo) => {
   if (!address) return { lat: 0, lng: 0 };
   return { lat: parseFloat(address.lat), lng: parseFloat(address.lng) };
 };
+
+export const getOrderTypes = (storeInfo) => {
+  const store = _.get(storeInfo, 'store', null);
+  if (!store) return [];
+  return _.get(store, 'order_types', []);
+};

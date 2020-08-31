@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
@@ -17,15 +17,22 @@ import DropDown from '../DropDown';
 import LoginSignUpDlg from '../LoginSignUpDlg';
 import UserDialog from '../UserDialog';
 import { getUserAvatar } from '../../utils/auth';
-import { TRANS_TYPE } from '../../constants';
 import * as types from '../../actions/actionTypes';
 import { GET_CATEGORIES } from '../../graphql/categories/categories-query';
 import { GET_STORE_SETTING_PRODUCT } from '../../graphql/store/store-query';
 import { getOrderedCategories } from '../../utils/category';
 
-const Header = ({ children }) => {
+const Header = ({ children, orderTypesList }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (orderTypesList.length > 0)
+      dispatch({
+        type: types.UPDATE_TRANS_TYPE,
+        payload: orderTypesList[0],
+      });
+  }, [dispatch, orderTypesList]);
 
   const { data, loading, error } = useQuery(GET_CATEGORIES);
   const { loading: storeSettingLoading, error: storeSettingError, data: storeSettingData } = useQuery(
@@ -70,18 +77,16 @@ const Header = ({ children }) => {
         </MDIconButton>
         <SearchInput categoryMenuList={getCategoryMenuItems()} />
         <DropDown
-          value={{ id: transType, label: transType }}
-          menuList={[
-            { id: TRANS_TYPE.POS, label: TRANS_TYPE.POS },
-            { id: TRANS_TYPE.DELIVERY, label: TRANS_TYPE.DELIVERY },
-            { id: TRANS_TYPE.CLICK, label: TRANS_TYPE.CLICK },
-          ]}
+          value={{ id: transType.id, label: transType.name }}
+          menuList={orderTypesList.map((item) => {
+            return { id: item.id, label: item.name };
+          })}
           wrapperStyles={{ marginLeft: 'auto', width: '147px', background: '#fff', borderRadius: '2px' }}
           buttonStyles={{ background: '#fff' }}
           onChange={(selected) => {
             dispatch({
               type: types.UPDATE_TRANS_TYPE,
-              payload: selected.id,
+              payload: { id: selected.id, name: selected.label },
             });
           }}
         />
