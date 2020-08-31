@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import Visibility from '@material-ui/icons/Visibility';
@@ -34,7 +35,7 @@ const PasswordInput = ({ id = 'password', label = 'Password', inputData, onChang
   };
 
   return (
-    <>
+    <Box className={classes.root}>
       <TextField
         id={id}
         label={label}
@@ -62,12 +63,17 @@ const PasswordInput = ({ id = 'password', label = 'Password', inputData, onChang
       >
         {inputData.showPassword ? <Visibility /> : <VisibilityOff />}
       </IconButton>
-    </>
+    </Box>
   );
 };
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    root: {
+      position: 'relative',
+      width: '100%',
+      boxSizing: 'border-box',
+    },
     PasswordInput: {
       '& .MuiInputBase-input': {
         height: '40px',

@@ -90,7 +90,6 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       paddingLeft: '40px',
-      paddingRight: '40px',
       marginTop: '-25px',
       color: theme.palette.primary.dark,
       backgroundColor: '#fff',
