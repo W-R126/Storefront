@@ -89,13 +89,14 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'center',
     },
     InputWrapper: {
-      marginTop: '40px',
-      minHeight: '70px',
+      marginTop: '35px',
+      height: '75px',
+      minHeight: '75px',
       width: '100%',
     },
     LoginInput: {
       '& .MuiInput-input': {
-        height: '40px',
+        height: '37px',
         padding: 0,
       },
     },

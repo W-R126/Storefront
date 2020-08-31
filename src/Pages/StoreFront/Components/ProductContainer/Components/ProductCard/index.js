@@ -8,7 +8,7 @@ import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 
 import { getCurrency } from '../../../../../../utils/store';
-import { getProductCart } from '../../../../../../utils/product';
+import { getProductCart, getProductPrice } from '../../../../../../utils/product';
 import * as types from '../../../../../../actions/actionTypes';
 import { GET_CURRENCY } from '../../../../../../graphql/localisation/localisation-query';
 import { formatPrice } from '../../../../../../utils/string';
@@ -19,8 +19,9 @@ const ProductCard = ({ productInfo }) => {
 
   const { data: currencyData } = useQuery(GET_CURRENCY);
 
-  const { cartInfo } = useSelector((state) => ({
+  const { cartInfo, orderType } = useSelector((state) => ({
     cartInfo: state.cartReducer.cartList,
+    orderType: state.storeReducer.orderType,
   }));
 
   const getProductImage = () => {
@@ -30,12 +31,7 @@ const ProductCard = ({ productInfo }) => {
   };
 
   const getPriceInfo = () => {
-    let price = 0;
-    const prices = _.get(productInfo, 'prices', []);
-    if (prices.length === 0) price = 0;
-    const priceInfos = _.get(prices[0], 'price_infos', []);
-    if (priceInfos.length === 0) price = 0;
-    price = _.get(priceInfos[0], 'price', 0);
+    const price = getProductPrice(productInfo, orderType);
     return formatPrice(price, currencyData);
   };
 

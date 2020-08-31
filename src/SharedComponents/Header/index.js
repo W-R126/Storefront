@@ -42,9 +42,9 @@ const Header = ({ children, orderTypesList }) => {
   const [showLogin, setShowLogin] = useState(false);
   const [showUserDetail, setShowUserDetail] = useState(false);
 
-  const { authInfo, transType } = useSelector((state) => ({
+  const { authInfo, orderType } = useSelector((state) => ({
     authInfo: state.authReducer.userInfo,
-    transType: state.storeReducer.transType,
+    orderType: state.storeReducer.orderType,
   }));
 
   const checkIsLogin = () => {
@@ -77,7 +77,7 @@ const Header = ({ children, orderTypesList }) => {
         </MDIconButton>
         <SearchInput categoryMenuList={getCategoryMenuItems()} />
         <DropDown
-          value={{ id: transType.id, label: transType.name }}
+          value={{ id: orderType.id, label: orderType.name }}
           menuList={orderTypesList.map((item) => {
             return { id: item.id, label: item.name };
           })}

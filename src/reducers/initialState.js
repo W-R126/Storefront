@@ -7,6 +7,6 @@ export default {
   },
   store: {
     storeInfo: {},
-    transType: {},
+    orderType: {},
   },
 };

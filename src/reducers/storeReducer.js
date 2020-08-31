@@ -6,7 +6,7 @@ export default (state = initialState.store, action) => {
     case types.UPDATE_TRANS_TYPE: {
       return {
         ...state,
-        transType: action.payload,
+        orderType: action.payload,
       };
     }
     default:

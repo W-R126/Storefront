@@ -79,9 +79,11 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: '35px',
       position: 'relative',
       width: '100%',
+      height: '75px',
+      minHeight: '75px',
     },
     LoginButton: {
-      marginTop: '35px',
+      marginTop: '20px',
       height: '50px',
     },
     Footer: {
