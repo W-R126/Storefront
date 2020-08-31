@@ -1,29 +1,35 @@
 import React from 'react';
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
 import CheckIcon from '@material-ui/icons/Check';
 
 const OrderTypesDiv = ({ warpperClassname, orderTypes }) => {
   const classes = useStyles();
+  const rootClasses = [classes.root];
+  if (warpperClassname) rootClasses.push(warpperClassname);
   return (
-    <div className={warpperClassname}>
+    <Box className={rootClasses.join(' ')}>
       {orderTypes.map((item) => {
         return (
-          <div className={classes.OrderItem} key={item.id}>
+          <Typography variant="h5" className={classes.OrderItem} key={item.id}>
             <div className={classes.IconCircle}>
               <CheckIcon />
             </div>
             {item.name.replace('_', ' & ')}
-          </div>
+          </Typography>
         );
       })}
-    </div>
+    </Box>
   );
 };
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {},
+    root: {
+      display: 'flex',
+    },
     OrderItem: {
       marginRight: '27px',
       display: 'flex',

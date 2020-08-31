@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
+import { useQuery } from '@apollo/react-hooks';
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { AppBar, Toolbar, Avatar } from '@material-ui/core';
@@ -11,17 +12,25 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone';
 
 import SearchInput from '../SearchInput';
-import MDIconButtom from '../../SharedComponents/MDIconButton';
+import MDIconButton from '../../SharedComponents/MDIconButton';
 import DropDown from '../DropDown';
 import LoginSignUpDlg from '../LoginSignUpDlg';
 import UserDialog from '../UserDialog';
 import { getUserAvatar } from '../../utils/auth';
 import { TRANS_TYPE } from '../../constants';
 import * as types from '../../actions/actionTypes';
+import { GET_CATEGORIES } from '../../graphql/categories/categories-query';
+import { GET_STORE_SETTING_PRODUCT } from '../../graphql/store/store-query';
+import { getOrderedCategories } from '../../utils/category';
 
 const Header = ({ children }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+
+  const { data, loading, error } = useQuery(GET_CATEGORIES);
+  const { loading: storeSettingLoading, error: storeSettingError, data: storeSettingData } = useQuery(
+    GET_STORE_SETTING_PRODUCT
+  );
 
   const [showLogin, setShowLogin] = useState(false);
   const [showUserDetail, setShowUserDetail] = useState(false);
@@ -37,19 +46,29 @@ const Header = ({ children }) => {
     return true;
   };
 
+  const getCategoryMenuItems = () => {
+    const categories = getOrderedCategories(data, storeSettingData);
+    return [
+      { id: '-1', label: 'All' },
+      ...categories.map((item) => {
+        return { id: item.id, label: item.name };
+      }),
+    ];
+  };
+
   return (
     <AppBar className={classes.Root}>
       <Toolbar>
-        <MDIconButtom aria-label="open drawer">
+        <MDIconButton aria-label="open drawer">
           <MenuIcon color="Secondary.dark" />
-        </MDIconButtom>
+        </MDIconButton>
         <Link to="/" className={classes.LogoBrand}>
           myda
         </Link>
-        <MDIconButtom aria-label="header back" wrapperClass={classes.BackButton}>
+        <MDIconButton aria-label="header back" wrapperClass={classes.BackButton}>
           <KeyboardBackspaceIcon color="Secondary.dark" />
-        </MDIconButtom>
-        <SearchInput />
+        </MDIconButton>
+        <SearchInput categoryMenuList={getCategoryMenuItems()} />
         <DropDown
           value={{ id: transType, label: transType }}
           menuList={[
@@ -66,14 +85,14 @@ const Header = ({ children }) => {
             });
           }}
         />
-        <MDIconButtom wrapperClass={classes.CartButton} aria-label="shopping-cart">
+        <MDIconButton wrapperClass={classes.CartButton} aria-label="shopping-cart">
           <ShoppingCartIcon />
-        </MDIconButtom>
+        </MDIconButton>
         {checkIsLogin() ? (
           <>
-            <MDIconButtom wrapperClass={classes.NotiButton}>
+            <MDIconButton wrapperClass={classes.NotiButton}>
               <NotificationsNoneIcon />
-            </MDIconButtom>
+            </MDIconButton>
             <Avatar
               className={classes.UserAvatar}
               src={getUserAvatar(authInfo)}

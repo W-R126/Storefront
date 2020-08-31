@@ -26,6 +26,11 @@ export const THEME = createMuiTheme({
     },
   },
   overrides: {
+    MuiTypography: {
+      h5: {
+        fontSize: '16px',
+      },
+    },
     MuiButton: {
       containedPrimary: {
         color: '#fff',
