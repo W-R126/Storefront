@@ -73,7 +73,11 @@ const ProductCard = ({ productInfo }) => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.ProductImg} style={{ backgroundImage: `url(${getProductImage()})` }}></div>
+      <div className={classes.ProductImg} style={{ backgroundImage: `url(${getProductImage()})` }}>
+        <div className={classes.ProductLabel}>
+          {productInfo.measure_amount} {productInfo.measure_type}
+        </div>
+      </div>
       <div className={classes.ProductContent}>
         <div className={classes.TopSection}>
           <div className={classes.LeftInfo}>
@@ -124,6 +128,20 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundPosition: 'center center',
       backgroundSize: 'contain',
       flex: '0 0 90px',
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    ProductLabel: {
+      marginTop: 'auto',
+      width: '100%',
+      height: '25px',
+      backgroundColor: 'rgba(1, 86, 184, 0.77)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: '#fff',
+      fontWeight: 300,
+      fontSize: '13px',
     },
     ProductContent: {
       flex: '1 1 100%',
