@@ -44,9 +44,10 @@ export const getOrdredProducts = (productData, storeSettingData) => {
 export const getProductPrice = (productInfo, orderType) => {
   const prices = _.get(productInfo, 'prices', []);
   if (prices.length === 0) return 0;
-  const findPrice = prices[0].price_infos.find(
-    (item) => item.price_type.name.toLowerCase() === orderType.name.toLowerCase()
-  );
+  const findPrice = prices[0].price_infos.find((item) => {
+    const priceType = _.get(item, 'price_type', {});
+    return _.get(priceType, 'name', '').toLowerCase() === _.get(orderType, 'name', '').toLowerCase();
+  });
   if (findPrice) return findPrice.price;
   return 0;
 };

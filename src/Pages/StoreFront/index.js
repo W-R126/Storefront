@@ -62,6 +62,16 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundSize: 'cover',
       marginTop: '80px',
       overflow: 'hidden',
+      '@media screen and (max-width: 1439px)': {
+        height: '350px',
+      },
+      '@media screen and (max-width: 1199px)': {
+        height: '300px',
+      },
+      '@media screen and (max-width: 767px)': {
+        height: '205px',
+        marginTop: '70px',
+      },
     },
   })
 );

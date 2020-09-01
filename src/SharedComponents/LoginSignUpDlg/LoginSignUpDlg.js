@@ -126,6 +126,9 @@ const useStyles = makeStyles((theme: Theme) =>
       boxSizing: 'border-box',
       display: 'flex',
       flexDirection: 'column',
+      '@media screen and (max-width: 767px)': {
+        right: 'calc(50% - 196px)',
+      },
     },
     CloseButton: {
       width: '30px',

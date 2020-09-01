@@ -9,6 +9,12 @@ export default (state = initialState.store, action) => {
         orderType: action.payload,
       };
     }
+    case types.CHANGE_COUNTRY: {
+      return {
+        ...state,
+        country: { ...action.payload },
+      };
+    }
     default:
       return state;
   }

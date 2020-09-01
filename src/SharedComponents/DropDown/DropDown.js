@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
-const DropDown = ({ value, onChange, menuList, wrapperStyles, buttonStyles }) => {
+const DropDown = ({ value, onChange, menuList, wrapperClass, buttonStyles }) => {
   const classes = useStyles();
 
   const [open, setOpen] = useState(false);
@@ -55,8 +55,10 @@ const DropDown = ({ value, onChange, menuList, wrapperStyles, buttonStyles }) =>
     };
   }, [open, ref]);
 
+  const rootClasses = [classes.ComponentContainer];
+  if (wrapperClass) rootClasses.push(wrapperClass);
   return (
-    <div ref={ref} className={classes.ComponentContainer} style={wrapperStyles}>
+    <div ref={ref} className={rootClasses.join(' ')}>
       <button
         ref={anchorRef}
         aria-controls={open ? 'menu-list-grow' : undefined}

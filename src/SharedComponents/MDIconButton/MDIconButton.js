@@ -21,6 +21,10 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '40px',
       height: '40px',
       borderRadius: 0,
+      '@media screen and (max-width: 767px):': {
+        width: '40px',
+        height: '40px',
+      },
     },
   })
 );

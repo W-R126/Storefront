@@ -90,18 +90,25 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       paddingLeft: '40px',
-      marginTop: '-25px',
       color: theme.palette.primary.dark,
       backgroundColor: '#fff',
     },
     StoreLogoInfo: {
       display: 'flex',
       marginTop: '-25px',
+      '@media screen and (max-width: 767px)': {
+        marginTop: '-5px',
+      },
     },
     StoreLogo: {
       width: '105px',
       height: '105px',
       borderRadius: '55px',
+      '@media screen and (max-width: 767px)': {
+        width: '70px',
+        height: '70px',
+        borderRadius: '35px',
+      },
     },
     TitleContent: {
       display: 'flex',
@@ -153,6 +160,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     MapGrid: {
       position: 'relative',
+      '@media screen and (max-width: 767px)': {
+        height: '167px',
+      },
     },
     MapOverlay: {
       position: 'absolute',
@@ -161,6 +171,9 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       height: '100%',
       backgroundImage: 'linear-gradient(to right, #ffffff 0%, rgba(255, 255, 255, 0.1) 60%);',
+      '@media screen and (max-width: 767px)': {
+        display: 'none',
+      },
     },
   })
 );

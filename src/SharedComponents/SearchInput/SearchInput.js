@@ -16,7 +16,7 @@ const SearchInput = ({ categoryMenuList }) => {
         value={selectedCategory}
         onChange={(selected) => setSelectedCategory({ ...selected })}
         menuList={categoryMenuList}
-        wrapperStyles={{ minWidth: '105px', flex: '1 1 105px' }}
+        wrapperClass={classes.CategoryDropDown}
       />
       <input className={classes.SearchField} />
       <button className={classes.SearchButton}>
@@ -33,6 +33,18 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: '57px',
       width: '432px',
       height: '40px',
+
+      '@media screen and (max-width: 1439px)': {
+        width: '350px',
+      },
+
+      '@media screen and (max-width: 1199px)': {
+        display: 'none',
+      },
+    },
+    CategoryDropDown: {
+      minWidth: '105px',
+      flex: '1 1 105px',
     },
     SearchField: {
       flex: '1 1 100%',

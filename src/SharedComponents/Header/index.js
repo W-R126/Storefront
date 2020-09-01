@@ -10,6 +10,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import SearchInput from '../SearchInput';
 import MDIconButton from '../../SharedComponents/MDIconButton';
@@ -66,7 +67,7 @@ const Header = ({ children, orderTypesList }) => {
   return (
     <AppBar className={classes.Root}>
       <Toolbar>
-        <MDIconButton aria-label="open drawer">
+        <MDIconButton aria-label="open drawer" wrapperClass={classes.MenuIconButton}>
           <MenuIcon color="Secondary.dark" />
         </MDIconButton>
         <Link to="/" className={classes.LogoBrand}>
@@ -81,7 +82,7 @@ const Header = ({ children, orderTypesList }) => {
           menuList={orderTypesList.map((item) => {
             return { id: item.id, label: item.name };
           })}
-          wrapperStyles={{ marginLeft: 'auto', width: '147px', background: '#fff', borderRadius: '2px' }}
+          wrapperClass={classes.OrderTypeDropDown}
           buttonStyles={{ background: '#fff' }}
           onChange={(selected) => {
             dispatch({
@@ -111,6 +112,14 @@ const Header = ({ children, orderTypesList }) => {
             <button className={classes.LoginButton} onClick={() => setShowLogin(true)}>
               Login
             </button>
+            <MDIconButton
+              wrapperClass={classes.IconLoginButton}
+              onClick={() => {
+                setShowLogin(true);
+              }}
+            >
+              <ExitToAppIcon />
+            </MDIconButton>
           </>
         )}
       </Toolbar>
@@ -127,6 +136,19 @@ const useStyles = makeStyles((theme: Theme) =>
       '& .MuiToolbar-root': {
         height: '80px',
       },
+
+      '@media screen and (max-width: 767px)': {
+        '& .MuiToolbar-root': {
+          height: '70px',
+          '& .MuiToolbar-gutters': {
+            paddingLeft: '10px',
+            paddingRight: '10px',
+          },
+        },
+      },
+    },
+    MenuIconButton: {
+      background: 'transparent',
     },
     LogoBrand: {
       color: '#0156b8',
@@ -134,15 +156,36 @@ const useStyles = makeStyles((theme: Theme) =>
       textDecoration: 'none',
       fontWeight: 600,
       marginLeft: '18px',
+      '@media screen and (max-width: 767px)': {
+        display: 'none',
+      },
     },
     BackButton: {
       marginLeft: '34px',
+      '@media screen and (max-width: 767px)': {
+        marginLeft: '13px',
+      },
+    },
+    OrderTypeDropDown: {
+      marginLeft: 'auto',
+      width: '147px',
+      background: '#fff',
+      borderRadius: '2px',
+      '@media screen and (max-width: 767px)': {
+        width: '112px',
+      },
     },
     CartButton: {
       marginLeft: '52px',
+      '@media screen and (max-width: 767px)': {
+        marginLeft: '10px',
+      },
     },
     NotiButton: {
       marginLeft: '40px',
+      '@media screen and (max-width: 767px)': {
+        marginLeft: '10px',
+      },
     },
     SignUpButton: {
       color: '#0156b8',
@@ -152,6 +195,9 @@ const useStyles = makeStyles((theme: Theme) =>
       outline: 'none',
       cursor: 'pointer',
       marginLeft: '42px',
+      '@media screen and (max-width: 767px)': {
+        display: 'none',
+      },
     },
     LoginButton: {
       color: '#0156b8',
@@ -161,12 +207,26 @@ const useStyles = makeStyles((theme: Theme) =>
       outline: 'none',
       cursor: 'pointer',
       marginLeft: '42px',
+      padding: 0,
+      '@media screen and (max-width: 767px)': {
+        display: 'none',
+      },
+    },
+    IconLoginButton: {
+      display: 'none',
+      marginLeft: '10px',
+      '@media screen and (max-width: 767px)': {
+        display: 'flex',
+      },
     },
     UserAvatar: {
       cursor: 'pointer',
       width: '40px',
       height: '40px',
       marginLeft: '43px',
+      '@media screen and (max-width: 767px)': {
+        marginLeft: '14px',
+      },
     },
   })
 );

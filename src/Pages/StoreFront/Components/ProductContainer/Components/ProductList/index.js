@@ -19,8 +19,6 @@ const ProductList = () => {
     GET_STORE_SETTING_PRODUCT
   );
   const { data: merchantNetPrice } = useQuery(GET_MERCHANT_NET_PRICE);
-  console.log('*******');
-  console.log(merchantNetPrice);
   return (
     <Grid container className={classes.root}>
       <Grid item xs={12}>

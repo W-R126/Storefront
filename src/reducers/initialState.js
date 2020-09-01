@@ -8,5 +8,6 @@ export default {
   store: {
     storeInfo: {},
     orderType: {},
+    country: {},
   },
 };
