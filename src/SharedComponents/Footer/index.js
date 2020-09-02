@@ -14,7 +14,6 @@ const Footer = () => {
     selectedCountry: state.storeReducer.country,
   }));
 
-  console.log(selectedCountry);
   return (
     <div fullWidth className={classes.root}>
       <div className={classes.TopSection}>

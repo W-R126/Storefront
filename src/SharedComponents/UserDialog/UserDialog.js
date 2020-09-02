@@ -25,7 +25,7 @@ const UserDialog = ({ hideModal }) => {
       <EditableLabel
         value={getUserName(authInfo)}
         onChange={(value) => {
-          console.log('asdfasdf');
+          console.log('change User Name');
         }}
         label="User Name"
         wrapperClass={classes.UserName}
@@ -33,7 +33,7 @@ const UserDialog = ({ hideModal }) => {
       <EditableLabel
         value={getUserEmail(authInfo)}
         onChange={(value) => {
-          console.log('asdfasdf');
+          console.log('Change User Email');
         }}
         label="User Email"
         wrapperClass={classes.UserName}

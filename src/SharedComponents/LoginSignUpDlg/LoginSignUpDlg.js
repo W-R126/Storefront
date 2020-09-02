@@ -135,7 +135,7 @@ const useStyles = makeStyles((theme: Theme) =>
       overflow: 'hidden',
       flexDirection: 'column',
       '@media screen and (max-width: 767px)': {
-        right: 'calc(50% - 196px)',
+        right: 'calc(50% - 191.5px)',
       },
     },
     CloseButton: {

@@ -9,12 +9,12 @@ import RemoveIcon from '@material-ui/icons/Remove';
 
 import ProductView from '../../../ProductView';
 import { getCurrency } from '../../../../../../utils/store';
-import { getProductCart, getProductPrice } from '../../../../../../utils/product';
+import { getProductCart, getProductPriceInfo } from '../../../../../../utils/product';
 import { GET_CURRENCY } from '../../../../../../graphql/localisation/localisation-query';
 import { formatPrice } from '../../../../../../utils/string';
 import * as types from '../../../../../../actions/actionTypes';
 
-const ProductCard = ({ productInfo }) => {
+const ProductCard = ({ productInfo, net_price }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -33,9 +33,31 @@ const ProductCard = ({ productInfo }) => {
     else return imgArr[0];
   };
 
-  const getPriceInfo = () => {
-    const price = getProductPrice(productInfo, orderType);
-    return formatPrice(price, currencyData);
+  const renderPriceInfo = () => {
+    const priceInfo = getProductPriceInfo(productInfo, orderType, net_price);
+    if (!priceInfo) return '';
+
+    if (net_price) {
+      const netPriceNames = priceInfo.taxes.map((taxItem) => taxItem.name);
+      const netPriceStr = netPriceNames.join(', ');
+
+      return (
+        <div className={classes.Price}>
+          {getCurrency(currencyData)} {formatPrice(priceInfo.price, currencyData)}
+          {netPriceNames.length > 0 && <span>+{netPriceStr}</span>}
+        </div>
+      );
+    } else {
+      let priceValue = priceInfo.price;
+      priceInfo.taxes.forEach((item) => {
+        priceValue += item.rate;
+      });
+      return (
+        <div className={classes.Price}>
+          {getCurrency(currencyData)} {formatPrice(priceValue, currencyData)}
+        </div>
+      );
+    }
   };
 
   const getCartCount = () => {
@@ -45,10 +67,11 @@ const ProductCard = ({ productInfo }) => {
 
   const updateCarts = (addNumber) => {
     if (addNumber === 1 && _.get(getProductCart(cartInfo, productInfo.id), 'id', -1) === -1) {
-      dispatch({
-        type: types.UPDATE_PRODUCT_CART,
-        payload: [...cartInfo, { id: productInfo.id, qty: 1, price: getPriceInfo() }],
-      });
+      // dispatch({
+      //   type: types.UPDATE_PRODUCT_CART,
+      //   payload: [...cartInfo, { id: productInfo.id, qty: 1, price: getPriceInfo() }],
+      // });
+      console.log('add cart clicked');
     } else {
       const cartList = [];
       cartInfo.forEach((item) => {
@@ -84,10 +107,8 @@ const ProductCard = ({ productInfo }) => {
             <div className={classes.Status}>Code: ${productInfo.bar_code}</div>
           </div>
           <div className={classes.Value}>
-            <div className={classes.Price}>
-              {getCurrency(currencyData)} {getPriceInfo()}
-            </div>
-            {/* <div className={classes.Stock}>10 in stock</div> */}
+            {renderPriceInfo()}
+            <div className={classes.Stock}>10 in stock</div>
           </div>
         </div>
         <div className={classes.Description}>{productInfo.short_description}</div>
@@ -123,6 +144,7 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '129px',
       boxShadow: '0 1px 6px 0 rgba(0, 0, 0, 0.05)',
       border: 'solid 0.5px rgba(186, 195, 201, 0.5)',
+      color: theme.palette.primary.dark,
     },
     ProductImg: {
       backgroundPosition: 'center center',
@@ -140,7 +162,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'center',
       color: '#fff',
-      fontWeight: 300,
+      fontWeight: 400,
       fontSize: '13px',
     },
     ProductContent: {
@@ -172,7 +194,7 @@ const useStyles = makeStyles((theme: Theme) =>
     Value: {
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'center',
+      justifyContent: 'flex-start',
       alignItems: 'flex-end',
       marginLeft: '15px',
       lineHeight: '18px',
@@ -181,11 +203,22 @@ const useStyles = makeStyles((theme: Theme) =>
     Price: {
       fontWeight: 500,
       lineHeight: '18px',
-      fontSize: '12px',
+      fontSize: '14px',
+      paddingTop: '2px',
+      '& span': {
+        fontSize: '12px',
+        fontWeight: 400,
+        marginLeft: '3px',
+      },
+    },
+    Stock: {
+      fontSize: '13px',
+      fontWeight: 400,
+      lineHeight: '18px',
     },
     Description: {
       fontSize: '12px',
-      fontWeight: 300,
+      fontWeight: 400,
       lineHeight: '18px',
       margin: '5px 0 0 0',
     },

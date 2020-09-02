@@ -1,5 +1,6 @@
 import React from 'react';
 
+import _ from 'lodash';
 import { useQuery } from '@apollo/react-hooks';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -19,6 +20,13 @@ const ProductList = () => {
     GET_STORE_SETTING_PRODUCT
   );
   const { data: merchantNetPrice } = useQuery(GET_MERCHANT_NET_PRICE);
+
+  const getNetPriceStatus = () => {
+    const merchantSettings = _.get(merchantNetPrice, 'merchantSettings', null);
+    return false;
+    return merchantSettings.products.net_price;
+  };
+
   return (
     <Grid container className={classes.root}>
       <Grid item xs={12}>
@@ -26,7 +34,7 @@ const ProductList = () => {
           {getOrdredProducts(productData, storeSettingData).map((item, nIndex) => {
             return (
               <Grid item lg={getIsShowSideCategory(storeSettingData) ? 4 : 3} md={6} xs={12} key={item.id}>
-                <ProductCard productInfo={item} />
+                <ProductCard productInfo={item} net_price={getNetPriceStatus()} />
               </Grid>
             );
           })}
