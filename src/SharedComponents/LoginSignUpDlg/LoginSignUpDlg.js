@@ -71,7 +71,7 @@ const LoginSignUpDlg = ({ hideLogin }) => {
         <CloseIcon />
       </IconButton>
       {(curView === LOGIN_EMAIL_PANEL || curView === LOGIN_PASSWORD_PANEL) && (
-        <SwipeableViews index={curView}>
+        <SwipeableViews index={curView} enableMouseEvents={false}>
           <Box id={LOGIN_EMAIL_PANEL} hidden={curView !== LOGIN_EMAIL_PANEL}>
             <LoginEmailPanel
               gotoPassword={() => {
