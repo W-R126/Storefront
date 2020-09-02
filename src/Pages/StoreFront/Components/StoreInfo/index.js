@@ -38,19 +38,19 @@ const StoreInfo = ({ loading, error, store }) => {
 
   return (
     <Grid container className={classes.root}>
-      <Grid item md={6}>
+      <Grid item md={6} xs={12} className={classes.MainInfo}>
         <Grid container>
-          <Grid item md={12} className={classes.StoreLogoInfo}>
+          <Grid item xs={12} className={classes.StoreLogoInfo}>
             <Avatar className={classes.StoreLogo} src={store.merchant.logo.url} alt="store logo" />
             <div className={classes.TitleContent}>
               <h4>{store.name}</h4>
               <p>{store.merchant.business_type}</p>
             </div>
           </Grid>
-          <Grid item md={12} className={classes.Description}>
+          <Grid item xs={12} className={classes.Description}>
             {store.about_story}
           </Grid>
-          <Grid item md={12}>
+          <Grid item xs={12}>
             <div className={classes.DetailInfoItem}>
               <div className={classes.LableName}>
                 <strong>Address:</strong>
@@ -78,7 +78,7 @@ const StoreInfo = ({ loading, error, store }) => {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item md={6} className={classes.MapGrid}>
+      <Grid item md={6} xs={12} className={classes.MapGrid}>
         <StoreMap mapCenter={getStorePos(store)} />
         <Box className={classes.MapOverlay}></Box>
       </Grid>
@@ -89,9 +89,17 @@ const StoreInfo = ({ loading, error, store }) => {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      paddingLeft: '40px',
       color: theme.palette.primary.dark,
       backgroundColor: '#fff',
+    },
+    MainInfo: {
+      paddingLeft: '40px',
+      '@media screen and (max-width: 959px)': {
+        paddingRight: '40px',
+      },
+      '@media screen and (max-width: 767px)': {
+        paddingRight: '20px',
+      },
     },
     StoreLogoInfo: {
       display: 'flex',
@@ -134,12 +142,19 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '16px',
       margin: '3px 0 11px',
       lineHeight: 1.5,
+      '@media screen and (max-width: 767px)': {
+        fontSize: '14px',
+      },
     },
     DetailInfoItem: {
       display: 'flex',
       width: '100%',
       margin: '0 0 19px 0',
       fontSize: '16px',
+      overflow: 'hidden',
+      '&:last-child': {
+        marginBottom: '6px',
+      },
     },
     LableName: {
       color: theme.palette.primary.dark,
@@ -150,6 +165,8 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.primary.dark,
       fontWeight: 300,
       flex: ' 1 1 100%',
+      overflow: 'hidden',
+      flexWrap: 'wrap',
     },
     StoreStatus: {
       marginRight: '20px',
@@ -160,8 +177,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     MapGrid: {
       position: 'relative',
-      '@media screen and (max-width: 767px)': {
-        height: '167px',
+      '@media screen and (max-width: 959px)': {
+        height: '317px',
       },
     },
     MapOverlay: {
@@ -171,7 +188,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       height: '100%',
       backgroundImage: 'linear-gradient(to right, #ffffff 0%, rgba(255, 255, 255, 0.1) 60%);',
-      '@media screen and (max-width: 767px)': {
+      '@media screen and (max-width: 959px)': {
         display: 'none',
       },
     },

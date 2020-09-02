@@ -15,21 +15,21 @@ const defaultMenuList = [
   { label: 'Label4', id: 'value4' },
 ];
 
-const defaultWrapperStyles = { width: '200px', marginLeft: '20px' };
+const defaultWrapperClass = { width: '200px', marginLeft: '20px' };
 const defaultButtonStyles = { backgroundColor: '#fff' };
 
 const DropDownExample = () => {
   const [selected, setSelected] = useState(defaultMenuList[0]);
 
   const menuList: Array = object('Options', defaultMenuList);
-  const wrapperStyles = object('WrapperStyle', defaultWrapperStyles);
+  const wrapperClass = object('WrapperStyle', defaultWrapperClass);
   const buttonStyles = object('ButtonStyle', defaultButtonStyles);
 
   return (
     <DropDown
       value={selected}
       menuList={menuList}
-      wrapperStyles={wrapperStyles}
+      wrapperClass={wrapperClass}
       buttonStyels={buttonStyles}
       onChange={(newValue) => setSelected({ ...newValue })}
     />

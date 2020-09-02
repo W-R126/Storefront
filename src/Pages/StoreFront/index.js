@@ -41,7 +41,7 @@ const StoreFrontPage = () => {
       {_.get(storeData, 'store', null) !== null && (
         <StoreInfo loading={storeLoading} error={storeError} store={_.get(storeData, 'store', {})} />
       )}
-      <ProductContainer />
+      {/* <ProductContainer /> */}
       <Footer />
       <OpeningHoursModal
         open={showOpeningHourModal}

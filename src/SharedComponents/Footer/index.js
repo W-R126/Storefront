@@ -54,6 +54,7 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: '#505c69',
       padding: '20px 25px 34px 20px',
       height: '167px',
+      marginTop: 'auto',
       '@media screen and (max-width: 767px)': {
         padding: '12px 12px 8px',
       },

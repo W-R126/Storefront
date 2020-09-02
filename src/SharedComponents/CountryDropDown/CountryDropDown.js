@@ -180,14 +180,14 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     MenuItemFlag: {
       width: '21px',
-      height: '11px',
+      height: '15px',
       backgroundSize: 'cover',
       marginRight: '10px',
       flex: '0 0 21px',
     },
     Flag: {
       width: '21px',
-      height: '11px',
+      height: '15px',
       backgroundSize: 'cover',
       marginRight: '6px',
       flex: '0 0 21px',

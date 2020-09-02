@@ -171,8 +171,8 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '147px',
       background: '#fff',
       borderRadius: '2px',
-      '@media screen and (max-width: 767px)': {
-        width: '112px',
+      '@media screen and (max-width: 479px)': {
+        width: '125px',
       },
     },
     CartButton: {

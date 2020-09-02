@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useQuery } from '@apollo/react-hooks';
 
@@ -7,15 +7,18 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 
+import ProductView from '../../../ProductView';
 import { getCurrency } from '../../../../../../utils/store';
 import { getProductCart, getProductPrice } from '../../../../../../utils/product';
-import * as types from '../../../../../../actions/actionTypes';
 import { GET_CURRENCY } from '../../../../../../graphql/localisation/localisation-query';
 import { formatPrice } from '../../../../../../utils/string';
+import * as types from '../../../../../../actions/actionTypes';
 
 const ProductCard = ({ productInfo }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+
+  const [showProductView, setShowProductView] = useState(false);
 
   const { data: currencyData } = useQuery(GET_CURRENCY);
 
@@ -90,7 +93,7 @@ const ProductCard = ({ productInfo }) => {
         <div className={classes.Description}>{productInfo.short_description}</div>
         <div className={classes.Bottom}>
           {getCartCount() === 0 ? (
-            <div className={classes.AddCart} onClick={() => updateCarts(1)} role="button">
+            <div className={classes.AddCart} onClick={() => setShowProductView(true)} role="button">
               Add to cart
             </div>
           ) : (
@@ -106,6 +109,7 @@ const ProductCard = ({ productInfo }) => {
           )}
         </div>
       </div>
+      <ProductView open={showProductView} hideModal={() => setShowProductView(false)} />
     </div>
   );
 };

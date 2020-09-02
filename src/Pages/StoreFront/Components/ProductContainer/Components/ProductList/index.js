@@ -25,7 +25,7 @@ const ProductList = () => {
         <Grid container spacing={2}>
           {getOrdredProducts(productData, storeSettingData).map((item, nIndex) => {
             return (
-              <Grid item md={getIsShowSideCategory(storeSettingData) ? 4 : 3} key={item.id}>
+              <Grid item lg={getIsShowSideCategory(storeSettingData) ? 4 : 3} md={6} xs={12} key={item.id}>
                 <ProductCard productInfo={item} />
               </Grid>
             );

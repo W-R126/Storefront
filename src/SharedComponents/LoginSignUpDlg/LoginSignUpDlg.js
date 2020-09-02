@@ -9,9 +9,11 @@ import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
+import Spinner from '../../SharedComponents/Spinner';
 import LoginEmailPanel from './Components/LoginEmailPanel';
 import LoginPasswordPanel from './Components/LoginPasswordPanel';
 import ForgotPasswordPanel from './Components/ForgotPasswordPanel';
+
 import { LOGIN } from '../../graphql/auth/auth-mutation';
 
 import * as types from '../../actions/actionTypes';
@@ -24,6 +26,7 @@ const LoginSignUpDlg = ({ hideLogin }) => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [curView, setCurView] = useState(LOGIN_EMAIL_PANEL);
+  const [loginLoading, setLoginLoading] = useState(false);
   const [loginData, setLoginData] = useState({
     email: {
       value: '',
@@ -41,6 +44,7 @@ const LoginSignUpDlg = ({ hideLogin }) => {
   const [loginMutation] = useMutation(LOGIN);
 
   const loginAction = () => {
+    setLoginLoading(true);
     loginMutation({
       variables: {
         username: loginData.email.value,
@@ -52,9 +56,11 @@ const LoginSignUpDlg = ({ hideLogin }) => {
           type: types.LOGIN_SUCCESS,
           payload: res.data.logIn,
         });
+        setLoginLoading(false);
         hideLogin();
       })
       .catch((err) => {
+        setLoginLoading(false);
         console.log('Login Failed.');
       });
   };
@@ -106,6 +112,7 @@ const LoginSignUpDlg = ({ hideLogin }) => {
         </SwipeableViews>
       )}
       {curView === FORGOT_PASSWORD_PANEL && <ForgotPasswordPanel gotoLogin={() => setCurView(LOGIN_EMAIL_PANEL)} />}
+      {loginLoading && <Spinner />}
     </Paper>
   );
 };
@@ -125,6 +132,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: '15px',
       boxSizing: 'border-box',
       display: 'flex',
+      overflow: 'hidden',
       flexDirection: 'column',
       '@media screen and (max-width: 767px)': {
         right: 'calc(50% - 196px)',

@@ -10,6 +10,7 @@ import { onError } from 'apollo-link-error';
 
 import StoreFrontPage from './Pages/StoreFront';
 
+import './App.css';
 const uploadLink = createUploadLink({
   uri: 'https://zd0dv59fq9.execute-api.eu-west-1.amazonaws.com/staging',
 });

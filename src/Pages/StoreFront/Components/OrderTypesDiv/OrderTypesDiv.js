@@ -35,6 +35,10 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
       textTransform: 'capitalize',
+      marginBottom: '10px',
+      '@media screen and (max-width: 767px)': {
+        fontSize: '14px',
+      },
     },
     IconCircle: {
       width: '24px',
