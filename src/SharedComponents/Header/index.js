@@ -17,11 +17,13 @@ import MDIconButton from '../../SharedComponents/MDIconButton';
 import DropDown from '../DropDown';
 import LoginSignUpDlg from '../LoginSignUpDlg';
 import UserDialog from '../UserDialog';
-import { getUserAvatar } from '../../utils/auth';
 import * as types from '../../actions/actionTypes';
 import { GET_CATEGORIES } from '../../graphql/categories/categories-query';
 import { GET_STORE_SETTING_PRODUCT } from '../../graphql/store/store-query';
+import { getUserAvatar } from '../../utils/auth';
 import { getOrderedCategories } from '../../utils/category';
+
+import LogoSvg from '../../assets/img/logo.svg';
 
 const Header = ({ children, orderTypesList }) => {
   const classes = useStyles();
@@ -71,7 +73,7 @@ const Header = ({ children, orderTypesList }) => {
           <MenuIcon color="Secondary.dark" />
         </MDIconButton>
         <Link to="/" className={classes.LogoBrand}>
-          myda
+          <img className={classes.Logo} src={LogoSvg} alt="header logo" />
         </Link>
         <MDIconButton aria-label="header back" wrapperClass={classes.BackButton}>
           <KeyboardBackspaceIcon color="Secondary.dark" />
@@ -156,9 +158,15 @@ const useStyles = makeStyles((theme: Theme) =>
       textDecoration: 'none',
       fontWeight: 600,
       marginLeft: '18px',
+      display: 'flex',
+      alignItems: 'center',
       '@media screen and (max-width: 767px)': {
         display: 'none',
       },
+    },
+    Logo: {
+      width: '86px',
+      height: 'auto',
     },
     BackButton: {
       marginLeft: '34px',

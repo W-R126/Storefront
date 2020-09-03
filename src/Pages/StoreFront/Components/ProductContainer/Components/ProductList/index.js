@@ -23,7 +23,7 @@ const ProductList = () => {
 
   const getNetPriceStatus = () => {
     const merchantSettings = _.get(merchantNetPrice, 'merchantSettings', null);
-    return false;
+    if (merchantSettings === null) return false;
     return merchantSettings.products.net_price;
   };
 

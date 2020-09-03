@@ -7,6 +7,8 @@ import CountryDropDown from '../CountryDropDown';
 import * as types from '../../actions/actionTypes';
 import { countries } from '../../constants';
 
+import LogoWhiteSvg from '../../assets/img/logo-white.svg';
+
 const Footer = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -27,7 +29,9 @@ const Footer = () => {
         </div>
       </div>
       <div className={classes.BottomSection}>
-        <Link className={classes.FooterLogo}>myda</Link>
+        <Link className={classes.FooterLogo}>
+          <img className={classes.Logo} src={LogoWhiteSvg} alt="Footer Logo" />
+        </Link>
         <CountryDropDown
           value={selectedCountry}
           onChange={(country) => {
@@ -56,6 +60,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: 'auto',
       '@media screen and (max-width: 767px)': {
         padding: '12px 12px 8px',
+        height: 'auto',
       },
     },
     TopSection: {
@@ -103,8 +108,18 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 500,
       color: '#fff',
       textDecoration: 'none',
+      display: 'flex',
+      alignItems: 'center',
       '@media screen and (max-width: 767px)': {
         marginBottom: 0,
+      },
+    },
+
+    Logo: {
+      width: '86px',
+      height: 'auto',
+      '@media screen and (max-width: 767px)': {
+        width: '52px',
       },
     },
     CountryDropDown: {
