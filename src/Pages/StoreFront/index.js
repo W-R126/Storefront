@@ -16,9 +16,9 @@ const StoreFrontPage = () => {
   const [showOpeningHourModal, setShowOpeningHourModal] = useState(false);
   const { loading: storeLoading, error: storeError, data: storeData } = useQuery(GET_STORE_DATA, {
     variables: { id: 'a0be564c-a982-471f-a4b5-5bdf6e29e1c2' },
-    onCompleted: (d) => {
-      setShowOpeningHourModal(true);
-    },
+    // onCompleted: (d) => {
+    //   setShowOpeningHourModal(true);
+    // },
   });
 
   const getBannerImg = () => {

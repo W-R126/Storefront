@@ -93,6 +93,12 @@ const ProductCard = ({ productInfo, net_price }) => {
     }
   };
 
+  const getStock = () => {
+    const stocks = _.get(productInfo, 'stocks', []);
+    if (stocks.length === 0) return 0;
+    return stocks[0].current_stock;
+  };
+
   return (
     <div className={classes.root}>
       <div className={classes.ProductImg} style={{ backgroundImage: `url(${getProductImage()})` }}>
@@ -108,7 +114,7 @@ const ProductCard = ({ productInfo, net_price }) => {
           </div>
           <div className={classes.Value}>
             {renderPriceInfo()}
-            <div className={classes.Stock}>10 in stock</div>
+            <div className={classes.Stock}>{`${getStock()} in stock`}</div>
           </div>
         </div>
         <div className={classes.Description}>{productInfo.short_description}</div>
