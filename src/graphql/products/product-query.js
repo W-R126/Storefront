@@ -1,8 +1,14 @@
 import gql from 'graphql-tag';
 
+interface Filter {
+  page: Number;
+  limit: Number;
+  count?: Boolean;
+}
+
 export const GET_PRODUCTS = gql`
-  query getProducts {
-    products {
+  query getProducts($filter: Filter) {
+    products(filter: $filter) {
       id
       name
       images {

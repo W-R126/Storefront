@@ -7,6 +7,7 @@ import { ApolloLink } from 'apollo-link';
 import { createUploadLink } from 'apollo-upload-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { onError } from 'apollo-link-error';
+import { Observable } from 'rxjs';
 
 import StoreFrontPage from './Pages/StoreFront';
 
@@ -33,25 +34,40 @@ const errorLink = onError(({ graphQLErrors, networkError, forward, operation }) 
   return forward(operation);
 });
 
-const authorizationLink = new ApolloLink((operation, forward) => {
-  const token = localStorage.getItem('token');
-  // const merchant = localStorage.getItem('merchant');
-  // const storeJson = localStorage.getItem('store');
-  // const store = storeJson ? JSON.parse(storeJson) : null;
-  const merchant = '4e20a0ea-9a66-4732-b53b-7e692ede0c45';
-  const storeId = 'a0be564c-a982-471f-a4b5-5bdf6e29e1c2';
+const authorizationLink = new ApolloLink(
+  (operation, forward) =>
+    new Observable((observer) => {
+      const token = localStorage.getItem('token');
+      // const merchant = localStorage.getItem('merchant');
+      // const storeJson = localStorage.getItem('store');
+      // const store = storeJson ? JSON.parse(storeJson) : null;
+      const merchant = '4e20a0ea-9a66-4732-b53b-7e692ede0c45';
+      const storeId = 'a0be564c-a982-471f-a4b5-5bdf6e29e1c2';
 
-  operation.setContext({
-    headers: {
-      authorization: token ? `Bearer ${token}` : 'Bearer Guest',
-      'Content-Type': 'application/json',
-      ...(merchant && { 'X-Myda-Merchant': merchant }),
-      // ...(store && { 'X-Myda-Store': store.id }),
-      'X-Myda-Store': storeId,
-    },
-  });
-  return forward(operation);
-});
+      operation.setContext({
+        headers: {
+          authorization: token ? `Bearer ${token}` : 'Bearer Guest',
+          'Content-Type': 'application/json',
+          ...(merchant && { 'X-Myda-Merchant': merchant }),
+          // ...(store && { 'X-Myda-Store': store.id }),
+          'X-Myda-Store': storeId,
+        },
+      });
+
+      const sub = forward(operation).subscribe({
+        next: (result) => {
+          // Some how get extensions passed from server
+          if (result.extensions) result.data.extensions = () => result.extensions;
+          observer.next(result);
+        },
+        // error: (error) => {...}
+        complete: observer.complete.bind(observer),
+      });
+      return () => {
+        if (sub) sub.unsubscribe();
+      };
+    })
+);
 
 const cache = new InMemoryCache();
 

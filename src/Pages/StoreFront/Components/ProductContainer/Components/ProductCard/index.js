@@ -110,7 +110,7 @@ const ProductCard = ({ productInfo, net_price }) => {
         <div className={classes.TopSection}>
           <div className={classes.LeftInfo}>
             <div className={classes.Title}>{productInfo.name}</div>
-            <div className={classes.Status}>Code: ${productInfo.bar_code}</div>
+            <div className={classes.Status}>Code: {productInfo.bar_code}</div>
           </div>
           <div className={classes.Value}>
             {renderPriceInfo()}
@@ -168,7 +168,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'center',
       color: '#fff',
-      fontWeight: 400,
+      fontWeight: 300,
       fontSize: '13px',
     },
     ProductContent: {
@@ -188,7 +188,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
     },
     Title: {
-      fontWeight: 500,
+      fontWeight: 'normal',
       lineHeight: '20px',
       marginBottom: '4px',
       fontSize: '14px',
@@ -196,6 +196,7 @@ const useStyles = makeStyles((theme: Theme) =>
     Status: {
       fontSize: '12px',
       lineHeight: '18px',
+      fontWeight: 300,
     },
     Value: {
       display: 'flex',
@@ -207,24 +208,24 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '12px',
     },
     Price: {
-      fontWeight: 500,
+      fontWeight: 'normal',
       lineHeight: '18px',
       fontSize: '14px',
       paddingTop: '2px',
       '& span': {
         fontSize: '12px',
-        fontWeight: 400,
+        fontWeight: 300,
         marginLeft: '3px',
       },
     },
     Stock: {
       fontSize: '13px',
-      fontWeight: 400,
+      fontWeight: 300,
       lineHeight: '18px',
     },
     Description: {
       fontSize: '12px',
-      fontWeight: 400,
+      fontWeight: 300,
       lineHeight: '18px',
       margin: '5px 0 0 0',
     },

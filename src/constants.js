@@ -1,3 +1,5 @@
+export const PRODUCT_PAGE_LIMIT = 300;
+
 export const countries = [
   {
     name: 'Afghanistan',

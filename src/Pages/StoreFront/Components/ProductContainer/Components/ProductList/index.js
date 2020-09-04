@@ -1,5 +1,5 @@
-import React from 'react';
-
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import { useQuery } from '@apollo/react-hooks';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
@@ -13,13 +13,51 @@ import { GET_MERCHANT_NET_PRICE } from '../../../../../../graphql/merchant/merch
 import { getOrdredProducts } from '../../../../../../utils/product';
 import { getIsShowSideCategory } from '../../../../../../utils/store';
 
+import { UPDATE_PRODUCT_PAGINATION } from '../../../../../../actions/actionTypes';
+
 const ProductList = () => {
   const classes = useStyles();
-  const { loading, error, data: productData } = useQuery(GET_PRODUCTS);
+  const dispatch = useDispatch();
+  const { pagination } = useSelector((state) => ({
+    pagination: state.productReducer.pagination,
+  }));
+
+  const { loading, error, data: productData, extensions: productExtensions } = useQuery(GET_PRODUCTS, {
+    variables: {
+      filter: {
+        page: pagination.page,
+        limit: pagination.limit,
+        count: true,
+      },
+    },
+  });
   const { loading: storeSettingLoading, error: storeSettingError, data: storeSettingData } = useQuery(
     GET_STORE_SETTING_PRODUCT
   );
   const { data: merchantNetPrice } = useQuery(GET_MERCHANT_NET_PRICE);
+
+  useEffect(() => {
+    let page_data = {
+      current_page: -1,
+      total_pages: -1,
+      limit: -1,
+      count: -1,
+    };
+
+    const extensions = _.get(productData, 'extensions', null);
+    if (!extensions) return;
+    if (productData.extensions) {
+      page_data = { ...productData.extensions.page_data };
+    }
+
+    dispatch({
+      type: UPDATE_PRODUCT_PAGINATION,
+      payload: {
+        ...pagination,
+        page_data: page_data,
+      },
+    });
+  }, [dispatch, pagination, productData]);
 
   const getNetPriceStatus = () => {
     const merchantSettings = _.get(merchantNetPrice, 'merchantSettings', null);

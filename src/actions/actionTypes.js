@@ -8,3 +8,6 @@ export const UPDATE_PRODUCT_CART = 'Update product cart';
 // Store
 export const UPDATE_TRANS_TYPE = 'Update Trans Type';
 export const CHANGE_COUNTRY = 'Change country';
+
+// Product
+export const UPDATE_PRODUCT_PAGINATION = 'Update current product list pagination info';
