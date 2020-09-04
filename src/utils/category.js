@@ -15,14 +15,18 @@ export const getOrderedCategories = (categoryData, storeSettingData) => {
       if (categoryOrders.length === 0 || !productView.by_category) {
         orderedCategories = [...categories];
       } else {
-        categoryOrders.forEach((item) => {
-          const finedOne = categories.find((categoryItem) => categoryItem.id === item.id);
-          if (finedOne)
-            orderedCategories.push({
-              ...finedOne,
-              position: item.position,
-            });
-        });
+        if (productView.show_selected) {
+          categoryOrders.forEach((item) => {
+            const finedOne = categories.find((categoryItem) => categoryItem.id === item.id);
+            if (finedOne)
+              orderedCategories.push({
+                ...finedOne,
+                position: item.position,
+              });
+          });
+        } else {
+          orderedCategories = [...categories];
+        }
       }
 
       if (productView.sort_by_name) {
