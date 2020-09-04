@@ -39,7 +39,12 @@ const StoreFrontPage = () => {
       <Header orderTypesList={getOrderTypes(storeData)} />
       <div className={classes.TopBanner} style={{ backgroundImage: `url(${getBannerImg()})` }}></div>
       {_.get(storeData, 'store', null) !== null && (
-        <StoreInfo loading={storeLoading} error={storeError} store={_.get(storeData, 'store', {})} />
+        <StoreInfo
+          loading={storeLoading}
+          error={storeError}
+          store={_.get(storeData, 'store', {})}
+          showOpeningHours={() => setShowOpeningHourModal(true)}
+        />
       )}
       <ProductContainer />
       <Footer />

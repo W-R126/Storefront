@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       textTransform: 'capitalize',
       marginBottom: '10px',
+      fontWeight: 300,
       '@media screen and (max-width: 767px)': {
         fontSize: '14px',
       },

@@ -10,7 +10,7 @@ import { getStoreOpenStatus, getStorePos } from '../../../../utils/store';
 import StoreMap from '../StoreMap';
 import OrderTypesDiv from '../OrderTypesDiv';
 
-const StoreInfo = ({ loading, error, store }) => {
+const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
   const classes = useStyles();
 
   const getFullAddress = () => {
@@ -31,7 +31,9 @@ const StoreInfo = ({ loading, error, store }) => {
         <span className={`${classes.StoreStatus} ${storeOpenStatus.closed ? '' : classes.StoreStatusOpen}`}>
           {storeOpenStatus.closed ? 'Close' : 'Open'}
         </span>
-        {storeOpenStatus.nextStatus}
+        <span onClick={showOpeningHours} role="button" style={{ cursor: 'pointer' }}>
+          {storeOpenStatus.nextStatus}
+        </span>
       </>
     );
   };
@@ -52,27 +54,19 @@ const StoreInfo = ({ loading, error, store }) => {
           </Grid>
           <Grid item xs={12}>
             <div className={classes.DetailInfoItem}>
-              <div className={classes.LableName}>
-                <strong>Address:</strong>
-              </div>
+              <div className={classes.LableName}>Address:</div>
               <div className={classes.LabelValue}>{getFullAddress()}</div>
             </div>
             <div className={classes.DetailInfoItem}>
-              <div className={classes.LableName}>
-                <strong>Hours:</strong>
-              </div>
+              <div className={classes.LableName}>Hours:</div>
               <div className={classes.LabelValue}>{renderHoursStatus()}</div>
             </div>
             <div className={classes.DetailInfoItem}>
-              <div className={classes.LableName}>
-                <strong>Phone:</strong>
-              </div>
+              <div className={classes.LableName}>Phone:</div>
               <div className={classes.LabelValue}>{store.phone}</div>
             </div>
             <div className={classes.DetailInfoItem}>
-              <div className={classes.LableName}>
-                <strong>Orders:</strong>
-              </div>
+              <div className={classes.LableName}>Orders:</div>
               <OrderTypesDiv warpperClassname={classes.LabelValue} orderTypes={_.get(store, 'order_types', [])} />
             </div>
           </Grid>
@@ -112,10 +106,14 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '105px',
       height: '105px',
       borderRadius: '55px',
+      boxShadow: '0 2px 4px 0 #f3f5f7',
+      border: 'solid 4px rgba(186, 195, 201, 0.5)',
+      boxSizing: 'border-box',
       '@media screen and (max-width: 767px)': {
         width: '70px',
         height: '70px',
         borderRadius: '35px',
+        border: 'solid 2px rgba(186, 195, 201, 0.5)',
       },
     },
     TitleContent: {
@@ -123,6 +121,9 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
       justifyContent: 'center',
       margin: '10px 0 0 13px',
+      '@media screen and (max-width: 767px)': {
+        marginTop: '5px',
+      },
       '& h4': {
         fontSize: '18px',
         color: theme.palette.primary.title,
@@ -135,6 +136,10 @@ const useStyles = makeStyles((theme: Theme) =>
         lineHeight: '1.29',
         margin: '4px 0 0 0',
         padding: 0,
+        fontWeight: 300,
+        '@media screen and (max-width: 767px)': {
+          marginTop: '1px',
+        },
       },
     },
     Description: {
@@ -142,6 +147,7 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '16px',
       margin: '3px 0 11px',
       lineHeight: 1.5,
+      fontWeight: 300,
       '@media screen and (max-width: 767px)': {
         fontSize: '14px',
       },
@@ -159,6 +165,7 @@ const useStyles = makeStyles((theme: Theme) =>
     LableName: {
       color: theme.palette.primary.dark,
       flex: '0 0 100px',
+      fontWeight: 'normal',
     },
     LabelValue: {
       display: 'flex',
@@ -170,7 +177,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     StoreStatus: {
       marginRight: '20px',
-      fontWeight: 600,
+      fontWeight: 'normal',
     },
     StoreStatusOpen: {
       color: '#55cc66',
