@@ -92,6 +92,7 @@ const useStyles = makeStyles((theme: Theme) =>
         paddingRight: '40px',
       },
       '@media screen and (max-width: 767px)': {
+        paddingLeft: '15px',
         paddingRight: '20px',
       },
     },

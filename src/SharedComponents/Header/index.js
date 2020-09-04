@@ -151,6 +151,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     MenuIconButton: {
       background: 'transparent',
+      padding: 0,
+      '& .MuiSvgIcon-root': {
+        width: '30px',
+        height: '30px',
+      },
     },
     LogoBrand: {
       color: '#0156b8',
