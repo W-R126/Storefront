@@ -46,7 +46,7 @@ const StoreFrontPage = () => {
           showOpeningHours={() => setShowOpeningHourModal(true)}
         />
       )}
-      {/* <ProductContainer /> */}
+      <ProductContainer />
       <Footer />
       <OpeningHoursModal
         open={showOpeningHourModal}
