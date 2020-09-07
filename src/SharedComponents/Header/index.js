@@ -80,14 +80,13 @@ const Header = ({ children, orderTypesList }) => {
         <MDIconButton aria-label="header back" wrapperClass={classes.BackButton}>
           <KeyboardBackspaceIcon color="Primary.text1" />
         </MDIconButton>
-        <SearchInput categoryMenuList={getCategoryMenuItems()} />
+        <SearchInput />
         <DropDown
           value={{ id: orderType.id, label: orderType.name }}
           menuList={orderTypesList.map((item) => {
             return { id: item.id, label: item.name };
           })}
           wrapperClass={classes.OrderTypeDropDown}
-          buttonStyles={{ background: '#fff' }}
           onChange={(selected) => {
             dispatch({
               type: types.UPDATE_TRANS_TYPE,
