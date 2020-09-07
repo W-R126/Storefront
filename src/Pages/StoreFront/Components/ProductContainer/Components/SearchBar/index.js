@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.primary.main,
     },
     TextNormal: {
-      color: theme.palette.primary.dark,
+      color: theme.palette.primary.text,
     },
   })
 );

@@ -15,8 +15,9 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import SearchInput from '../SearchInput';
 import MDIconButton from '../../SharedComponents/MDIconButton';
 import DropDown from '../DropDown';
-import LoginSignUpDlg from '../LoginSignUpDlg';
+import LoginModal from '../LoginModal';
 import UserDialog from '../UserDialog';
+import SignUpModal from '../SignUpModal';
 import * as types from '../../actions/actionTypes';
 import { GET_CATEGORIES } from '../../graphql/categories/categories-query';
 import { GET_STORE_SETTING_PRODUCT } from '../../graphql/store/store-query';
@@ -44,6 +45,7 @@ const Header = ({ children, orderTypesList }) => {
 
   const [showLogin, setShowLogin] = useState(false);
   const [showUserDetail, setShowUserDetail] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(true);
 
   const { authInfo, orderType } = useSelector((state) => ({
     authInfo: state.authReducer.userInfo,
@@ -70,13 +72,13 @@ const Header = ({ children, orderTypesList }) => {
     <AppBar className={classes.Root}>
       <Toolbar>
         <MDIconButton aria-label="open drawer" wrapperClass={classes.MenuIconButton}>
-          <MenuIcon color="Secondary.dark" />
+          <MenuIcon color="Primary.text1" />
         </MDIconButton>
         <Link to="/" className={classes.LogoBrand}>
           <img className={classes.Logo} src={LogoSvg} alt="header logo" />
         </Link>
         <MDIconButton aria-label="header back" wrapperClass={classes.BackButton}>
-          <KeyboardBackspaceIcon color="Secondary.dark" />
+          <KeyboardBackspaceIcon color="Primary.text1" />
         </MDIconButton>
         <SearchInput categoryMenuList={getCategoryMenuItems()} />
         <DropDown
@@ -110,8 +112,22 @@ const Header = ({ children, orderTypesList }) => {
           </>
         ) : (
           <>
-            <button className={classes.SignUpButton}>Signup</button>
-            <button className={classes.LoginButton} onClick={() => setShowLogin(true)}>
+            <button
+              className={classes.SignUpButton}
+              onClick={() => {
+                setShowSignUp(true);
+                setShowLogin(false);
+              }}
+            >
+              Signup
+            </button>
+            <button
+              className={classes.LoginButton}
+              onClick={() => {
+                setShowLogin(true);
+                setShowSignUp(false);
+              }}
+            >
               Login
             </button>
             <MDIconButton
@@ -125,8 +141,16 @@ const Header = ({ children, orderTypesList }) => {
           </>
         )}
       </Toolbar>
-      {showLogin && <LoginSignUpDlg hideLogin={() => setShowLogin(false)} />}
+      {showLogin && (
+        <LoginModal
+          isShow={showLogin}
+          hideModal={() => {
+            setShowLogin(false);
+          }}
+        />
+      )}
       {showUserDetail && <UserDialog hideModal={() => setShowUserDetail(false)} />}
+      {showSignUp && <SignUpModal hideModal={() => setShowSignUp()} />}
     </AppBar>
   );
 };

@@ -100,7 +100,7 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'relative',
     },
     DropDownButton: {
-      color: theme.palette.primary.dark,
+      color: theme.palette.primary.text,
       background: theme.palette.primary.greyBack,
       fontSize: '16px',
       height: '40px',
@@ -136,7 +136,7 @@ const useStyles = makeStyles((theme: Theme) =>
       boxSizing: 'border-box',
       border: `1px solid ${theme.palette.primary.border}`,
       '& .MuiMenuItem-root': {
-        color: theme.palette.primary.dark,
+        color: theme.palette.primary.text,
         textTransform: 'capitalize',
       },
     },

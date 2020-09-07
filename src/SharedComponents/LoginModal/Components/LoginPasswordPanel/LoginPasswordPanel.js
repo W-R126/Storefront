@@ -48,10 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       display: 'flex',
       flexDirection: 'column',
-      paddingLeft: '10px',
-      paddingRight: '10px',
       alignItems: 'center',
-      marginTop: '-5px',
     },
     Title: {
       fontSize: '22px',
@@ -59,13 +56,13 @@ const useStyles = makeStyles((theme: Theme) =>
       letterSpacing: '0.41px',
       color: theme.palette.primary.text,
       textAlign: 'center',
-      margin: 0,
+      margin: '15px 0 0 0',
     },
     EmailDiv: {
       fontSize: '16px',
       fontWeight: 600,
       color: theme.palette.primary.text,
-      margin: '35px 0 0 0',
+      margin: '30px 0 0 0',
       textAlign: 'center',
       display: 'flex',
       justifyContent: 'space-around',
@@ -74,6 +71,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     BackButton: {
       padding: 0,
+      width: '40px',
+      height: '40px',
+      background: theme.palette.secondary.greyBack,
+      borderRadius: '20px',
+      paddingLeft: '8px',
     },
     PasswordInputWrapper: {
       marginTop: '35px',

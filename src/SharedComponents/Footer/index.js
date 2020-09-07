@@ -34,14 +34,20 @@ const Footer = () => {
         </Link>
         <CountryDropDown
           value={selectedCountry}
+          isPhoneNumber={false}
           onChange={(country) => {
             dispatch({
               type: types.CHANGE_COUNTRY,
               payload: country,
             });
           }}
+          dropDownPosition={{
+            right: 0,
+            bottom: '100%',
+          }}
           countries={countries}
           wrapperClass={classes.CountryDropDown}
+          buttonStyles={{ fontSize: '12px' }}
         />
         <div className={`${classes.CopyRight} ${classes.ShowMobile}`}>© Myda 2020.</div>
       </div>

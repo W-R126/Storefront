@@ -8,7 +8,15 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
-const CountryDropDown = ({ value, onChange, countries, wrapperClass, buttonStyles }) => {
+const CountryDropDown = ({
+  value,
+  onChange,
+  countries,
+  isPhoneNumber,
+  wrapperClass,
+  buttonStyles,
+  dropDownPosition,
+}) => {
   const classes = useStyles();
 
   const [open, setOpen] = useState(false);
@@ -77,16 +85,21 @@ const CountryDropDown = ({ value, onChange, countries, wrapperClass, buttonStyle
         style={buttonStyles}
       >
         <div
-          className={classes.Flag}
+          className={`${isPhoneNumber ? classes.Flag : classes.FlagCountry}`}
           style={{
             backgroundImage: getFlag(),
           }}
         />
-        {_.get(value, 'name', '') === '' ? 'Select a country' : value.name}
+        {isPhoneNumber ? (
+          <>{value.dial_code}</>
+        ) : (
+          <>{_.get(value, 'name', '') === '' ? 'Select a country' : value.name}</>
+        )}
+
         <KeyboardArrowDownIcon className={`${open ? classes.Opened : undefined} ${classes.ChevIcon}`} />
       </button>
       {open && (
-        <Box className={classes.DropDownMenu}>
+        <Box className={classes.DropDownMenu} style={{ ...dropDownPosition }}>
           <MenuList autoFocusItem={open} id="menu-list-grow">
             {countries.map((item) => {
               return (
@@ -105,6 +118,7 @@ const CountryDropDown = ({ value, onChange, countries, wrapperClass, buttonStyle
                       backgroundImage: `url(${require(`../../assets/img/flags/${item.code.toLowerCase()}.svg`)})`,
                     }}
                   />
+                  {isPhoneNumber && <div className={classes.DialCode}>{item.dial_code}</div>}
                   <div className={classes.CountryName}>{item.name}</div>
                 </MenuItem>
               );
@@ -127,7 +141,7 @@ const useStyles = makeStyles((theme: Theme) =>
     DropDownButton: {
       color: '#fff',
       background: 'none',
-      fontSize: '12px',
+
       height: '40px',
       borderTopRightRadius: 0,
       borderBottomRightRadius: 0,
@@ -154,43 +168,64 @@ const useStyles = makeStyles((theme: Theme) =>
       transform: 'rotateZ(-180deg)',
     },
     DropDownMenu: {
-      width: '180px',
+      width: '276px',
       position: 'absolute',
       background: '#fff',
       boxSizing: 'border-box',
-      border: `1px solid ${theme.palette.primary.border}`,
-      height: '300px',
-      bottom: '100%',
+      boxShadow: '0 1px 4px 0 rgba(186, 195, 201, 0.5)',
+      border: 'solid 1px rgba(186, 195, 201, 0.5)',
+      height: '264px',
       overflowY: 'auto',
       right: 0,
+      bottom: '100%',
+      borderRadius: '2px',
+      zIndex: 1,
       '& .MuiMenuItem-root': {
-        color: theme.palette.primary.dark,
+        color: theme.palette.primary.text,
+      },
+      '& .MuiList-root': {
+        padding: 0,
       },
     },
     MenuItem: {
-      fontSize: '14px',
+      color: theme.palette.primary.text,
+      fontSize: '16px',
       display: 'flex',
       overflow: 'hidden',
       paddingRight: '6px',
+      fontWeight: 300,
+      lineHeight: '19px',
+      padding: '13px 13px 12px 21px',
+    },
+    DialCode: {
+      display: 'inline-block',
+      marginLeft: '5px',
+      width: '20px',
     },
     CountryName: {
       flex: '1 1 100%',
       whiteSpace: 'normal',
       wordBreak: 'break-word',
+      marginLeft: '20px',
     },
     MenuItemFlag: {
-      width: '21px',
-      height: '15px',
+      width: '25px',
+      height: '19px',
       backgroundSize: 'cover',
-      marginRight: '10px',
-      flex: '0 0 21px',
+      flex: '0 0 25px',
     },
     Flag: {
-      width: '21px',
-      height: '15px',
+      width: '25px',
+      height: '19px',
       backgroundSize: 'cover',
       marginRight: '6px',
-      flex: '0 0 21px',
+      flex: '0 0 25px',
+    },
+    FlagCountry: {
+      width: '20px',
+      height: '11px',
+      marginRight: '5px',
+      flex: '0, 0, 20px',
     },
   })
 );

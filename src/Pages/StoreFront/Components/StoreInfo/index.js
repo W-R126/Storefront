@@ -83,7 +83,7 @@ const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      color: theme.palette.primary.dark,
+      color: theme.palette.primary.text,
       backgroundColor: '#fff',
     },
     MainInfo: {
@@ -144,7 +144,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     Description: {
-      color: theme.palette.primary.dark,
+      color: theme.palette.primary.text,
       fontSize: '16px',
       margin: '3px 0 11px',
       lineHeight: 1.5,
@@ -164,13 +164,13 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     LableName: {
-      color: theme.palette.primary.dark,
+      color: theme.palette.primary.text,
       flex: '0 0 100px',
       fontWeight: 'normal',
     },
     LabelValue: {
       display: 'flex',
-      color: theme.palette.primary.dark,
+      color: theme.palette.primary.text,
       fontWeight: 300,
       flex: ' 1 1 100%',
       overflow: 'hidden',

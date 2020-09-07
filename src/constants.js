@@ -1,4 +1,4 @@
-export const PRODUCT_PAGE_LIMIT = 100;
+export const PRODUCT_PAGE_LIMIT = 3;
 
 export const countries = [
   {

@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '16px',
       lineHeight: '16px',
       boxSizing: 'border-box',
-      color: theme.palette.primary.dark,
+      color: theme.palette.primary.text,
       borderLeft: 0,
       borderRight: 0,
       borderTop: `1px solid ${theme.palette.primary.border}`,
