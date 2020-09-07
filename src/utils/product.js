@@ -10,26 +10,30 @@ export const getOrdredProducts = (productData, storeSettingData) => {
   if (productData === undefined || productData === null) {
     return [];
   } else {
-    if (storeSettingData === undefined || storeSettingData === null) return _.get(productData, 'products', []);
+    if (storeSettingData === undefined || storeSettingData === null) return productData;
     else {
       let orderedProducts = [];
-      const productList = productData.products;
+      const productList = productData;
       const productView = getProductViewFromStoreSetting(storeSettingData);
       const productsOrder = productView.products;
 
       if (productsOrder === null) {
-        orderedProducts = _.get(productData, 'products', []);
+        orderedProducts = [...productData];
       } else {
-        productsOrder
-          .sort((a, b) => a.position - b.position)
-          .forEach((item) => {
-            const findOne = productList.find((productItem) => productItem.id === item.id);
-            if (findOne)
-              orderedProducts.push({
-                ...findOne,
-                position: item.position,
-              });
-          });
+        if (productView.show_selected) {
+          productsOrder
+            .sort((a, b) => a.position - b.position)
+            .forEach((item) => {
+              const findOne = productList.find((productItem) => productItem.id === item.id);
+              if (findOne)
+                orderedProducts.push({
+                  ...findOne,
+                  position: item.position,
+                });
+            });
+        } else {
+          orderedProducts = [...productData];
+        }
       }
 
       if (productView.sort_by_name) {
