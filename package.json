@@ -41,6 +41,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "deploy:staging": "scotty --spa --source ./build --bucket myda-storefront-staging --region eu-west-1",
+    "deploy:preProd": "scotty --spa --source ./build --bucket myda-storefront-preProd --region eu-west-1",
+    "deploy:production": "scotty --spa --source ./build --bucket myda-storefront --region eu-west-1",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public",

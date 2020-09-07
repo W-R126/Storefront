@@ -45,7 +45,7 @@ const Header = ({ children, orderTypesList }) => {
 
   const [showLogin, setShowLogin] = useState(false);
   const [showUserDetail, setShowUserDetail] = useState(false);
-  const [showSignUp, setShowSignUp] = useState(true);
+  const [showSignUp, setShowSignUp] = useState(false);
 
   const { authInfo, orderType } = useSelector((state) => ({
     authInfo: state.authReducer.userInfo,
