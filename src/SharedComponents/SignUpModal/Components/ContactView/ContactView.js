@@ -2,20 +2,23 @@ import React from 'react';
 
 import { useFormik } from 'formik';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { useLazyQuery } from '@apollo/react-hooks';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
-import { Button, TextField } from '@material-ui/core';
+import { Button, TextField, InputAdornment, CircularProgress } from '@material-ui/core';
 
 import { getSignUpContactValidateionSchema } from '../../../../validators/signup-validation';
+import { CHECK_EMAIL_AVAILABILITY } from '../../../../graphql/auth/auth-query';
+import CloseIcons from '@material-ui/icons/Close';
 
-const ContactView = ({ onChange, gotoNext }) => {
+const ContactView = ({ formData, onChange, gotoNext }) => {
   const classes = useStyles();
 
   const contactFormSubmitProps = useFormik({
     initialValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
     },
     enableReinitialize: true,
     validateOnChange: false,
@@ -30,6 +33,10 @@ const ContactView = ({ onChange, gotoNext }) => {
       gotoNext();
     },
   });
+
+  const [checkEmail, { data: emailData, error: emailError, loading: emailLoading }] = useLazyQuery(
+    CHECK_EMAIL_AVAILABILITY
+  );
 
   return (
     <Box className={classes.root}>
@@ -46,6 +53,9 @@ const ContactView = ({ onChange, gotoNext }) => {
             fullWidth
             error={contactFormSubmitProps.errors.firstName}
             helperText={contactFormSubmitProps.errors.firstName}
+            onBlur={(e) => {
+              contactFormSubmitProps.handleBlur(e);
+            }}
           />
         </Box>
         <Box className={classes.InputWrapper}>
@@ -57,6 +67,9 @@ const ContactView = ({ onChange, gotoNext }) => {
             fullWidth
             error={contactFormSubmitProps.errors.lastName}
             helperText={contactFormSubmitProps.errors.lastName}
+            onBlur={(e) => {
+              contactFormSubmitProps.handleBlur(e);
+            }}
           />
         </Box>
         <Box className={classes.InputWrapper}>
@@ -66,8 +79,24 @@ const ContactView = ({ onChange, gotoNext }) => {
             value={contactFormSubmitProps.values.email}
             fullWidth
             onChange={contactFormSubmitProps.handleChange}
-            error={contactFormSubmitProps.errors.email}
-            helperText={contactFormSubmitProps.errors.email}
+            error={contactFormSubmitProps.errors.email || emailData}
+            helperText={contactFormSubmitProps.errors.email || (emailData && 'This email already exsit.')}
+            onBlur={(e) => {
+              contactFormSubmitProps.handleBlur(e);
+              checkEmail({
+                variables: {
+                  email: e.target.value,
+                },
+              });
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {emailLoading && <CircularProgress size={20} />}
+                  {(emailData || !!contactFormSubmitProps.errors.email) && <CloseIcons color="error" />}
+                </InputAdornment>
+              ),
+            }}
           />
         </Box>
         <Button
@@ -79,6 +108,7 @@ const ContactView = ({ onChange, gotoNext }) => {
           onClick={() => {
             contactFormSubmitProps.validateForm();
           }}
+          disabled={Object.keys(contactFormSubmitProps.errors).length > 0 || emailData || emailLoading}
         >
           Continue
         </Button>

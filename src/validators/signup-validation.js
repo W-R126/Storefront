@@ -17,3 +17,11 @@ export const getSignUpValidationSchema = () =>
     ),
     email: Yup.string().email('Invalid email field').required('Required field'),
   });
+
+export const getPasswordValidationSchema = () =>
+  Yup.object().shape({
+    password: Yup.string().matches(
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{3,}$/,
+      'Must One Uppercase, One Lowercase, One Number and one special case Character'
+    ),
+  });

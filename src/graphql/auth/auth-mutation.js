@@ -103,3 +103,28 @@ export const LOGIN = gql`
     }
   }
 `;
+
+export const SIGNUP = gql`
+  mutation createUser(
+    $email: String!
+    $mobile: String!
+    $password: HashPassword!
+    $secondName: String!
+    $firstName: String!
+  ) {
+    createUser(
+      input: { email: $email, mobile: $mobile, password: $password, last_name: $secondName, first_name: $firstName }
+    ) {
+      activations {
+        user_id
+        email
+      }
+    }
+  }
+`;
+
+export const SEND_RESET_CODE = gql`
+  mutation sendResetCode($email: String!) {
+    sendResetCode(input: { email: $email })
+  }
+`;

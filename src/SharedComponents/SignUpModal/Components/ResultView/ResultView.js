@@ -1,12 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
+import { useMutation, useLazyQuery } from '@apollo/react-hooks';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-const ResultView = ({ formData, changeEmail }) => {
+import { SEND_RESET_CODE } from '../../../../graphql/auth/auth-mutation';
+import { CHECK_ACTIVATIONS } from '../../../../graphql/auth/auth-query';
+
+const ResultView = ({ userData, gotoChangeEmail, hideModal }) => {
   const classes = useStyles();
+
+  const [checkActivation, data] = useLazyQuery(CHECK_ACTIVATIONS);
+  const [sendResetCode, { data: sendResetCodeData }] = useMutation(SEND_RESET_CODE);
+
+  useEffect(() => {
+    setTimeout(() => {
+      hideModal();
+    }, 150000);
+
+    const interval = setInterval(() => {
+      checkActivation({
+        variables: { userID: userData && userData.createUser.activations[0].user_id },
+      });
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [checkActivation, hideModal, userData]);
 
   return (
     <Box className={classes.root}>
@@ -20,9 +40,9 @@ const ResultView = ({ formData, changeEmail }) => {
         <br />
         Follow instructions we sent to
         <br />
-        <span style={{ fontWeight: 500 }}>{formData.email}</span>
+        <span style={{ fontWeight: 500 }}>{userData && userData.createUser.activations[0].email}</span>
         complete validation.{' '}
-        <span className="ChangeEmail" onClick={changeEmail} role="button">
+        <span className="ChangeEmail" onClick={gotoChangeEmail} role="button">
           Change email.
         </span>
       </Typography>
@@ -37,7 +57,11 @@ const ResultView = ({ formData, changeEmail }) => {
         <span
           className="ChangeEmail"
           onClick={() => {
-            console.log('asdf');
+            sendResetCode({
+              variables: {
+                email: userData.createUser.activations[0].email,
+              },
+            });
           }}
           role="button"
         >

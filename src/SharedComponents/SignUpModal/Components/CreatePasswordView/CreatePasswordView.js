@@ -6,9 +6,36 @@ import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import PasswordInput from '../../../PasswordInput';
+import { getPasswordValidationSchema } from '../../../../validators/signup-validation';
 
 const CreatePasswordView = ({ password, policyAgree, onChange, signUp }) => {
   const classes = useStyles();
+  const schema = getPasswordValidationSchema();
+
+  const checkPasswordValidate = (newPassword) => {
+    schema
+      .validate({
+        password: newPassword.value,
+      })
+      .then((res) => {
+        onChange({
+          password: {
+            value: newPassword.value,
+            validate: true,
+            errorMsg: '',
+          },
+        });
+      })
+      .catch((err) => {
+        onChange({
+          password: {
+            value: newPassword.value,
+            validate: false,
+            errorMsg: err.errors[0],
+          },
+        });
+      });
+  };
 
   return (
     <Box className={classes.root}>
@@ -24,9 +51,7 @@ const CreatePasswordView = ({ password, policyAgree, onChange, signUp }) => {
           label="Enter Password"
           inputData={password}
           onChange={(password) => {
-            onChange({
-              password: password,
-            });
+            checkPasswordValidate(password);
           }}
         />
       </Box>
@@ -35,7 +60,7 @@ const CreatePasswordView = ({ password, policyAgree, onChange, signUp }) => {
           defaultChecked
           color="primary"
           inputProps={{ 'aria-label': 'secondary checkbox' }}
-          value={policyAgree}
+          checked={policyAgree}
           onChange={(e) => {
             onChange({
               policyAgree: e.target.checked,
@@ -46,8 +71,14 @@ const CreatePasswordView = ({ password, policyAgree, onChange, signUp }) => {
           I agree to Myda <a>Terms of use & Privacy Poliicies</a>
         </Typography>
       </Box>
-
-      <Button color="primary" variant="contained" fullWidth className={classes.SignUpButton} onClick={signUp}>
+      <Button
+        color="primary"
+        variant="contained"
+        fullWidth
+        className={classes.SignUpButton}
+        onClick={signUp}
+        disabled={!password.validate || password.value.length === 0 || !policyAgree}
+      >
         Sign up
       </Button>
     </Box>
@@ -89,7 +120,7 @@ const useStyles = makeStyles((theme: Theme) =>
     CheckboxWrapper: {
       boxSizing: 'border-box',
       display: 'flex',
-      margin: '20px 0 0 0',
+      margin: '30px 0 0 0',
       '& .MuiCheckbox-colorPrimary': {
         alignItems: 'flex-start',
         padding: 0,

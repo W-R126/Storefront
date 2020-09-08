@@ -48,6 +48,7 @@ const PasswordInput = ({ id = 'password', label = 'Password', inputData, onChang
         error={!inputData.validate}
         helperText={inputData.errorMsg}
         className={classes.PasswordInput}
+        autoComplete="new-password"
       />
       <IconButton
         className={classes.showpasswordbtn}
