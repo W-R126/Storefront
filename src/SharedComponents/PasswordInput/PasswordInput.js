@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
@@ -11,6 +11,9 @@ import { getPasswordValidationSchema } from '../../validators/login-validation';
 
 const PasswordInput = ({ id = 'password', label = 'Password', inputData, onChange }) => {
   const classes = useStyles();
+
+  const [showPassword, setShowPassword] = useState(false);
+
   const schema = getPasswordValidationSchema();
 
   const handleChangePassword = (e) => {
@@ -18,7 +21,6 @@ const PasswordInput = ({ id = 'password', label = 'Password', inputData, onChang
       .validate({ password: e.target.value })
       .then((res) => {
         onChange({
-          ...inputData,
           value: res.password,
           validate: true,
           errorMsg: '',
@@ -26,7 +28,6 @@ const PasswordInput = ({ id = 'password', label = 'Password', inputData, onChang
       })
       .catch((err) => {
         onChange({
-          ...inputData,
           value: err.value.password,
           validate: false,
           errorMsg: err.errors[0],
@@ -39,7 +40,7 @@ const PasswordInput = ({ id = 'password', label = 'Password', inputData, onChang
       <TextField
         id={id}
         label={label}
-        type={inputData.showPassword ? 'text' : 'password'}
+        type={showPassword ? 'text' : 'password'}
         size="medium"
         fullWidth
         value={inputData.value}
@@ -47,21 +48,19 @@ const PasswordInput = ({ id = 'password', label = 'Password', inputData, onChang
         error={!inputData.validate}
         helperText={inputData.errorMsg}
         className={classes.PasswordInput}
+        autoComplete="new-password"
       />
       <IconButton
         className={classes.showpasswordbtn}
         aria-label="toggle password visibility"
         onClick={(e): void => {
-          onChange({
-            ...inputData,
-            showPassword: !inputData.showPassword,
-          });
+          setShowPassword(!showPassword);
         }}
         onMouseDown={(e) => {
           e.preventDefault();
         }}
       >
-        {inputData.showPassword ? <Visibility /> : <VisibilityOff />}
+        {showPassword ? <Visibility /> : <VisibilityOff />}
       </IconButton>
     </Box>
   );

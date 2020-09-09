@@ -21,11 +21,24 @@ const Footer = () => {
       <div className={classes.TopSection}>
         <div className={`${classes.CopyRight} ${classes.ShowDesktop}`}>© Myda 2020.</div>
         <div className={classes.FooterLinkDiv}>
-          <Link className={classes.FooterLink}>About Us</Link>
-          <Link className={classes.FooterLink}>Our Role</Link>
-          <Link className={classes.FooterLink}>Your Data</Link>
-          <Link className={classes.FooterLink}>Privacy</Link>
-          <Link className={classes.FooterLink}>Terms of Use</Link>
+          <a className={classes.FooterLink} href="https://www.mydacloud.com/about">
+            About Us
+          </a>
+          <a className={classes.FooterLink} href="https://www.mydacloud.com">
+            Our Role
+          </a>
+          <a className={classes.FooterLink} href="https://www.mydacloud.com/howitworks">
+            How it works
+          </a>
+          <a className={classes.FooterLink} href="https://www.mydacloud.com/yourdata">
+            Your Data
+          </a>
+          <a className={classes.FooterLink} href="https://www.mydacloud.com/privacy">
+            Privacy
+          </a>
+          <a className={classes.FooterLink} href="https://www.mydacloud.com/legal">
+            Terms of Use
+          </a>
         </div>
       </div>
       <div className={classes.BottomSection}>
@@ -34,14 +47,20 @@ const Footer = () => {
         </Link>
         <CountryDropDown
           value={selectedCountry}
+          isPhoneNumber={false}
           onChange={(country) => {
             dispatch({
               type: types.CHANGE_COUNTRY,
               payload: country,
             });
           }}
+          dropDownPosition={{
+            right: 0,
+            bottom: '100%',
+          }}
           countries={countries}
           wrapperClass={classes.CountryDropDown}
+          buttonStyles={{ fontSize: '12px' }}
         />
         <div className={`${classes.CopyRight} ${classes.ShowMobile}`}>© Myda 2020.</div>
       </div>
@@ -79,6 +98,11 @@ const useStyles = makeStyles((theme: Theme) =>
         width: '100%',
         justifyContent: 'space-around',
       },
+      '@media screen and (max-width: 639px)': {
+        width: '100%',
+        justifyContent: 'space-around',
+        flexWrap: 'wrap',
+      },
     },
     FooterLink: {
       marginLeft: '40px',
@@ -86,12 +110,18 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 300,
       color: '#fff',
       textDecoration: 'none',
+      whiteSpace: 'nowrap',
       '&:hover': {
         textDecoration: 'underline',
       },
       '@media screen and (max-width: 767px)': {
         fontSize: '12px',
         marginLeft: 0,
+      },
+      '@media screen and (max-width: 639px)': {
+        flex: '1 1 33.33%',
+        textAlign: 'center',
+        marginBottom: '5px',
       },
     },
     BottomSection: {
@@ -101,6 +131,9 @@ const useStyles = makeStyles((theme: Theme) =>
         flexDirection: 'column',
         alignItems: 'center',
         marginTop: '32px',
+      },
+      '@media screen and (max-width: 639px)': {
+        marginTop: '27px',
       },
     },
     FooterLogo: {

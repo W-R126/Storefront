@@ -1,27 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import Box from '@material-ui/core/Box';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
+import { Button, TextField } from '@material-ui/core';
 
-import DropDown from '../DropDown';
-
-const SearchInput = ({ categoryMenuList }) => {
+const SearchInput = () => {
   const classes = useStyles();
-  const [selectedCategory, setSelectedCategory] = useState({ id: '-1', label: 'All' });
 
   return (
     <Box className={classes.root}>
-      <DropDown
-        value={selectedCategory}
-        onChange={(selected) => setSelectedCategory({ ...selected })}
-        menuList={categoryMenuList}
-        wrapperClass={classes.CategoryDropDown}
+      <TextField
+        className={classes.SearchField}
+        placeholder="Search"
+        variant="outlined"
+        InputProps={{
+          endAdornment: (
+            <Button className={classes.SearchButton}>
+              <SearchIcon />
+            </Button>
+          ),
+        }}
+        fullWidth
       />
-      <input className={classes.SearchField} />
-      <button className={classes.SearchButton}>
-        <SearchIcon />
-      </button>
     </Box>
   );
 };
@@ -47,29 +48,60 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: '1 1 105px',
     },
     SearchField: {
-      flex: '1 1 100%',
-      height: '40px',
-      padding: '10px',
-      fontSize: '16px',
-      lineHeight: '16px',
-      boxSizing: 'border-box',
-      color: theme.palette.primary.dark,
-      borderLeft: 0,
-      borderRight: 0,
-      borderTop: `1px solid ${theme.palette.primary.border}`,
-      borderBottom: `1px solid ${theme.palette.primary.border}`,
-      outline: 'none',
+      // flex: '1 1 100%',
+      // height: '40px',
+      // padding: '10px',
+      // fontSize: '16px',
+      // lineHeight: '16px',
+      // boxSizing: 'border-box',
+      // color: theme.palette.primary.text,
+      // border: `1px solid ${theme.palette.primary.border}`,
+      // borderRight: 0,
+      // outline: 'none',
+      // backgroundColor: 'rgba(186, 195, 201, 0.4)',
+      // borderTopLeftRadius: '4px',
+      // borderBottomLeftRadius: '4px',
+      '& .MuiOutlinedInput-adornedEnd': {
+        paddingRight: 0,
+      },
+      '& .MuiOutlinedInput-input': {
+        paddingRight: 0,
+        height: '40px',
+        lineHeight: '20px',
+        paddingTop: '10px',
+        paddingBottom: '10px',
+        boxSizing: 'border-box',
+        backgroundColor: 'rgba(186, 195, 201, 0.4)',
+        borderTopLeftRadius: '4px',
+        borderBottomLeftRadius: '4px',
+      },
+      '& .Mui-focused': {
+        '& .MuiOutlinedInput-input': {
+          backgroundColor: 'white',
+        },
+        '& .MuiOutlinedInput-notchedOutline': {
+          border: `1px solid ${theme.palette.primary.border}`,
+        },
+      },
+      '& .MuiOutlinedInput-notchedOutline': {
+        border: 'none',
+      },
     },
     SearchButton: {
-      width: '40px',
+      width: '47px',
       height: '40px',
       borderRadius: 0,
-      borderTopRightRadius: '2px',
-      borderBottomRightRadius: '2px',
+      borderTopRightRadius: '4px',
+      borderBottomRightRadius: '4px',
       background: theme.palette.primary.yellow,
       outline: 'none',
       border: 'none',
       cursor: 'pointer',
+      '&:hover': {
+        '&:hover': {
+          backgroundColor: '#f6b601',
+        },
+      },
       '& .MuiSvgIcon-root': {
         color: '#fff',
       },

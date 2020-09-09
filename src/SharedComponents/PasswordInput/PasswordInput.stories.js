@@ -13,7 +13,6 @@ const PasswordInputExample = () => {
     value: '',
     validate: true,
     errorMsg: '',
-    showPassword: true,
   });
 
   return <PasswordInput inputData={value} onChange={(newValue) => setValue({ ...newValue })} />;

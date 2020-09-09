@@ -150,7 +150,7 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '129px',
       boxShadow: '0 1px 6px 0 rgba(0, 0, 0, 0.05)',
       border: 'solid 0.5px rgba(186, 195, 201, 0.5)',
-      color: theme.palette.primary.dark,
+      color: theme.palette.primary.text,
     },
     ProductImg: {
       backgroundPosition: 'center center',

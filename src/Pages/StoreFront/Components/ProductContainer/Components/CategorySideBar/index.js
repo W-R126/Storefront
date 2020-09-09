@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme: Theme) =>
         padding: '20px',
         height: '60px',
         fontSize: '16px',
-        color: theme.palette.primary.dark,
+        color: theme.palette.primary.text,
       },
       '& .Mui-selected': {
         background: theme.palette.primary.greyBack,

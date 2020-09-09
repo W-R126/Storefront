@@ -100,7 +100,7 @@ const useStyles = makeStyles((theme: Theme) =>
     MainContent: {
       fontSize: '16px',
       lineHeight: '19px',
-      color: theme.palette.primary.dark,
+      color: theme.palette.primary.text,
       marginBottom: '13px',
 
       '& .MuiGrid-item': {

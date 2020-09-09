@@ -9,20 +9,23 @@ export const THEME = createMuiTheme({
   },
   palette: {
     primary: {
-      light: '#757ce8',
+      light: '#2a88ff',
       main: '#1174f2',
-      dark: '#20272f',
+      dark: '#0e60c9',
       greyBack: '#f3f5f7',
       contrastText: '#fff',
       border: '#bac3c9',
       yellow: '#ffc624',
       title: '#505c69',
+      text: '#20272f',
+      text1: '#ba000d',
     },
     secondary: {
-      light: '#ff7961',
-      main: '#f44336',
-      dark: '#ba000d',
+      light: '#2a88ff',
+      main: '#1174f2',
+      dark: '#0e60c9',
       contrastText: '#000',
+      greyBack: 'rgba(186, 195, 201, 0.3)',
     },
   },
   overrides: {

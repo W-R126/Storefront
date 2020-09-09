@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
@@ -67,10 +67,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       display: 'flex',
       flexDirection: 'column',
-      paddingLeft: '10px',
-      paddingRight: '10px',
       alignItems: 'center',
-      marginTop: '-5px',
     },
     Title: {
       fontSize: '22px',
@@ -78,7 +75,7 @@ const useStyles = makeStyles((theme: Theme) =>
       letterSpacing: '0.41px',
       color: theme.palette.primary.text,
       textAlign: 'center',
-      margin: 0,
+      margin: '15px 0 0 0',
     },
     Description: {
       fontSize: '18px',
@@ -105,7 +102,7 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '50px',
     },
     SignUpButton: {
-      marginTop: '34px',
+      marginTop: '38px',
       fontSize: '16px',
       color: theme.palette.primary.text,
       lineHeight: '19px',
