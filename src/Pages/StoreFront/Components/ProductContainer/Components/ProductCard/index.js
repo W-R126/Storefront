@@ -164,10 +164,11 @@ const useStyles = makeStyles((theme: Theme) =>
     ProductImg: {
       backgroundPosition: 'center center',
       backgroundSize: 'contain',
-      flex: '0 0 90px',
+      flex: '0 0 95px',
       display: 'flex',
       flexDirection: 'column',
       backgroundRepeat: 'no-repeat',
+      border: 'solid 1px #f3f5f7',
     },
     ProductLabel: {
       marginTop: 'auto',

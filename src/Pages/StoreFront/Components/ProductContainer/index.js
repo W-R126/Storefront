@@ -32,10 +32,10 @@ const ProductContainer = ({ client, getProductPaginationAction }) => {
   return (
     <div className={classes.root}>
       <Grid container className={classes.MainContent}>
-        <Grid item md={12}>
+        <Grid item md={12} xs={12}>
           <SearchBar />
         </Grid>
-        <Grid item md={12} className={classes.ProductContent}>
+        <Grid item md={12} xs={12} className={classes.ProductContent}>
           <CategorySideBar />
           <ProductList />
         </Grid>

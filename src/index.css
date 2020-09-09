@@ -19,3 +19,7 @@ body {
 .gm-style-cc {
   display: none;
 }
+
+.MuiList-root {
+  outline: none;
+}
