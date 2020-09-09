@@ -15,7 +15,7 @@ const SIGNUP_CONTACT_VIEW = 1;
 const SIGNUP_CREATE_PASSWORD_VIEW = 2;
 const SIGNUP_RESULT_VIEW = 3;
 
-const SignUpModal = ({ isShow, hideModal }) => {
+const SignUpModal = ({ isShow, hideModal, gotoLogin }) => {
   const [curView, setCurView] = useState(SIGNUP_PHONE_VIEW);
   const [formData, setFormData] = useState({
     phoneNumber: { code: '+44', number: '', validate: true, errorMsg: '' },
@@ -61,6 +61,7 @@ const SignUpModal = ({ isShow, hideModal }) => {
           gotoNext={() => {
             setCurView(SIGNUP_CONTACT_VIEW);
           }}
+          gotoLogin={gotoLogin}
         />
       )}
       {curView === SIGNUP_CONTACT_VIEW && (

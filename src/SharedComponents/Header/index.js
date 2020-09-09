@@ -146,10 +146,22 @@ const Header = ({ children, orderTypesList }) => {
           hideModal={() => {
             setShowLogin(false);
           }}
+          gotoSignUp={() => {
+            setShowLogin(false);
+            setShowSignUp(true);
+          }}
         />
       )}
       {showUserDetail && <UserDialog hideModal={() => setShowUserDetail(false)} />}
-      {showSignUp && <SignUpModal hideModal={() => setShowSignUp()} />}
+      {showSignUp && (
+        <SignUpModal
+          hideModal={() => setShowSignUp(false)}
+          gotoLogin={() => {
+            setShowSignUp(false);
+            setShowLogin(true);
+          }}
+        />
+      )}
     </AppBar>
   );
 };

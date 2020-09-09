@@ -16,7 +16,7 @@ import { LOGIN_SUCCESS } from '../../actions/actionTypes';
 const LOGIN_EMAIL_PANEL = 0;
 const LOGIN_PASSWORD_PANEL = 1;
 
-const LoginModal = ({ isShow, hideModal }) => {
+const LoginModal = ({ isShow, hideModal, gotoSignUp }) => {
   const dispatch = useDispatch();
 
   const [curView, setCurView] = useState(LOGIN_EMAIL_PANEL);
@@ -75,6 +75,7 @@ const LoginModal = ({ isShow, hideModal }) => {
                 },
               });
             }}
+            gotoSignUp={gotoSignUp}
           />
         </Box>
         <Box id={LOGIN_PASSWORD_PANEL} hidden={curView !== LOGIN_PASSWORD_PANEL}>

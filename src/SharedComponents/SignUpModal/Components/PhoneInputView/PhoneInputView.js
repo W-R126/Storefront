@@ -7,7 +7,7 @@ import { Button } from '@material-ui/core';
 
 import PhoneNumberInput from '../../../PhoneNumberInput';
 
-const PhoneInputView = ({ phoneNumber, onChange, gotoNext }) => {
+const PhoneInputView = ({ phoneNumber, onChange, gotoNext, gotoLogin }) => {
   const classes = useStyles();
 
   return (
@@ -30,10 +30,10 @@ const PhoneInputView = ({ phoneNumber, onChange, gotoNext }) => {
       >
         Continue
       </Button>
-      <Box className={classes.LoginBox}>
+      <Button className={classes.LoginBox} onClick={gotoLogin}>
         Already have a Myda Account?
         <span className="LoginButton">Login</span>
-      </Box>
+      </Button>
     </Box>
   );
 };
@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.primary.text,
       margin: '40px 0 0 0',
       '& .LoginButton': {
-        marginLeft: '4px',
+        marginLeft: '5px',
         cursor: 'pointer',
         color: theme.palette.primary.main,
       },

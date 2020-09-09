@@ -7,7 +7,7 @@ import { Button } from '@material-ui/core';
 
 import { getEmailValidationSchema } from '../../../../validators/login-validation';
 
-const LoginEmailPanel = ({ email, onChange, gotoPassword }) => {
+const LoginEmailPanel = ({ email, onChange, gotoPassword, gotoSignUp }) => {
   const classes = useStyles();
   const schema = getEmailValidationSchema();
 
@@ -57,7 +57,9 @@ const LoginEmailPanel = ({ email, onChange, gotoPassword }) => {
       >
         Continue
       </Button>
-      <Button className={classes.SignUpButton}>New to Myda? Signup</Button>
+      <Button className={classes.SignUpButton} onClick={gotoSignUp}>
+        New to Myda? <span className="SignupText">Signup</span>
+      </Button>
     </div>
   );
 };
@@ -107,6 +109,11 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.primary.text,
       lineHeight: '19px',
       fontWeight: 300,
+      '& .SignupText': {
+        marginLeft: '5px',
+        cursor: 'pointer',
+        color: theme.palette.primary.main,
+      },
     },
   })
 );
