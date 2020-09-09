@@ -8,7 +8,7 @@ import SearchBar from './Components/SearchBar';
 import CategorySideBar from './Components/CategorySideBar';
 import ProductList from './Components/ProductList';
 
-import { getProductPaginationAction } from '../../../../actions/product';
+import { getProductPaginationAction } from '../../../../actions/productAction';
 
 const ProductContainer = ({ client, getProductPaginationAction }) => {
   const classes = useStyles();

@@ -30,7 +30,7 @@ const ProductCard = ({ productInfo, net_price }) => {
   const getProductImage = () => {
     const imgArr = _.get(productInfo, 'images', []);
     if (imgArr.length === 0) return '';
-    else return imgArr[0];
+    else return imgArr[0].url;
   };
 
   const renderPriceInfo = () => {
@@ -71,7 +71,7 @@ const ProductCard = ({ productInfo, net_price }) => {
       //   type: types.UPDATE_PRODUCT_CART,
       //   payload: [...cartInfo, { id: productInfo.id, qty: 1, price: getPriceInfo() }],
       // });
-      console.log('add cart clicked');
+      console.log('click update carts');
     } else {
       const cartList = [];
       cartInfo.forEach((item) => {
@@ -136,7 +136,16 @@ const ProductCard = ({ productInfo, net_price }) => {
           )}
         </div>
       </div>
-      <ProductView open={showProductView} hideModal={() => setShowProductView(false)} />
+      {showProductView && (
+        <ProductView
+          open={showProductView}
+          hideModal={() => setShowProductView(false)}
+          // productId={productInfo.id}
+          productId={'023af2b9-4206-4995-9cf9-9a956e220d37'}
+          currencyData={currencyData}
+          net_price={net_price}
+        />
+      )}
     </div>
   );
 };
@@ -158,6 +167,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: '0 0 90px',
       display: 'flex',
       flexDirection: 'column',
+      backgroundRepeat: 'no-repeat',
     },
     ProductLabel: {
       marginTop: 'auto',

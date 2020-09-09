@@ -15,7 +15,7 @@ import { GET_MERCHANT_NET_PRICE } from '../../../../../../graphql/merchant/merch
 import { getOrdredProducts } from '../../../../../../utils/product';
 import { getIsShowSideCategory } from '../../../../../../utils/store';
 
-import { getProductPaginationAction } from '../../../../../../actions/product';
+import { getProductPaginationAction } from '../../../../../../actions/productAction';
 
 const ProductList = ({ client, getProductPaginationAction }) => {
   const classes = useStyles();

@@ -39,3 +39,54 @@ export const GET_PRODUCTS = gql`
     }
   }
 `;
+
+export const GET_PRODUCT_BY_ID = gql`
+  query getProduct($id: String) {
+    products(id: $id) {
+      name
+      bar_code
+      product_code
+      # SKU
+      images {
+        id
+        url
+      }
+      description
+      measure_type
+      measure_amount
+      stocks {
+        current_stock
+      }
+      prices {
+        price_infos {
+          price_type {
+            id
+            name
+          }
+          price
+          taxes {
+            id
+            rate
+            name
+          }
+        }
+      }
+      allergies {
+        id
+        name
+        image {
+          id
+          url
+        }
+      }
+      ingredients {
+        name
+        measure {
+          id
+          amount
+          measure_type
+        }
+      }
+    }
+  }
+`;

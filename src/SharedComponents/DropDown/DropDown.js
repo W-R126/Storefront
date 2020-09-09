@@ -68,8 +68,7 @@ const DropDown = ({ value, onChange, menuList, wrapperClass, buttonStyles }) => 
         className={classes.DropDownButton}
         style={buttonStyles}
       >
-        {/* {_.get(value, 'label', '')} */}
-        asdfasdf
+        {_.get(value, 'label', '')}
         <KeyboardArrowDownIcon className={`${open ? classes.Opened : undefined} ${classes.ChevIcon}`} />
       </Button>
       {open && (

@@ -6,6 +6,36 @@ export const THEME = createMuiTheme({
     button: {
       textTransform: 'none',
     },
+    h1: {
+      fontSize: '22px',
+      lineHeight: '27px',
+      color: '#505c69',
+      fontWeight: 'normal',
+    },
+    h2: {
+      fontSize: '18px',
+      fontWeight: 300,
+      color: '#505c69',
+      lineHeight: '22px',
+    },
+    h3: {
+      fontSize: '16px',
+      lineHeight: '19px',
+      color: '#505c69',
+      fontWeight: 300,
+    },
+    h4: {
+      fontSize: '14px',
+      lineHeight: '19px',
+      color: '#505c69',
+      fontWeight: 300,
+    },
+    h6: {
+      fontSize: '10px',
+      lineHeight: '13px',
+      color: '#505c69',
+      fontWeight: 300,
+    },
   },
   palette: {
     primary: {

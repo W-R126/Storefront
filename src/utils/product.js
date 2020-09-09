@@ -53,3 +53,18 @@ export const getProductPriceInfo = (productInfo, orderType) => {
   });
   return findPrice;
 };
+
+export const getProductTotalAmount = (productInfo, orderType, net_price) => {
+  const priceInfo = getProductPriceInfo(productInfo, orderType, net_price);
+  if (!priceInfo) return 0;
+
+  if (net_price) {
+    let returnPrice = priceInfo.price;
+    priceInfo.taxes.forEach((item) => {
+      returnPrice += item.rate;
+    });
+    return returnPrice;
+  } else {
+    return priceInfo.price;
+  }
+};
