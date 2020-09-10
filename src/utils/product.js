@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { getProductViewFromStoreSetting } from './store';
 
-export const getProductCart = (cartList, productId) => {
-  const findCart = cartList.find((item) => item.id === productId);
+export const getProductCart = (cartList, productId, orderType) => {
+  const findCart = cartList.find((item) => item.id === productId && item.orderType === _.get(orderType, 'name', ''));
   return findCart;
 };
 
@@ -13,7 +13,6 @@ export const getOrdredProducts = (productData, storeSettingData) => {
     if (storeSettingData === undefined || storeSettingData === null) return productData;
     else {
       let orderedProducts = [];
-      const productList = productData;
       const productView = getProductViewFromStoreSetting(storeSettingData);
       const productsOrder = productView.products;
 
@@ -21,16 +20,30 @@ export const getOrdredProducts = (productData, storeSettingData) => {
         orderedProducts = [...productData];
       } else {
         if (productView.show_selected) {
-          productsOrder
-            .sort((a, b) => a.position - b.position)
-            .forEach((item) => {
-              const findOne = productList.find((productItem) => productItem.id === item.id);
-              if (findOne)
-                orderedProducts.push({
-                  ...findOne,
-                  position: item.position,
-                });
-            });
+          let maxOrderValue = Math.max.apply(
+            Math,
+            productsOrder.map(function (o) {
+              return o.position;
+            })
+          );
+
+          productData.forEach((item) => {
+            const findOne = productsOrder.find((orderItem) => orderItem.id === item.id);
+            if (findOne)
+              orderedProducts.push({
+                ...item,
+                position: findOne.position,
+              });
+            else {
+              maxOrderValue++;
+              orderedProducts.push({
+                ...item,
+                position: maxOrderValue,
+              });
+            }
+          });
+
+          orderedProducts = [...orderedProducts.sort((a, b) => a.position - b.position)];
         } else {
           orderedProducts = [...productData];
         }

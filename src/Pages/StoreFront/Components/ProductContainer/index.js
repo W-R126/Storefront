@@ -40,7 +40,7 @@ const ProductContainer = ({ client, getProductPaginationAction }) => {
           <ProductList />
         </Grid>
         {showLoadMore() && (
-          <Grid item md={12} className={classes.LoadMoreContainer}>
+          <Grid item md={12} xs={12} className={classes.LoadMoreContainer}>
             <div className={classes.LoadMoreButton} onClick={handleClickLoadMore} role="button">
               Load More
             </div>

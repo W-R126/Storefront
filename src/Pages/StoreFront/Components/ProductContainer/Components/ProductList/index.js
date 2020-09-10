@@ -12,6 +12,8 @@ import ProductCard from '../ProductCard';
 
 import { GET_STORE_SETTING_PRODUCT } from '../../../../../../graphql/store/store-query';
 import { GET_MERCHANT_NET_PRICE } from '../../../../../../graphql/merchant/merchant-query';
+import { GET_CURRENCY } from '../../../../../../graphql/localisation/localisation-query';
+
 import { getOrdredProducts } from '../../../../../../utils/product';
 import { getIsShowSideCategory } from '../../../../../../utils/store';
 
@@ -19,14 +21,17 @@ import { getProductPaginationAction } from '../../../../../../actions/productAct
 
 const ProductList = ({ client, getProductPaginationAction }) => {
   const classes = useStyles();
-  const { productList } = useSelector((state) => ({
+  const { productList, cartInfo, orderType } = useSelector((state) => ({
     productList: state.productReducer.productList,
+    cartInfo: state.cartReducer.cartList,
+    orderType: state.storeReducer.orderType,
   }));
 
   const { loading: storeSettingLoading, error: storeSettingError, data: storeSettingData } = useQuery(
     GET_STORE_SETTING_PRODUCT
   );
   const { data: merchantNetPrice } = useQuery(GET_MERCHANT_NET_PRICE);
+  const { data: currencyData } = useQuery(GET_CURRENCY);
 
   useEffect(() => {
     getProductPaginationAction(client, 1);
@@ -45,7 +50,14 @@ const ProductList = ({ client, getProductPaginationAction }) => {
           {getOrdredProducts(productList, storeSettingData).map((item, nIndex) => {
             return (
               <Grid item lg={getIsShowSideCategory(storeSettingData) ? 4 : 3} md={6} xs={12} key={item.id}>
-                <ProductCard productInfo={item} net_price={getNetPriceStatus()} />
+                <ProductCard
+                  productInfo={item}
+                  currencyData={currencyData}
+                  net_price={getNetPriceStatus()}
+                  cartInfo={cartInfo}
+                  orderType={orderType}
+                  loading={false}
+                />
               </Grid>
             );
           })}

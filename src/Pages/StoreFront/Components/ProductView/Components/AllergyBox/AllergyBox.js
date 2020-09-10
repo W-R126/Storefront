@@ -1,5 +1,6 @@
 import React from 'react';
 
+import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import { Typography } from '@material-ui/core';
@@ -9,7 +10,6 @@ const AllergyBox = ({ allergyData, wrapperClass }) => {
 
   const rootClasses = [classes.root];
   if (wrapperClass) rootClasses.push(wrapperClass);
-
   return (
     <Box className={rootClasses.join(' ')}>
       <Typography variant="h1" className={classes.Title}>
@@ -19,8 +19,13 @@ const AllergyBox = ({ allergyData, wrapperClass }) => {
         {allergyData.map((item) => {
           return (
             <Box className={classes.AllergyInfo} key={item.id}>
-              <Box className={classes.AllergyImg} style={{ backgroundImage: `url(${item.image.url})` }}></Box>
-              <Typography variant="h6">{item.name}</Typography>
+              <Box
+                className={classes.AllergyImg}
+                style={{ backgroundImage: `url(${_.get(item.image, 'url', '')})` }}
+              ></Box>
+              <Typography variant="h6" className={classes.ItemTitle}>
+                {item.name}
+              </Typography>
             </Box>
           );
         })}
@@ -56,6 +61,10 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
       alignItems: 'center',
       margin: '10px 10px 0 0',
+      '@media screen and (max-width: 768px)': {
+        width: '50px',
+        height: '53px',
+      },
     },
     AllergyImg: {
       display: 'flex',
@@ -67,6 +76,18 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'contain',
       margin: '0 0 12px 0',
+      '@media screen and (max-width: 768px)': {
+        width: '25px',
+        height: '25px',
+        margin: '0 0 5px 0',
+      },
+    },
+    ItemTitle: {
+      maxWidth: '80%',
+      overflow: 'hidden',
+      display: 'flex',
+      whiteSpace: 'nowrap',
+      textAlign: 'center',
     },
   })
 );

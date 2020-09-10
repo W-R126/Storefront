@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+
 import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useQuery } from '@apollo/react-hooks';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 import Header from '../../SharedComponents/Header';
 import StoreInfo from './Components/StoreInfo';
@@ -10,6 +12,8 @@ import Footer from '../../SharedComponents/Footer';
 import OpeningHoursModal from './Components/OpeningHoursModal';
 import { GET_STORE_DATA } from '../../graphql/store/store-query';
 import { getOrderTypes } from '../../utils/store';
+
+import BannerPlaceHolder from '../../assets/img/store-banner-placeholder.png';
 
 const StoreFrontPage = () => {
   const classes = useStyles();
@@ -23,10 +27,11 @@ const StoreFrontPage = () => {
 
   const getBannerImg = () => {
     const store = _.get(storeData, 'store', null);
-    if (store) {
-      return store.settings.touchpoint_settings.digital_front.banner.url;
+    if (!store || !store.settings.touchpoint_settings.digital_front.banner.url) {
+      return BannerPlaceHolder;
     }
-    return '';
+    if (storeLoading) return BannerPlaceHolder;
+    return store.settings.touchpoint_settings.digital_front.banner.url;
   };
 
   const getStoreOpening = () => {
@@ -37,7 +42,9 @@ const StoreFrontPage = () => {
   return (
     <>
       <Header orderTypesList={getOrderTypes(storeData)} />
+
       <div className={classes.TopBanner} style={{ backgroundImage: `url(${getBannerImg()})` }}></div>
+
       {_.get(storeData, 'store', null) !== null && (
         <StoreInfo
           loading={storeLoading}
@@ -65,6 +72,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       height: '398px',
       backgroundSize: 'cover',
+      backgroundPosition: 'center',
       marginTop: '80px',
       overflow: 'hidden',
       '@media screen and (max-width: 1439px)': {

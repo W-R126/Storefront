@@ -14,6 +14,7 @@ export const GET_PRODUCTS = gql`
       images {
         id
         url
+        thumbnail
       }
       bar_code
       short_description

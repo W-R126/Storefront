@@ -3,19 +3,33 @@ import initialState from './initialState';
 
 export default (state = initialState.cart, action) => {
   switch (action.type) {
+    case types.ADD_PRODUCT_CART: {
+      return {
+        ...state,
+        cartList: [...state.cartList, action.payload],
+      };
+    }
     case types.UPDATE_PRODUCT_CART: {
       const addProduct = { ...action.payload };
-      const findOne = state.cartList.find(
-        (item) => item.productId === addProduct.productId && item.orderType === addProduct.orderType
-      );
       let updatedCart = [];
-      if (findOne) {
-        updatedCart = state.cartList.map((item) => {
-          if (item.productId === addProduct.productId && item.orderType === addProduct.orderType) return addProduct;
-          else return item;
+      if (addProduct.qty <= 0) {
+        updatedCart = state.cartList.filter((item) => {
+          if (item.productId && item.orderType === addProduct.orderType) return false;
+          else return true;
         });
       } else {
-        updatedCart = [...state.cartList, addProduct];
+        const findOne = state.cartList.find(
+          (item) => item.productId === addProduct.productId && item.orderType === addProduct.orderType
+        );
+
+        if (findOne) {
+          updatedCart = state.cartList.map((item) => {
+            if (item.productId === addProduct.productId && item.orderType === addProduct.orderType) return addProduct;
+            else return item;
+          });
+        } else {
+          updatedCart = [...state.cartList, addProduct];
+        }
       }
       return {
         ...state,

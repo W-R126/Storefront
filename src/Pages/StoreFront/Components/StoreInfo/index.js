@@ -9,6 +9,7 @@ import Box from '@material-ui/core/Box';
 import { getStoreOpenStatus, getStorePos } from '../../../../utils/store';
 import StoreMap from '../StoreMap';
 import OrderTypesDiv from '../OrderTypesDiv';
+import LogoPlaceHolderImg from '../../../../assets/img/product-card-placeholder.png';
 
 const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
   const classes = useStyles();
@@ -38,12 +39,20 @@ const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
     );
   };
 
+  const getLogoImg = () => {
+    if (loading) return LogoPlaceHolderImg;
+    if (!store || !store.merchant) return LogoPlaceHolderImg;
+    const url = _.get(store.merchant.logo, 'url', null);
+    if (url === null || url.length === 0) return LogoPlaceHolderImg;
+    return url;
+  };
+
   return (
     <Grid container className={classes.root}>
       <Grid item md={6} xs={12} className={classes.MainInfo}>
         <Grid container>
           <Grid item xs={12} className={classes.StoreLogoInfo}>
-            <Avatar className={classes.StoreLogo} src={store.merchant.logo.url} alt="store logo" />
+            <Avatar className={classes.StoreLogo} src={getLogoImg()} alt="store logo" />
             <div className={classes.TitleContent}>
               <h4>{store.name}</h4>
               <p>{store.merchant.business_type}</p>
