@@ -21,7 +21,31 @@ const LoginPasswordPanel = ({ email, password, onChange, gotoLogin, gotoForgotPa
         <span></span>
       </Box>
       <Box className={classes.PasswordInputWrapper}>
-        <PasswordInput label="Enter Password" inputData={password} onChange={(newValue) => onChange({ ...newValue })} />
+        <PasswordInput
+          label="Enter Password"
+          inputData={password}
+          onChange={(e) =>
+            onChange({
+              ...password,
+              value: e.target.value,
+            })
+          }
+          onBlur={(e) => {
+            if (e.target.value.length === 0) {
+              onChange({
+                value: e.target.value,
+                validate: false,
+                errorMsg: 'Required field',
+              });
+            } else {
+              onChange({
+                value: e.target.value,
+                validate: true,
+                errorMsg: '',
+              });
+            }
+          }}
+        />
       </Box>
       <Button
         variant="contained"

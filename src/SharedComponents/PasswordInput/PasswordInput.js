@@ -7,33 +7,10 @@ import IconButton from '@material-ui/core/IconButton';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
-import { getPasswordValidationSchema } from '../../validators/login-validation';
-
-const PasswordInput = ({ id = 'password', label = 'Password', inputData, onChange }) => {
+const PasswordInput = ({ id = 'password', label = 'Password', inputData, onChange, onBlur }) => {
   const classes = useStyles();
 
   const [showPassword, setShowPassword] = useState(false);
-
-  const schema = getPasswordValidationSchema();
-
-  const handleChangePassword = (e) => {
-    schema
-      .validate({ password: e.target.value })
-      .then((res) => {
-        onChange({
-          value: res.password,
-          validate: true,
-          errorMsg: '',
-        });
-      })
-      .catch((err) => {
-        onChange({
-          value: err.value.password,
-          validate: false,
-          errorMsg: err.errors[0],
-        });
-      });
-  };
 
   return (
     <Box className={classes.root}>
@@ -44,7 +21,8 @@ const PasswordInput = ({ id = 'password', label = 'Password', inputData, onChang
         size="medium"
         fullWidth
         value={inputData.value}
-        onChange={handleChangePassword}
+        onChange={onChange}
+        onBlur={onBlur}
         error={!inputData.validate}
         helperText={inputData.errorMsg}
         className={classes.PasswordInput}

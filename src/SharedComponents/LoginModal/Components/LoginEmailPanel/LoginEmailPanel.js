@@ -41,7 +41,15 @@ const LoginEmailPanel = ({ email, onChange, gotoPassword, gotoSignUp }) => {
           label="Email"
           fullWidth
           value={email.value}
-          onChange={(e) => handleChangeEmail(e)}
+          onChange={(e) =>
+            onChange({
+              ...email,
+              value: e.target.value,
+            })
+          }
+          onBlur={(e) => {
+            handleChangeEmail(e);
+          }}
           error={!email.validate}
           helperText={email.errorMsg}
         />

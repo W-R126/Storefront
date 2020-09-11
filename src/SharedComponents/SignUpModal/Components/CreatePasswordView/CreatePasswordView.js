@@ -12,15 +12,15 @@ const CreatePasswordView = ({ password, policyAgree, onChange, signUp }) => {
   const classes = useStyles();
   const schema = getPasswordValidationSchema();
 
-  const checkPasswordValidate = (newPassword) => {
+  const checkPasswordValidate = (e) => {
     schema
       .validate({
-        password: newPassword.value,
+        password: e.target.value,
       })
       .then((res) => {
         onChange({
           password: {
-            value: newPassword.value,
+            value: res.password,
             validate: true,
             errorMsg: '',
           },
@@ -29,7 +29,7 @@ const CreatePasswordView = ({ password, policyAgree, onChange, signUp }) => {
       .catch((err) => {
         onChange({
           password: {
-            value: newPassword.value,
+            value: err.value.password,
             validate: false,
             errorMsg: err.errors[0],
           },
@@ -50,9 +50,15 @@ const CreatePasswordView = ({ password, policyAgree, onChange, signUp }) => {
         <PasswordInput
           label="Enter Password"
           inputData={password}
-          onChange={(password) => {
-            checkPasswordValidate(password);
+          onChange={(e) => {
+            onChange({
+              password: {
+                ...password,
+                value: e.target.value,
+              },
+            });
           }}
+          onBlur={checkPasswordValidate}
         />
       </Box>
       <Box className={classes.CheckboxWrapper}>
