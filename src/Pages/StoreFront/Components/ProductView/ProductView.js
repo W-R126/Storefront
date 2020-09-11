@@ -129,7 +129,7 @@ const ProductView = ({ open, hideModal, productId, currencyData, net_price, addP
 
   if (loading)
     return (
-      <Dialog open={open} onClose={hideModal} fullWidth={true} maxWidth="lg" className={classes.root}>
+      <Dialog open={open} onClose={hideModal} fullWidth={true} maxWidth="md" className={classes.root}>
         <IconButton onClick={hideModal} className={classes.CloseButton}>
           <CloseIcon color="Primary.title" />
         </IconButton>
@@ -161,7 +161,7 @@ const ProductView = ({ open, hideModal, productId, currencyData, net_price, addP
     );
   else
     return (
-      <Dialog open={open} onClose={hideModal} fullWidth={true} maxWidth="lg" className={classes.root}>
+      <Dialog open={open} onClose={hideModal} fullWidth={true} maxWidth="md" className={classes.root}>
         <IconButton onClick={hideModal} className={classes.CloseButton}>
           <CloseIcon color="Primary.title" />
         </IconButton>
@@ -250,16 +250,21 @@ const useStyles = makeStyles((theme: Theme) =>
       '& .MuiDialog-paper': {
         padding: '50px',
         width: '100%',
-        maxWidth: '1180px',
+        maxWidth: '1024px',
         borderRadius: '10px',
         boxShadow: '0 1px 4px 0 rgba(186, 195, 201, 0.5)',
         border: 'solid 1px rgba(186, 195, 201, 0.5)',
         backgroundColor: '#ffffff',
         position: 'relative',
+        maxHeight: '80vh',
         '@media screen and (max-width: 768px)': {
           paddingLeft: '15px',
           paddingRight: '15px',
           paddingTop: '20px',
+        },
+        '@media screen and (max-width: 480px)': {
+          marginLeft: '15px',
+          marginRight: '15px',
         },
       },
     },
@@ -343,6 +348,8 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'right',
       '@media screen and (max-width: 768px)': {
         textAlign: 'left',
+        paddingLeft: '10px',
+        minWidth: 'auto',
       },
     },
     StockValue: {
@@ -350,6 +357,8 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'right',
       '@media screen and (max-width: 768px)': {
         textAlign: 'left',
+        paddingLeft: '10px',
+        minWidth: 'auto',
       },
     },
     CartControlField: {
@@ -372,7 +381,13 @@ const useStyles = makeStyles((theme: Theme) =>
         marginTop: '25px',
       },
     },
-    CartInput: { width: '100px', marginLeft: '15px' },
+    CartInput: {
+      width: '100px',
+      marginLeft: '15px',
+      '@media screen and (max-width: 410px)': {
+        width: '60px',
+      },
+    },
     CartButton: {
       width: '120px',
       height: '50px',

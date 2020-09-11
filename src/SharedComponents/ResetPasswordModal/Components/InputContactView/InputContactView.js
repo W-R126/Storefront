@@ -36,7 +36,6 @@ const InputContactView = ({ formData, onChange, gotoNext, gotoLogin }) => {
     CHECK_EMAIL_AVAILABILITY,
     {
       onCompleted(d) {
-        debugger;
         if (d) {
           onChange({
             ...formData.email,
@@ -58,9 +57,7 @@ const InputContactView = ({ formData, onChange, gotoNext, gotoLogin }) => {
     sendResetCode,
     { data: sendResetCodeData, loading: sendResetCodeLoading, error: sendResetCodeError },
   ] = useMutation(SEND_RESET_CODE, {
-    onCompleted(d) {
-      debugger;
-    },
+    onCompleted(d) {},
   });
 
   const handleClickContinue = () => {

@@ -108,7 +108,8 @@ export const getCurrency = (localisationInfo) => {
 
 export const getStorePos = (storeInfo) => {
   const address = _.get(storeInfo, 'address', null);
-  if (!address) return { lat: 0, lng: 0 };
+  if (!address) return null;
+  if (address.lat === null || address.lng === null) return null;
   return { lat: parseFloat(address.lat), lng: parseFloat(address.lng) };
 };
 

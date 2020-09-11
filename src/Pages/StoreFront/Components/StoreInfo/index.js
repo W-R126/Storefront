@@ -102,7 +102,7 @@ const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
           </Grid>
         </Grid>
         <Grid item md={6} xs={12} className={classes.MapGrid}>
-          <StoreMap mapCenter={getStorePos(store)} />
+          {getStorePos(store) !== null && <StoreMap mapCenter={getStorePos(store)} />}
           <Box className={classes.MapOverlay}></Box>
         </Grid>
       </Grid>
