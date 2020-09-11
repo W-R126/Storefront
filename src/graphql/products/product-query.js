@@ -17,6 +17,7 @@ export const GET_PRODUCTS = gql`
         thumbnail
       }
       bar_code
+      stocked
       short_description
       measure_amount
       measure_type
@@ -47,7 +48,7 @@ export const GET_PRODUCT_BY_ID = gql`
       name
       bar_code
       product_code
-      # SKU
+      stocked
       images {
         id
         url

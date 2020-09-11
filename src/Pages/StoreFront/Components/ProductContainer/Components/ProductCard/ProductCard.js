@@ -140,23 +140,21 @@ const ProductCard = ({
   return (
     <div className={classes.root}>
       <div className={classes.ProductImg} style={{ backgroundImage: `url(${getProductImage()})` }}>
-        {productInfo.measure_type !== null &&
-          productInfo.measure_amount !== null &&
-          productInfo.measure_type !== 'qty' && (
-            <div className={classes.ProductLabel}>
-              {productInfo.measure_amount} {productInfo.measure_type}
-            </div>
-          )}
+        {productInfo.measure_type !== null && productInfo.measure_amount !== null && (
+          <div className={classes.ProductLabel}>
+            {productInfo.measure_amount} {productInfo.measure_type}
+          </div>
+        )}
       </div>
       <div className={classes.ProductContent}>
         <div className={classes.TopSection}>
           <div className={classes.LeftInfo}>
             <div className={classes.Title}>{productInfo.name}</div>
-            <div className={classes.Status}>Code: {productInfo.bar_code}</div>
+            {_.get(productInfo, 'stocked', false) && <div className={classes.Status}>Code: {productInfo.bar_code}</div>}
           </div>
           <div className={classes.Value}>
             {renderPriceInfo()}
-            {/* <div className={classes.Stock}>{`${getStock()} in stock`}</div> */}
+            <div className={classes.Stock}>{`${getStock()} in stock`}</div>
           </div>
         </div>
         <div className={classes.Description}>{productInfo.short_description}</div>
@@ -193,19 +191,26 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
       backgroundRepeat: 'no-repeat',
-      border: 'solid 1px #f3f5f7',
+      position: 'relative',
+      marginTop: '-5px',
+      marginBottom: '-5px',
+      marginLeft: '-5px',
     },
     ProductLabel: {
+      position: 'absolute',
       marginTop: 'auto',
-      width: '100%',
-      height: '25px',
-      backgroundColor: 'rgba(1, 86, 184, 0.77)',
+      width: '38px',
+      height: '38px',
+      backgroundColor: 'rgba(20, 54, 106, 0.89)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       color: '#fff',
-      fontWeight: 300,
-      fontSize: '13px',
+      fontWeight: 'normal',
+      fontSize: '12px',
+      bottom: '5px',
+      left: '5px',
+      borderRadius: '19px',
     },
     ProductContent: {
       flex: '1 1 100%',

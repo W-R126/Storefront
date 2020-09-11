@@ -63,7 +63,7 @@ const ProductView = ({ open, hideModal, productId, currencyData, net_price, addP
   const getProductLabel = () => {
     const product = getProduct();
     if (product) {
-      if (product.measure_amount === null || product.measure_type === 'qty') return '';
+      if (product.measure_amount === null || product.measure_type === null) return '';
       return `${product.measure_amount} ${product.measure_type}`;
     }
     return '';
@@ -117,12 +117,16 @@ const ProductView = ({ open, hideModal, productId, currencyData, net_price, addP
           <Typography className={classes.ProductTitle} variant="h1">
             {_.get(getProduct(), 'name', '')}
           </Typography>
-          <Typography variant="h3" style={{ marginTop: '5px' }}>
-            {`Barcode: ${_.get(getProduct(), 'bar_code', '')}`}
-          </Typography>
-          <Typography variant="h3" style={{ marginTop: '5px' }}>
-            {`SKU: ${_.get(getProduct(), 'SKU', '')}`}
-          </Typography>
+          {_.get(getProduct(), 'stocked', false) && (
+            <>
+              <Typography variant="h3" style={{ marginTop: '5px' }}>
+                {`Barcode: ${_.get(getProduct(), 'bar_code', '')}`}
+              </Typography>
+              <Typography variant="h3" style={{ marginTop: '5px' }}>
+                {`SKU: ${_.get(getProduct(), 'SKU', '')}`}
+              </Typography>
+            </>
+          )}
         </>
       );
   };
