@@ -16,7 +16,7 @@ import { LOGIN_SUCCESS } from '../../actions/actionTypes';
 const LOGIN_EMAIL_PANEL = 0;
 const LOGIN_PASSWORD_PANEL = 1;
 
-const LoginModal = ({ isShow, hideModal, gotoSignUp }) => {
+const LoginModal = ({ isShow, hideModal, gotoSignUp, gotoForgotPassword }) => {
   const dispatch = useDispatch();
 
   const [curView, setCurView] = useState(LOGIN_EMAIL_PANEL);
@@ -84,7 +84,7 @@ const LoginModal = ({ isShow, hideModal, gotoSignUp }) => {
               setCurView(LOGIN_EMAIL_PANEL);
             }}
             gotoForgotPassword={() => {
-              // setCurView(FORGOT_PASSWORD_PANEL);
+              gotoForgotPassword();
             }}
             email={loginData.email}
             password={loginData.password}

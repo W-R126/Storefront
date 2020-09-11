@@ -21,10 +21,12 @@ import { getProductPaginationAction } from '../../../../../../actions/productAct
 
 const ProductList = ({ client, getProductPaginationAction }) => {
   const classes = useStyles();
-  const { productList, cartInfo, orderType } = useSelector((state) => ({
+  const { productList, cartInfo, orderType, filter, pageData } = useSelector((state) => ({
     productList: state.productReducer.productList,
     cartInfo: state.cartReducer.cartList,
     orderType: state.storeReducer.orderType,
+    filter: state.productReducer.filter,
+    pageData: state.productReducer.pageData,
   }));
 
   const { loading: storeSettingLoading, error: storeSettingError, data: storeSettingData } = useQuery(
@@ -34,8 +36,8 @@ const ProductList = ({ client, getProductPaginationAction }) => {
   const { data: currencyData } = useQuery(GET_CURRENCY);
 
   useEffect(() => {
-    getProductPaginationAction(client, 1);
-  }, [client, getProductPaginationAction]);
+    getProductPaginationAction(client, filter, pageData);
+  }, [filter, pageData.current_page]);
 
   const getNetPriceStatus = () => {
     const merchantSettings = _.get(merchantNetPrice, 'merchantSettings', null);
@@ -43,13 +45,35 @@ const ProductList = ({ client, getProductPaginationAction }) => {
     return merchantSettings.products.net_price;
   };
 
+  const renderLoadingCards = () => {
+    const renderCards = [];
+    const limitValue = 4;
+    // const limitValue = getIsShowSideCategory(storeSettingData) ? 4 : 3;
+    for (let i = 0; i < 3; i++) {
+      renderCards.push(
+        <Grid item lg={limitValue} md={6} xs={12} key={i}>
+          <ProductCard
+            productInfo={undefined}
+            currencyData={currencyData}
+            net_price={getNetPriceStatus()}
+            cartInfo={cartInfo}
+            orderType={orderType}
+            loading={true}
+          />
+        </Grid>
+      );
+    }
+    return renderCards;
+  };
+
   return (
-    <Grid container className={classes.root}>
+    <Grid container className={classes.root} style={{}}>
       <Grid item xs={12}>
         <Grid container spacing={2}>
+          {storeSettingLoading && pageData.current_page === 1 && renderLoadingCards()}
           {getOrdredProducts(productList, storeSettingData).map((item, nIndex) => {
             return (
-              <Grid item lg={getIsShowSideCategory(storeSettingData) ? 4 : 3} md={6} xs={12} key={item.id}>
+              <Grid item lg={getIsShowSideCategory(storeSettingData) ? 4 : 3} md={6} xs={12} key={nIndex}>
                 <ProductCard
                   productInfo={item}
                   currencyData={currencyData}
@@ -69,9 +93,7 @@ const ProductList = ({ client, getProductPaginationAction }) => {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      paddingLeft: '26px',
-    },
+    root: {},
   })
 );
 export default withApollo(

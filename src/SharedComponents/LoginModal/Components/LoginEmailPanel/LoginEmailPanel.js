@@ -44,7 +44,6 @@ const LoginEmailPanel = ({ email, onChange, gotoPassword, gotoSignUp }) => {
           onChange={(e) => handleChangeEmail(e)}
           error={!email.validate}
           helperText={email.errorMsg}
-          size="medium"
         />
       </Box>
       <Button

@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useQuery } from '@apollo/react-hooks';
-import Skeleton from '@material-ui/lab/Skeleton';
 
 import Header from '../../SharedComponents/Header';
 import StoreInfo from './Components/StoreInfo';
@@ -45,14 +44,12 @@ const StoreFrontPage = () => {
 
       <div className={classes.TopBanner} style={{ backgroundImage: `url(${getBannerImg()})` }}></div>
 
-      {_.get(storeData, 'store', null) !== null && (
-        <StoreInfo
-          loading={storeLoading}
-          error={storeError}
-          store={_.get(storeData, 'store', {})}
-          showOpeningHours={() => setShowOpeningHourModal(true)}
-        />
-      )}
+      <StoreInfo
+        loading={storeLoading}
+        error={storeError}
+        store={_.get(storeData, 'store', {})}
+        showOpeningHours={() => setShowOpeningHourModal(true)}
+      />
       <ProductContainer />
       <Footer />
       <OpeningHoursModal

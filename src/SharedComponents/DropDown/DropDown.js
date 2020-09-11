@@ -114,6 +114,12 @@ const useStyles = makeStyles((theme: Theme) =>
       '&.MuiButton-root': {
         backgroundColor: 'rgba( 186, 195, 201, 0.2)',
       },
+      '& .MuiButton-label': {
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
+        justifyContent: 'flex-start',
+      },
     },
     ChevIcon: {
       position: 'absolute',
@@ -132,6 +138,8 @@ const useStyles = makeStyles((theme: Theme) =>
       top: 'calc(100% + 2px)',
       borderRadius: '10px',
       borderColor: 'rgba(186, 195, 201, 0.5)',
+      maxHeight: '300px',
+      overflowY: 'auto',
       '& .MuiList-root': {
         padding: '15px 0',
       },

@@ -18,6 +18,8 @@ import DropDown from '../DropDown';
 import LoginModal from '../LoginModal';
 import UserDialog from '../UserDialog';
 import SignUpModal from '../SignUpModal';
+import ResetPassword from '../ResetPasswordModal';
+
 import * as types from '../../actions/actionTypes';
 import { GET_CATEGORIES } from '../../graphql/categories/categories-query';
 import { GET_STORE_SETTING_PRODUCT } from '../../graphql/store/store-query';
@@ -46,6 +48,7 @@ const Header = ({ children, orderTypesList }) => {
   const [showLogin, setShowLogin] = useState(false);
   const [showUserDetail, setShowUserDetail] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
+  const [showResetPassowrdModal, setShowResetPassword] = useState(false);
 
   const { authInfo, orderType } = useSelector((state) => ({
     authInfo: state.authReducer.userInfo,
@@ -150,6 +153,10 @@ const Header = ({ children, orderTypesList }) => {
             setShowLogin(false);
             setShowSignUp(true);
           }}
+          gotoForgotPassword={() => {
+            setShowLogin(false);
+            setShowResetPassword(true);
+          }}
         />
       )}
       {showUserDetail && <UserDialog hideModal={() => setShowUserDetail(false)} />}
@@ -158,6 +165,17 @@ const Header = ({ children, orderTypesList }) => {
           hideModal={() => setShowSignUp(false)}
           gotoLogin={() => {
             setShowSignUp(false);
+            setShowLogin(true);
+          }}
+        />
+      )}
+      {showResetPassowrdModal && (
+        <ResetPassword
+          hideModal={() => {
+            setShowResetPassword(false);
+          }}
+          gotoLogin={() => {
+            setShowResetPassword(false);
             setShowLogin(true);
           }}
         />

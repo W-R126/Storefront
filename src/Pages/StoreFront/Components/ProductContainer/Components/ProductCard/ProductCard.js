@@ -115,37 +115,47 @@ const ProductCard = ({
       );
   };
 
+  if (loading)
+    return (
+      <div className={classes.root}>
+        <Skeleton className={classes.SkelotonProductImg} />
+        <div className={classes.ProductContent}>
+          <div className={classes.TopSection}>
+            <div className={classes.LeftInfo}>
+              <Skeleton className={classes.SkeletonTitle} animation="pulse" />
+              <Skeleton className={classes.SkeltonStatus} />
+            </div>
+            <div className={classes.Value}>
+              <Skeleton className={classes.SkeltonStatus} />
+            </div>
+          </div>
+          <Skeleton variant="rect" height={40} />
+          <div className={classes.Bottom}>
+            <Skeleton width={60} style={{ marginLeft: 'auto' }} />
+          </div>
+        </div>
+      </div>
+    );
+
   return (
     <div className={classes.root}>
-      {loading ? (
-        <Skeleton className={classes.SkelotonProductImg} />
-      ) : (
-        <div className={classes.ProductImg} style={{ backgroundImage: `url(${getProductImage()})` }}>
-          {productInfo.measure_type !== null &&
-            productInfo.measure_amount !== null &&
-            productInfo.measure_type !== 'qty' && (
-              <div className={classes.ProductLabel}>
-                {productInfo.measure_amount} {productInfo.measure_type}
-              </div>
-            )}
-        </div>
-      )}
+      <div className={classes.ProductImg} style={{ backgroundImage: `url(${getProductImage()})` }}>
+        {productInfo.measure_type !== null &&
+          productInfo.measure_amount !== null &&
+          productInfo.measure_type !== 'qty' && (
+            <div className={classes.ProductLabel}>
+              {productInfo.measure_amount} {productInfo.measure_type}
+            </div>
+          )}
+      </div>
       <div className={classes.ProductContent}>
         <div className={classes.TopSection}>
           <div className={classes.LeftInfo}>
-            {loading ? (
-              <Skeleton className={classes.SkeletonTitle} animation="pulse" />
-            ) : (
-              <div className={classes.Title}>{productInfo.name}</div>
-            )}
-            {loading ? (
-              <Skeleton className={classes.SkeltonStatus} />
-            ) : (
-              <div className={classes.Status}>Code: {productInfo.bar_code}</div>
-            )}
+            <div className={classes.Title}>{productInfo.name}</div>
+            <div className={classes.Status}>Code: {productInfo.bar_code}</div>
           </div>
           <div className={classes.Value}>
-            {loading ? <Skeleton className={classes.SkeltonStatus} /> : renderPriceInfo()}
+            {renderPriceInfo()}
             {/* <div className={classes.Stock}>{`${getStock()} in stock`}</div> */}
           </div>
         </div>
@@ -157,7 +167,6 @@ const ProductCard = ({
           open={showProductView}
           hideModal={() => setShowProductView(false)}
           productId={productInfo.id}
-          // productId={'023af2b9-4206-4995-9cf9-9a956e220d37'}
           currencyData={currencyData}
           net_price={net_price}
         />

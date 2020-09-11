@@ -1,7 +1,7 @@
 import React from 'react';
 import { withKnobs, object, boolean } from '@storybook/addon-knobs';
 import { Provider } from 'react-redux';
-import store from './store';
+import store from '../../../../../../store';
 
 import ProductCard from './ProductCard';
 
@@ -18,6 +18,7 @@ export const normal = () => {
   const orderType: Object = object('OrderType', defaultOrderType);
   const cartInfo: Array = object('CartInfo', defaultCartInfo);
   const netPrice: Boolean = boolean('Net Price', false);
+  const loading: Boolean = boolean('Loading', false);
 
   return (
     <Provider store={store}>
@@ -27,6 +28,7 @@ export const normal = () => {
         orderType={orderType}
         netPrice={netPrice}
         cartInfo={cartInfo}
+        loading={loading}
       />
     </Provider>
   );

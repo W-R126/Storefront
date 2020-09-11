@@ -5,6 +5,7 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 import { getStoreOpenStatus, getStorePos } from '../../../../utils/store';
 import StoreMap from '../StoreMap';
@@ -46,6 +47,67 @@ const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
     if (url === null || url.length === 0) return LogoPlaceHolderImg;
     return url;
   };
+
+  if (loading) {
+    return (
+      <Grid container className={classes.root}>
+        <Grid item md={6} xs={12} className={classes.MainInfo}>
+          <Grid container>
+            <Grid item xs={12} className={classes.StoreLogoInfo}>
+              <Skeleton className={classes.SkeletonStoreLogo} variant="rect" />
+
+              <div className={classes.TitleContent}>
+                <Skeleton variant="rect" width={140} height={20} />
+                <Skeleton width={140} height={18} />
+              </div>
+            </Grid>
+
+            <Grid item xs={12} className={classes.Description}>
+              <Skeleton variant="rect" width="100%" height={24} />
+            </Grid>
+            <Grid item xs={12}>
+              <div className={classes.DetailInfoItem}>
+                <div className={classes.LableName}>
+                  <Skeleton style={{ marginRight: '10px' }} />
+                </div>
+                <div className={classes.LabelValue}>
+                  <Skeleton width="80%" />
+                </div>
+              </div>
+              <div className={classes.DetailInfoItem}>
+                <div className={classes.LableName}>
+                  <Skeleton style={{ marginRight: '10px' }} />
+                </div>
+                <div className={classes.LabelValue}>
+                  <Skeleton width="80%" />
+                </div>
+              </div>
+              <div className={classes.DetailInfoItem}>
+                <div className={classes.LableName}>
+                  <Skeleton style={{ marginRight: '10px' }} />
+                </div>
+                <div className={classes.LabelValue}>
+                  <Skeleton width="80%" />
+                </div>
+              </div>
+              <div className={classes.DetailInfoItem}>
+                <div className={classes.LableName}>
+                  <Skeleton style={{ marginRight: '10px' }} />
+                </div>
+                <div className={classes.LabelValue}>
+                  <Skeleton width="80%" />
+                </div>
+              </div>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item md={6} xs={12} className={classes.MapGrid}>
+          <StoreMap mapCenter={getStorePos(store)} />
+          <Box className={classes.MapOverlay}></Box>
+        </Grid>
+      </Grid>
+    );
+  }
 
   return (
     <Grid container className={classes.root}>
@@ -124,6 +186,17 @@ const useStyles = makeStyles((theme: Theme) =>
         height: '70px',
         borderRadius: '35px',
         border: 'solid 2px rgba(186, 195, 201, 0.5)',
+      },
+    },
+    SkeletonStoreLogo: {
+      border: 'none',
+      width: '105px',
+      height: '105px',
+      borderRadius: '55px',
+      '@media screen and (max-width: 767px)': {
+        width: '70px',
+        height: '70px',
+        borderRadius: '35px',
       },
     },
     TitleContent: {
