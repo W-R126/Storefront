@@ -175,6 +175,7 @@ const Header = ({ children, orderTypesList }) => {
             setShowResetPassword(false);
           }}
           gotoLogin={() => {
+            debugger;
             setShowResetPassword(false);
             setShowLogin(true);
           }}

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import AuthModal from '../AuthModal';
 import InputContactView from './Components/InputContactView';
+import CheckEmailView from './Components/CheckEmailView';
 
 const INPUT_CONTACT_VIEW = 0;
-const LOGIN_VIEW = 1;
+const RESEND_VIEW = 1;
 
 const ResetPasswordModal = ({ isShow, hideModal, gotoLogin }) => {
   const [curView, setCurView] = useState(INPUT_CONTACT_VIEW);
@@ -27,9 +28,12 @@ const ResetPasswordModal = ({ isShow, hideModal, gotoLogin }) => {
               email: { ...value },
             });
           }}
-          gotoNext={() => setCurView(LOGIN_VIEW)}
-          gotoLoing={gotoLogin}
+          gotoNext={() => setCurView(RESEND_VIEW)}
+          gotoLogin={gotoLogin}
         />
+      )}
+      {curView === RESEND_VIEW && (
+        <CheckEmailView formData={formData} gotoLogin={gotoLogin} gotoBack={() => setCurView(INPUT_CONTACT_VIEW)} />
       )}
     </AuthModal>
   );

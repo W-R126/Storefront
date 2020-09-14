@@ -57,7 +57,9 @@ const InputContactView = ({ formData, onChange, gotoNext, gotoLogin }) => {
     sendResetCode,
     { data: sendResetCodeData, loading: sendResetCodeLoading, error: sendResetCodeError },
   ] = useMutation(SEND_RESET_CODE, {
-    onCompleted(d) {},
+    onCompleted(d) {
+      gotoNext();
+    },
   });
 
   const handleClickContinue = () => {
