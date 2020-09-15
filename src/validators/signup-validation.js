@@ -20,8 +20,12 @@ export const getSignUpValidationSchema = () =>
 
 export const getPasswordValidationSchema = () =>
   Yup.object().shape({
-    password: Yup.string().matches(
-      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{3,}$/,
-      'Must One Uppercase, One Lowercase, One Number and one special case Character'
-    ),
+    password: Yup.string()
+      .min(8, 'Too Short!')
+      .max(50, 'Too Long!')
+      .matches(
+        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{3,}$/,
+        'Must One Uppercase, One Lowercase, One Number and one special case Character'
+      )
+      .required('Required field'),
   });

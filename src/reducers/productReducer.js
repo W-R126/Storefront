@@ -7,10 +7,12 @@ export default (state = initialState.product, action) => {
     case types.UPDATE_PRODUCT_PAGEDATA: {
       return {
         ...state,
+        loading: true,
         pageData: { ...action.payload },
       };
     }
     case types.UPDATE_PRODUCT_LIST: {
+      console.log('UPDATE_PRODUCT_LIST');
       return {
         ...state,
         loading: false,

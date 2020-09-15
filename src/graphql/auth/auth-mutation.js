@@ -128,3 +128,14 @@ export const SEND_RESET_CODE = gql`
     sendResetCode(input: { email: $email })
   }
 `;
+
+interface PasswordResetInput {
+  code: String;
+  password: String;
+}
+
+export const PASSWORD_RESET = gql`
+  mutation passwordReset($input: PasswordResetInput!) {
+    passwordReset(input: $input)
+  }
+`;

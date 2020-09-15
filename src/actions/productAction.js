@@ -80,7 +80,6 @@ export const updateCatgoryFilterAction = (newCategory) => (dispatch) => {
 };
 
 export const updateSearchStrProductAction = (newStr) => (dispatch) => {
-  console.log(newStr);
   dispatch({
     type: UPDATE_PRODUCT_SEARCH_STR_FILTER,
     payload: newStr,

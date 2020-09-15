@@ -12,9 +12,7 @@ const AuthModal = ({ isShow, hideModal, children, wrapperClass }) => {
   if (wrapperClass) rootClass.push(wrapperClass);
 
   const handleClick = () => {
-    setTimeout(() => {
-      hideModal();
-    }, 150);
+    hideModal();
   };
 
   return (
@@ -55,8 +53,11 @@ const useStyles = makeStyles((theme: Theme) =>
       right: '15px',
       top: '15px',
       borderRadius: '20px',
-      backgroundColor: theme.palette.secondary.greyBack,
+      backgroundColor: 'rgba(186, 195, 201, 0.3)',
       zIndex: 1,
+      '&: hover': {
+        backgroundColor: 'rgba(186, 195, 201, 0.6)',
+      },
     },
   })
 );

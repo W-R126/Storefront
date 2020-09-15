@@ -85,6 +85,10 @@ const ProductList = ({ client, getProductPaginationAction }) => {
               </Grid>
             );
           })}
+          {productLoading &&
+            pageData.total_pages > 1 &&
+            pageData.current_page < pageData.total_pages &&
+            renderLoadingCards()}
         </Grid>
       </Grid>
     </Grid>

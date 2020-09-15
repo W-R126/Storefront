@@ -113,7 +113,6 @@ export const getCurrency = (localisationInfo) => {
 
 export const getStorePos = (storeInfo) => {
   const address = _.get(storeInfo, 'address', null);
-  console.log(address);
   if (!address) return null;
   const lat = _.get(address, 'lat', null);
   const lng = _.get(address, 'lng', null);

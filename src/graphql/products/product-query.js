@@ -1,10 +1,10 @@
 import gql from 'graphql-tag';
 
-type Filter = {
-  page: Number,
-  limit: Number,
-  count?: Boolean,
-};
+interface Filter {
+  page: Number;
+  limit: Number;
+  count?: Boolean;
+}
 
 export const GET_PRODUCTS = gql`
   query getProducts($filter: Filter) {
