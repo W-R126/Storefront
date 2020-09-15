@@ -200,7 +200,7 @@ const useStyles = makeStyles((theme: Theme) =>
     DialCode: {
       display: 'inline-block',
       marginLeft: '5px',
-      width: '20px',
+      minWidth: '20px',
     },
     CountryName: {
       flex: '1 1 100%',
@@ -211,13 +211,13 @@ const useStyles = makeStyles((theme: Theme) =>
     MenuItemFlag: {
       width: '25px',
       height: '19px',
-      backgroundSize: 'cover',
+      backgroundSize: '100% 100%',
       flex: '0 0 25px',
     },
     Flag: {
       width: '25px',
       height: '19px',
-      backgroundSize: 'cover',
+      backgroundSize: '100% 100%',
       marginRight: '6px',
       flex: '0 0 25px',
     },
@@ -226,6 +226,7 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '11px',
       marginRight: '5px',
       flex: '0, 0, 20px',
+      backgroundSize: '100% 100%',
     },
   })
 );

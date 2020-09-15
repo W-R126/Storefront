@@ -5,12 +5,21 @@ import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
-const AuthModal = ({ isShow, hideModal, children }) => {
+const AuthModal = ({ isShow, hideModal, children, wrapperClass }) => {
   const classes = useStyles();
 
+  const rootClass = [classes.root];
+  if (wrapperClass) rootClass.push(wrapperClass);
+
+  const handleClick = () => {
+    setTimeout(() => {
+      hideModal();
+    }, 150);
+  };
+
   return (
-    <Paper className={classes.root}>
-      <IconButton onClick={hideModal} className={classes.CloseButton}>
+    <Paper className={rootClass.join(' ')}>
+      <IconButton onClick={handleClick} className={classes.CloseButton}>
         <CloseIcon />
       </IconButton>
       {children}

@@ -8,7 +8,7 @@ import MenuList from '@material-ui/core/MenuList';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { Button } from '@material-ui/core';
 
-const DropDown = ({ value, onChange, menuList, wrapperClass, buttonStyles }) => {
+const DropDown = ({ value, onChange, menuList, wrapperClass, buttonClass }) => {
   const classes = useStyles();
 
   const [open, setOpen] = useState(false);
@@ -58,6 +58,11 @@ const DropDown = ({ value, onChange, menuList, wrapperClass, buttonStyles }) => 
 
   const rootClasses = [classes.ComponentContainer];
   if (wrapperClass) rootClasses.push(wrapperClass);
+
+  const dropDownButtonClasses = [classes.DropDownButton];
+  if (buttonClass) dropDownButtonClasses.push(buttonClass);
+  if (open) dropDownButtonClasses.push(classes.Active);
+
   return (
     <div ref={ref} className={rootClasses.join(' ')}>
       <Button
@@ -65,8 +70,7 @@ const DropDown = ({ value, onChange, menuList, wrapperClass, buttonStyles }) => 
         aria-controls={open ? 'menu-list-grow' : undefined}
         aria-haspopup="true"
         onClick={handleToggle}
-        className={classes.DropDownButton}
-        style={buttonStyles}
+        className={dropDownButtonClasses.join(' ')}
       >
         {_.get(value, 'label', '')}
         <KeyboardArrowDownIcon className={`${open ? classes.Opened : undefined} ${classes.ChevIcon}`} />
@@ -103,22 +107,37 @@ const useStyles = makeStyles((theme: Theme) =>
     DropDownButton: {
       color: theme.palette.primary.text,
       fontSize: '16px',
-      borderRadius: '4px',
-      paddingLeft: '21px',
+      borderRadius: '0',
+      paddingLeft: '10px',
       paddingRight: '40px',
       position: 'relative',
       textTransform: 'capitalize',
-      width: '147px',
+      width: '100%',
       height: '40px',
       fontWeight: 300,
       '&.MuiButton-root': {
         backgroundColor: 'rgba( 186, 195, 201, 0.2)',
+        '&:hover': {
+          transition: 'border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+          borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
+        },
+      },
+      '&.MuiButton-root:after': {
+        content: ' asdf',
       },
       '& .MuiButton-label': {
         overflow: 'hidden',
         whiteSpace: 'nowrap',
         textOverflow: 'ellipsis',
         justifyContent: 'flex-start',
+      },
+      '&.active': {},
+    },
+    Active: {
+      borderBottom: `1px solid ${theme.palette.primary.main} !important`,
+      backgroundColor: 'white !important',
+      '& .MuiButton-label': {
+        color: theme.palette.primary.main,
       },
     },
     ChevIcon: {
@@ -140,6 +159,7 @@ const useStyles = makeStyles((theme: Theme) =>
       borderColor: 'rgba(186, 195, 201, 0.5)',
       maxHeight: '300px',
       overflowY: 'auto',
+      zIndex: 1,
       '& .MuiList-root': {
         padding: '15px 0',
       },

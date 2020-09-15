@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useMutation } from '@apollo/react-hooks';
 
 import AuthModal from '../AuthModal';
@@ -9,6 +9,7 @@ import CreatePasswordView from './Components/CreatePasswordView';
 import ResultView from './Components/ResultView';
 
 import { SIGNUP } from '../../graphql/auth/auth-mutation';
+import { getDialCodeWithCode } from '../../constants';
 
 const SIGNUP_PHONE_VIEW = 0;
 const SIGNUP_CONTACT_VIEW = 1;
@@ -16,9 +17,18 @@ const SIGNUP_CREATE_PASSWORD_VIEW = 2;
 const SIGNUP_RESULT_VIEW = 3;
 
 const SignUpModal = ({ isShow, hideModal, gotoLogin }) => {
+  const { countryCode } = useSelector((state) => ({
+    countryCode: state.localizationReducer.countryCode,
+  }));
   const [curView, setCurView] = useState(SIGNUP_PHONE_VIEW);
   const [formData, setFormData] = useState({
-    phoneNumber: { code: '+44', number: '', validate: true, errorMsg: '' },
+    phoneNumber: {
+      dial_code: getDialCodeWithCode(countryCode),
+      code: countryCode,
+      number: '',
+      validate: true,
+      errorMsg: '',
+    },
     firstName: '',
     lastName: '',
     email: '',
@@ -37,7 +47,7 @@ const SignUpModal = ({ isShow, hideModal, gotoLogin }) => {
           firstName: formData.firstName,
           secondName: formData.lastName,
           password: formData.password.value,
-          mobile: '+441234567891' || `${formData.phoneNumber.code}${formData.phoneNumber.number}`, // fix
+          mobile: '+441234567891' || `${formData.phoneNumber.dial_code}${formData.phoneNumber.number}`, // fix
         },
       });
     } catch (e) {

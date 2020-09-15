@@ -18,9 +18,14 @@ const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
   const getFullAddress = () => {
     let address = '';
     const addressKeys = ['line1', 'line2', 'city_town', 'postcode'];
+    const addresses = _.get(store, 'address', {});
+
     addressKeys.forEach((item, nIndex) => {
-      address += `${store.address[item]}`;
-      if (nIndex < addressKeys.length - 1) address += ', ';
+      const strValue = _.get(addresses, item, '');
+      if (strValue && strValue.length > 0) {
+        address += strValue;
+        if (nIndex < addressKeys.length - 1) address += ', ';
+      }
     });
     return address;
   };
@@ -33,9 +38,7 @@ const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
         <span className={`${classes.StoreStatus} ${storeOpenStatus.closed ? '' : classes.StoreStatusOpen}`}>
           {storeOpenStatus.closed ? 'Close' : 'Open'}
         </span>
-        <span onClick={showOpeningHours} role="button" style={{ cursor: 'pointer' }}>
-          {storeOpenStatus.nextStatus}
-        </span>
+        <span style={{ cursor: 'pointer' }}>{storeOpenStatus.nextStatus}</span>
       </>
     );
   };
@@ -102,7 +105,6 @@ const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
           </Grid>
         </Grid>
         <Grid item md={6} xs={12} className={classes.MapGrid}>
-          {getStorePos(store) !== null && <StoreMap mapCenter={getStorePos(store)} />}
           <Box className={classes.MapOverlay}></Box>
         </Grid>
       </Grid>
@@ -117,7 +119,7 @@ const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
             <Avatar className={classes.StoreLogo} src={getLogoImg()} alt="store logo" />
             <div className={classes.TitleContent}>
               <h4>{store.name}</h4>
-              <p>{store.merchant.business_type}</p>
+              <p>{_.get(_.get(store, 'merchant', {}), 'business_type', '')}</p>
             </div>
           </Grid>
           <Grid item xs={12} className={classes.Description}>
@@ -130,7 +132,14 @@ const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
             </div>
             <div className={classes.DetailInfoItem}>
               <div className={classes.LableName}>Hours:</div>
-              <div className={classes.LabelValue}>{renderHoursStatus()}</div>
+              <div
+                className={classes.LabelValue}
+                onClick={showOpeningHours}
+                role="button"
+                style={{ cursor: 'pointer' }}
+              >
+                {renderHoursStatus()}
+              </div>
             </div>
             <div className={classes.DetailInfoItem}>
               <div className={classes.LableName}>Phone:</div>
@@ -144,7 +153,7 @@ const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
         </Grid>
       </Grid>
       <Grid item md={6} xs={12} className={classes.MapGrid}>
-        <StoreMap mapCenter={getStorePos(store)} />
+        {getStorePos(store) !== null && <StoreMap mapCenter={getStorePos(store)} />}
         <Box className={classes.MapOverlay}></Box>
       </Grid>
     </Grid>

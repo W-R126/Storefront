@@ -79,7 +79,7 @@ const CategorySideBar = ({ storeSettingData, updateCatgoryFilterAction }) => {
         onChange={(selected) => {
           handleChangeCategory(selected.id);
         }}
-        buttonStyles={{ height: '60px' }}
+        buttonClass={classes.DropDownButtonClass}
       />
     </>
   );
@@ -124,6 +124,9 @@ const useStyles = makeStyles((theme: Theme) =>
       '@media screen and (max-width: 480px)': {
         flex: '0 0 108px',
       },
+    },
+    DropDownButtonClass: {
+      height: '60px',
     },
   })
 );

@@ -15,7 +15,7 @@ const PhoneNumberInput = ({ value, onChange, wrapperClass }) => {
   if (wrapperClass) rootClasses.push(wrapperClass);
 
   const getCountryValue = () => {
-    const findOne = countries.find((item) => item.dial_code === value.code);
+    const findOne = countries.find((item) => item.dial_code === value.dial_code && item.code === value.code);
     return findOne;
   };
 
@@ -44,12 +44,14 @@ const PhoneNumberInput = ({ value, onChange, wrapperClass }) => {
         onChange={(e) => {
           handleChange({
             code: value.code,
+            dial_code: value.dial_code,
             number: e.target.value.replace(/\D/, ''),
           });
         }}
         onBlur={(e) => {
           handleChange({
             code: value.code,
+            dial_code: value.dial_code,
             number: e.target.value.replace(/\D/, ''),
           });
         }}
@@ -62,7 +64,8 @@ const PhoneNumberInput = ({ value, onChange, wrapperClass }) => {
               value={getCountryValue()}
               onChange={(country) => {
                 handleChange({
-                  code: country.dial_code,
+                  code: country.code,
+                  dial_code: country.dial_code,
                   number: value.number,
                 });
               }}

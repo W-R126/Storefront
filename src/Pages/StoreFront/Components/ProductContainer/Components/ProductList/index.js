@@ -14,19 +14,19 @@ import { GET_STORE_SETTING_PRODUCT } from '../../../../../../graphql/store/store
 import { GET_MERCHANT_NET_PRICE } from '../../../../../../graphql/merchant/merchant-query';
 import { GET_CURRENCY } from '../../../../../../graphql/localisation/localisation-query';
 
-import { getOrdredProducts } from '../../../../../../utils/product';
 import { getIsShowSideCategory } from '../../../../../../utils/store';
 
 import { getProductPaginationAction } from '../../../../../../actions/productAction';
 
 const ProductList = ({ client, getProductPaginationAction }) => {
   const classes = useStyles();
-  const { productList, cartInfo, orderType, filter, pageData } = useSelector((state) => ({
+  const { productList, cartInfo, orderType, filter, pageData, productLoading } = useSelector((state) => ({
     productList: state.productReducer.productList,
     cartInfo: state.cartReducer.cartList,
     orderType: state.storeReducer.orderType,
     filter: state.productReducer.filter,
     pageData: state.productReducer.pageData,
+    productLoading: state.productReducer.loading,
   }));
 
   const { loading: storeSettingLoading, error: storeSettingError, data: storeSettingData } = useQuery(
@@ -49,7 +49,7 @@ const ProductList = ({ client, getProductPaginationAction }) => {
     const renderCards = [];
     const limitValue = 4;
     // const limitValue = getIsShowSideCategory(storeSettingData) ? 4 : 3;
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 9; i++) {
       renderCards.push(
         <Grid item lg={limitValue} md={6} xs={12} key={i}>
           <ProductCard
@@ -70,8 +70,8 @@ const ProductList = ({ client, getProductPaginationAction }) => {
     <Grid container className={classes.root} style={{}}>
       <Grid item xs={12}>
         <Grid container spacing={2}>
-          {storeSettingLoading && pageData.current_page === 1 && renderLoadingCards()}
-          {getOrdredProducts(productList, storeSettingData).map((item, nIndex) => {
+          {productLoading && pageData.total_pages === 0 && renderLoadingCards()}
+          {productList.map((item, nIndex) => {
             return (
               <Grid item lg={getIsShowSideCategory(storeSettingData) ? 4 : 3} md={6} xs={12} key={nIndex}>
                 <ProductCard

@@ -10,6 +10,7 @@ export const getStoreOpenStatus = (store_openings) => {
 
   const dayIndex = new Date().getDay();
   const dayOpenInfo = getOpenDayInfo(store_openings, dayIndex);
+  if (dayOpenInfo === null) return { closed: true, nextStatus: '' };
   if (dayOpenInfo.closed) return { closed: true, nextStatus: '' };
 
   const curDateValue = new Date().valueOf();
@@ -75,8 +76,12 @@ export const getStoreOpenStatus = (store_openings) => {
 };
 
 export const getOpenDayInfo = (store_openings, dayIndex) => {
-  let dayName = DAY_NAMES[dayIndex];
-  return store_openings.find((item) => item.day === dayName);
+  try {
+    let dayName = DAY_NAMES[dayIndex];
+    return store_openings.find((item) => item.day === dayName);
+  } catch (err) {
+    return null;
+  }
 };
 
 export const getProductViewFromStoreSetting = (storeSetting) => {
@@ -108,9 +113,13 @@ export const getCurrency = (localisationInfo) => {
 
 export const getStorePos = (storeInfo) => {
   const address = _.get(storeInfo, 'address', null);
+  console.log(address);
   if (!address) return null;
-  if (address.lat === null || address.lng === null) return null;
-  return { lat: parseFloat(address.lat), lng: parseFloat(address.lng) };
+  const lat = _.get(address, 'lat', null);
+  const lng = _.get(address, 'lng', null);
+
+  if (lat === null || lng === null) return null;
+  return { lat: parseFloat(lat), lng: parseFloat(lng) };
 };
 
 export const getOrderTypes = (storeInfo) => {

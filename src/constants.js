@@ -1212,3 +1212,13 @@ export const countries = [
     code: 'ZW',
   },
 ];
+
+export const getCountryWithCode = (code) => {
+  return countries.find((item) => item.code === code);
+};
+
+export const getDialCodeWithCode = (code) => {
+  const findOne = countries.find((item) => item.code === code);
+  if (findOne) return findOne.dial_code;
+  else return '';
+};

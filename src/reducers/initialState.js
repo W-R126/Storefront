@@ -10,7 +10,6 @@ export default {
   store: {
     storeInfo: {},
     orderType: {},
-    country: {},
   },
   product: {
     productList: [],
@@ -24,5 +23,9 @@ export default {
       category: 'all',
       searchStr: '',
     },
+    loading: true,
+  },
+  localization: {
+    countryCode: 'GB',
   },
 };

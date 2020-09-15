@@ -1,19 +1,19 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import CountryDropDown from '../CountryDropDown';
-import * as types from '../../actions/actionTypes';
-import { countries } from '../../constants';
+import { setLocalizationAction } from '../../actions/localizationAction';
+import { countries, getCountryWithCode } from '../../constants';
 
 import LogoWhiteSvg from '../../assets/img/logo-white.svg';
 
-const Footer = () => {
+const Footer = ({ setLocalizationAction }) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const { selectedCountry } = useSelector((state) => ({
-    selectedCountry: state.storeReducer.country,
+  const { countryCode } = useSelector((state) => ({
+    countryCode: state.localizationReducer.countryCode,
   }));
 
   return (
@@ -46,13 +46,10 @@ const Footer = () => {
           <img className={classes.Logo} src={LogoWhiteSvg} alt="Footer Logo" />
         </Link>
         <CountryDropDown
-          value={selectedCountry}
+          value={getCountryWithCode(countryCode)}
           isPhoneNumber={false}
           onChange={(country) => {
-            dispatch({
-              type: types.CHANGE_COUNTRY,
-              payload: country,
-            });
+            setLocalizationAction(country.code);
           }}
           dropDownPosition={{
             right: 0,
@@ -176,4 +173,4 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-export default Footer;
+export default connect(null, { setLocalizationAction })(Footer);

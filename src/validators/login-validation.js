@@ -2,7 +2,7 @@ import * as Yup from 'yup';
 
 export const getLoginValidationSchema = () =>
   Yup.object().shape({
-    password: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Required field'),
+    password: Yup.string().min(8, 'Too Short!').max(50, 'Too Long!').required('Required field'),
     username: Yup.string().email('Invalid email field').required('Required field'),
   });
 
@@ -13,5 +13,5 @@ export const getEmailValidationSchema = () =>
 
 export const getPasswordValidationSchema = () =>
   Yup.object().shape({
-    password: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Required field'),
+    password: Yup.string().min(8, 'Too Short!').max(50, 'Too Long!').required('Required field'),
   });

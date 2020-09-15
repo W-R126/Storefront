@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
       background: theme.palette.primary.greyBack,
       width: '40px',
       height: '40px',
-      borderRadius: 0,
+      borderRadius: '4px',
       '@media screen and (max-width: 767px):': {
         width: '40px',
         height: '40px',

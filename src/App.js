@@ -1,15 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { getCountryCode } from './apis';
 import { Switch, BrowserRouter as Router, Route } from 'react-router-dom';
 
 import StoreFrontPage from './Pages/StoreFront';
-
+import ResetPasswordPage from './Pages/ResetPassword';
 import './App.css';
 
-const App = () => {
+import { setLocalizationAction } from './actions/localizationAction';
+
+const App = ({ setLocalizationAction }) => {
+  useEffect(() => {
+    getCountryCode()
+      .then((res) => {
+        setLocalizationAction(res.data.country);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [setLocalizationAction]);
+
   return (
     <Router>
       <div className="App">
         <Switch>
+          <Route path="/resetpassword" component={ResetPasswordPage} />
           <Route path="/" component={StoreFrontPage} />
         </Switch>
       </div>
@@ -17,4 +32,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default connect(null, { setLocalizationAction })(App);

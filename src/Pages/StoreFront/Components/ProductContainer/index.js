@@ -73,7 +73,7 @@ const ProductContainer = ({ client, updateProducdtPageDataAction }) => {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      padding: '25px 40px 202px 40px',
+      padding: '25px 40px 30px 40px',
       '@media screen and (max-width: 768px)': {
         padding: 0,
       },
@@ -123,6 +123,11 @@ const useStyles = makeStyles((theme: Theme) =>
       boxSizing: 'border-box',
       '@media screen and (max-width: 768px)': {
         display: 'flex',
+        flex: '0 0 200px',
+        marginRight: '10px',
+      },
+      '@media screen and (max-width: 480px)': {
+        flex: '0 0 108px',
       },
     },
   })

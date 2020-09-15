@@ -48,19 +48,6 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: '1 1 105px',
     },
     SearchField: {
-      // flex: '1 1 100%',
-      // height: '40px',
-      // padding: '10px',
-      // fontSize: '16px',
-      // lineHeight: '16px',
-      // boxSizing: 'border-box',
-      // color: theme.palette.primary.text,
-      // border: `1px solid ${theme.palette.primary.border}`,
-      // borderRight: 0,
-      // outline: 'none',
-      // backgroundColor: 'rgba(186, 195, 201, 0.4)',
-      // borderTopLeftRadius: '4px',
-      // borderBottomLeftRadius: '4px',
       '& .MuiOutlinedInput-adornedEnd': {
         paddingRight: 0,
       },
@@ -71,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) =>
         paddingTop: '10px',
         paddingBottom: '10px',
         boxSizing: 'border-box',
-        backgroundColor: 'rgba(186, 195, 201, 0.4)',
+        backgroundColor: '#f3f5f7',
         borderTopLeftRadius: '4px',
         borderBottomLeftRadius: '4px',
       },
@@ -89,6 +76,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     SearchButton: {
       width: '47px',
+      maxWidth: '47px',
+      minWidth: '47px',
       height: '40px',
       borderRadius: 0,
       borderTopRightRadius: '4px',
@@ -97,6 +86,8 @@ const useStyles = makeStyles((theme: Theme) =>
       outline: 'none',
       border: 'none',
       cursor: 'pointer',
+      paddingLeft: 0,
+      paddingRight: 0,
       '&:hover': {
         '&:hover': {
           backgroundColor: '#f6b601',

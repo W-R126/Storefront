@@ -13,12 +13,14 @@ export default (state = initialState.product, action) => {
     case types.UPDATE_PRODUCT_LIST: {
       return {
         ...state,
+        loading: false,
         productList: [...state.productList, ...action.payload],
       };
     }
     case types.UPDATE_PRODUCT_CATEGORY_FIILTER: {
       return {
         ...state,
+        loading: true,
         filter: {
           ...state.filter,
           category: action.payload,
@@ -35,6 +37,7 @@ export default (state = initialState.product, action) => {
     case types.UPDATE_PRODUCT_SEARCH_STR_FILTER: {
       return {
         ...state,
+        loading: true,
         filter: {
           ...state.filter,
           searchStr: action.payload,

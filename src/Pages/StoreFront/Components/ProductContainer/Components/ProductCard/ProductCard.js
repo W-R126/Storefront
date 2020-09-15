@@ -216,9 +216,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: '1 1 100%',
       display: 'flex',
       flexDirection: 'column',
-      paddingLeft: '10px',
-      paddingRight: '17px',
-      paddingBottom: '12px',
+      padding: '5px 17px 11px 10px',
     },
     TopSection: {
       display: 'flex',
@@ -233,6 +231,7 @@ const useStyles = makeStyles((theme: Theme) =>
       lineHeight: '20px',
       marginBottom: '4px',
       minWidth: '100px',
+      fontSize: '14px',
     },
     Status: {
       fontSize: '12px',
@@ -277,7 +276,8 @@ const useStyles = makeStyles((theme: Theme) =>
     AddCart: {
       margin: '3px 0 0 auto',
       color: theme.palette.primary.main,
-      fontSize: '12px',
+      fontSize: '14px',
+      fontWeight: 'normal',
       cursor: 'pointer',
       lineHeight: 'normal',
     },

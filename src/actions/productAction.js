@@ -9,15 +9,16 @@ import { GET_PRODUCTS } from '../graphql/products/product-query';
 import { PRODUCT_PAGE_LIMIT } from '../constants';
 
 export const getProductPaginationAction = (client, filter, pageData) => (dispatch) => {
-  let variableJSON = {};
+  let variableJSON = { touchpoint_type: 'digital_front' };
   variableJSON['filter'] = {
     page: pageData.current_page,
     limit: PRODUCT_PAGE_LIMIT,
     count: true,
   };
 
-  if (filter.searchStr.length > 0) variableJSON.filter['name'] = { __like: `%${filter.searchStr}%` };
-  if (filter.category !== 'all') variableJSON['category_id'] = { __like: `%${filter.category}%` };
+  if (filter.searchStr && filter.searchStr.length > 0)
+    variableJSON.filter['name'] = `%${filter.searchStr.toLowerCase()}%`;
+  if (filter.category !== 'all') variableJSON['category_id'] = filter.category;
 
   client
     .query({
@@ -52,6 +53,15 @@ export const getProductPaginationAction = (client, filter, pageData) => (dispatc
     })
     .catch((err) => {
       console.log(err);
+      dispatch({
+        type: UPDATE_PRODUCT_PAGEDATA,
+        payload: pageData,
+      });
+
+      dispatch({
+        type: UPDATE_PRODUCT_LIST,
+        payload: [],
+      });
     });
 };
 
@@ -70,6 +80,7 @@ export const updateCatgoryFilterAction = (newCategory) => (dispatch) => {
 };
 
 export const updateSearchStrProductAction = (newStr) => (dispatch) => {
+  console.log(newStr);
   dispatch({
     type: UPDATE_PRODUCT_SEARCH_STR_FILTER,
     payload: newStr,

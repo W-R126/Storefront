@@ -96,6 +96,7 @@ const Header = ({ children, orderTypesList }) => {
               payload: { id: selected.id, name: selected.label },
             });
           }}
+          buttonClass={classes.DropDownButtonClass}
         />
         <MDIconButton wrapperClass={classes.CartButton} aria-label="shopping-cart">
           <ShoppingCartIcon />
@@ -175,7 +176,6 @@ const Header = ({ children, orderTypesList }) => {
             setShowResetPassword(false);
           }}
           gotoLogin={() => {
-            debugger;
             setShowResetPassword(false);
             setShowLogin(true);
           }}
@@ -293,6 +293,11 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: '43px',
       '@media screen and (max-width: 767px)': {
         marginLeft: '14px',
+      },
+    },
+    DropDownButtonClass: {
+      '@media screen and (max-width: 480px)': {
+        width: '100%',
       },
     },
   })
