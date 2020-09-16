@@ -1,32 +1,32 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import { useMutation, useLazyQuery } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { SEND_RESET_CODE } from '../../../../graphql/auth/auth-mutation';
-import { CHECK_ACTIVATIONS } from '../../../../graphql/auth/auth-query';
 
-const ResultView = ({ userData, gotoChangeEmail, hideModal }) => {
+const ResultView = ({ userData, gotoChangeEmail, hideModal, loading }) => {
   const classes = useStyles();
 
-  const [checkActivation, data] = useLazyQuery(CHECK_ACTIVATIONS);
   const [sendResetCode, { data: sendResetCodeData }] = useMutation(SEND_RESET_CODE);
 
-  useEffect(() => {
-    setTimeout(() => {
-      hideModal();
-    }, 150000);
-
-    const interval = setInterval(() => {
-      checkActivation({
-        variables: { userID: userData && userData.createUser.activations[0].user_id },
+  const handleClickResent = () => {
+    sendResetCode({
+      variables: {
+        email: userData.createUser.activations[0].email,
+      },
+    })
+      .then((res) => {
+        debugger;
+        hideModal();
+      })
+      .catch((err) => {
+        debugger;
       });
-    }, 10000);
-    return () => clearInterval(interval);
-  }, [checkActivation, hideModal, userData]);
+  };
 
   return (
     <Box className={classes.root}>
@@ -46,7 +46,7 @@ const ResultView = ({ userData, gotoChangeEmail, hideModal }) => {
           Change email.
         </span>
       </Typography>
-      <CircularProgress className={classes.Spinner} />
+      {loading && <CircularProgress className={classes.Spinner} />}
 
       <Typography variant="h5" className={classes.SubTitle} style={{ marginTop: '14px' }}>
         Awaiting validation...
@@ -54,17 +54,7 @@ const ResultView = ({ userData, gotoChangeEmail, hideModal }) => {
 
       <Typography variant="h5" className={classes.SubTitle}>
         Don't get the email?{' '}
-        <span
-          className="ChangeEmail"
-          onClick={() => {
-            sendResetCode({
-              variables: {
-                email: userData.createUser.activations[0].email,
-              },
-            });
-          }}
-          role="button"
-        >
+        <span className="ChangeEmail" onClick={handleClickResent} role="button">
           Resend.
         </span>
       </Typography>

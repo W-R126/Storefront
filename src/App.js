@@ -24,7 +24,7 @@ const App = ({ setLocalizationAction }) => {
     <Router>
       <div className="App">
         <Switch>
-          <Route path="/resetpassword/:code" component={ResetPasswordPage} />
+          <Route path="/reset/:code" component={ResetPasswordPage} />
           <Route path="/" component={StoreFrontPage} />
         </Switch>
       </div>

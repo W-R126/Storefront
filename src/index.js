@@ -63,7 +63,7 @@ const authorizationLink = new ApolloLink(
       const sub = forward(operation).subscribe({
         next: (result) => {
           // Some how get extensions passed from server
-          if (result.extensions) result.data.extensions = result.extensions;
+          if (result && result.extensions) result.data.extensions = result.extensions;
           observer.next(result);
         },
         // error: (error) => {...}

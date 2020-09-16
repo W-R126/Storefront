@@ -53,9 +53,11 @@ const ProductContainer = ({ client, updateProducdtPageDataAction }) => {
           <SearchBar />
         </Grid>
         <Grid item md={12} xs={12} className={classes.ProductContent}>
-          <Box className={classes.DesktopCateggoryWrapper}>
-            {getIsShowSideCategory(storeSettingData) && <CategorySideBar storeSettingData={storeSettingData} />}
-          </Box>
+          {getIsShowSideCategory(storeSettingData) && (
+            <Box className={classes.DesktopCateggoryWrapper}>
+              <CategorySideBar storeSettingData={storeSettingData} />
+            </Box>
+          )}
           <ProductList />
         </Grid>
         {showLoadMore() && (

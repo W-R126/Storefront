@@ -15,6 +15,7 @@ import { GET_MERCHANT_NET_PRICE } from '../../../../../../graphql/merchant/merch
 import { GET_CURRENCY } from '../../../../../../graphql/localisation/localisation-query';
 
 import { getIsShowSideCategory } from '../../../../../../utils/store';
+import { getOrdredProducts } from '../../../../../../utils/product';
 
 import { getProductPaginationAction } from '../../../../../../actions/productAction';
 
@@ -71,7 +72,7 @@ const ProductList = ({ client, getProductPaginationAction }) => {
       <Grid item xs={12}>
         <Grid container spacing={2}>
           {productLoading && pageData.total_pages === 0 && renderLoadingCards()}
-          {productList.map((item, nIndex) => {
+          {getOrdredProducts(productList, storeSettingData).map((item, nIndex) => {
             return (
               <Grid item lg={getIsShowSideCategory(storeSettingData) ? 4 : 3} md={6} xs={12} key={nIndex}>
                 <ProductCard

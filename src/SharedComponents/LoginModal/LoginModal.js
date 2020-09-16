@@ -54,6 +54,14 @@ const LoginModal = ({ isShow, hideModal, gotoSignUp, gotoForgotPassword }) => {
       })
       .catch((err) => {
         setLoginLoading(false);
+        setLoginData({
+          ...loginData,
+          password: {
+            ...loginData.password,
+            validate: false,
+            errorMsg: 'Incorrect Password. Try again',
+          },
+        });
         console.log('Login Failed.');
       });
   };

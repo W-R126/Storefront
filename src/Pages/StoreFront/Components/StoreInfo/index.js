@@ -35,10 +35,16 @@ const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
 
     return (
       <>
-        <span className={`${classes.StoreStatus} ${storeOpenStatus.closed ? '' : classes.StoreStatusOpen}`}>
+        <span
+          className={`${classes.StoreStatus} ${storeOpenStatus.closed ? '' : classes.StoreStatusOpen}`}
+          onClick={showOpeningHours}
+          role="button"
+        >
           {storeOpenStatus.closed ? 'Close' : 'Open'}
         </span>
-        <span style={{ cursor: 'pointer' }}>{storeOpenStatus.nextStatus}</span>
+        <span style={{ cursor: 'pointer' }} onClick={showOpeningHours} role="button">
+          {storeOpenStatus.nextStatus}
+        </span>
       </>
     );
   };
@@ -132,14 +138,7 @@ const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
             </div>
             <div className={classes.DetailInfoItem}>
               <div className={classes.LableName}>Hours:</div>
-              <div
-                className={classes.LabelValue}
-                onClick={showOpeningHours}
-                role="button"
-                style={{ cursor: 'pointer' }}
-              >
-                {renderHoursStatus()}
-              </div>
+              <div className={classes.LabelValue}>{renderHoursStatus()}</div>
             </div>
             <div className={classes.DetailInfoItem}>
               <div className={classes.LableName}>Phone:</div>
@@ -270,6 +269,7 @@ const useStyles = makeStyles((theme: Theme) =>
     StoreStatus: {
       marginRight: '20px',
       fontWeight: 'normal',
+      cursor: 'pointer',
     },
     StoreStatusOpen: {
       color: '#55cc66',

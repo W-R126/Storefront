@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 
 import { useMutation } from '@apollo/react-hooks';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -14,14 +14,14 @@ import LogoSvg from '../../assets/img/logo.svg';
 const PASSWORD_VIEW = 0;
 const RESULT_VIEW = 1;
 
-const ResetPasswordPage = ({ gotoLogin }) => {
+const ResetPasswordPage = () => {
   const classes = useStyles();
+  const history = useHistory();
   const { code } = useParams();
 
   const schema = getPasswordValidationSchema();
 
   const [curPage, setCurPage] = useState(PASSWORD_VIEW);
-  // const [loading, setLoading] = useState(false);
   const [passwordData, setPasswordData] = useState({
     value: '',
     validate: true,
@@ -60,10 +60,19 @@ const ResetPasswordPage = ({ gotoLogin }) => {
           password: passwordData.value,
         },
       },
-      onCompleted(d) {
-        setCurPage(RESULT_VIEW);
-      },
-    });
+    })
+      .then((res) => {
+        if (res.data.passwordReset === 'true' || res.data.passwordReset === true) {
+          setCurPage(RESULT_VIEW);
+        }
+      })
+      .catch((err) => {
+        setPasswordData({
+          ...passwordData,
+          validate: false,
+          errorMsg: 'This code already expired.',
+        });
+      });
   };
 
   return (
@@ -73,10 +82,13 @@ const ResetPasswordPage = ({ gotoLogin }) => {
 
         {curPage === PASSWORD_VIEW && (
           <>
-            <Typography className={classes.EnterNewPassword}>Enter your new password.</Typography>
-            <Typography className={classes.SubTitle} variant="h6">
+            <Typography className={classes.SubTitle} variant="h3">
               Create new password
             </Typography>
+            <Typography className={classes.EnterNewPassword} variant="h3">
+              Enter your new password.
+            </Typography>
+
             <Box className={classes.PasswordWrapper}>
               <PasswordInput
                 id="reset-password-input"
@@ -106,20 +118,30 @@ const ResetPasswordPage = ({ gotoLogin }) => {
         )}
         {curPage === RESULT_VIEW && (
           <>
-            <Typography className={classes.SubTitle} variant="h6">
+            <Typography className={classes.SubTitle} variant="h3">
               Your password is changed.
             </Typography>
             <Typography className={classes.ResultDescription}>
               Your password for {'emailaddress'}Your password for ss****ss@gmail.com is successfully changed. Return to
               the application or click below to login.
             </Typography>
-            <Button className={classes.LoginButton} variant="contained" color="primary" onClick={gotoLogin}>
+            <Button
+              className={classes.LoginButton}
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                history.push('/');
+              }}
+            >
               Login
             </Button>
           </>
         )}
         {resetMutationLoading && <Spinner />}
       </Paper>
+      <Typography className={classes.Footer} variant="h3">
+        © Myda
+      </Typography>
     </Box>
   );
 };
@@ -135,47 +157,70 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'center',
       background: 'white',
+      padding: '10px 15px',
     },
     MainContent: {
       alignItems: 'center',
       display: 'flex',
       flexDirection: 'column',
       padding: '18px 25px',
-      width: '438px',
-      height: '438px',
+      width: '100%',
+      maxWidth: '383px',
+      height: '385px',
       borderRadius: '6px',
       border: 'solid 1px #bac3c9',
       boxShadow: 'none',
       position: 'relative',
+      boxSizing: 'border-box',
+      marginTop: 'auto',
     },
     LogoImg: {
       width: '90px',
       height: '36px',
     },
     SubTitle: {
-      margin: '20px 0 0 0',
-      fontSize: '9px',
+      margin: '40px 0 0 0',
       fontWeight: 500,
-      lineHeight: '11px',
+      '@media screen and (max-width: 400px)': {
+        marginTop: '30px',
+      },
     },
-    EnterNewPassword: {},
+    EnterNewPassword: {
+      margin: '40px 0 0 0',
+      alignSelf: 'flex-start',
+      color: theme.palette.primary.text,
+    },
     ResultDescription: {
-      margin: '29px 0 0 0',
+      margin: '50px 0 0 0',
+      color: theme.palette.primary.text,
+      '@media screen and (max-width: 400px)': {
+        marginTop: '40px',
+      },
     },
     PasswordWrapper: {
       width: '100%',
       boxSizing: 'border-box',
       height: '97px',
+      margin: '20px 0 0 0',
+      '@media screen and (max-width: 400px)': {
+        marginTop: '20px',
+      },
     },
     CreateButton: {
-      margin: '20px 0 0 0',
+      margin: '10px 0 0 0',
       width: '100%',
       height: '50px',
     },
     LoginButton: {
       width: '100%',
       height: '50px',
-      margin: '35px 0 0 0',
+      margin: '50px 0 0 0',
+      '@media screen and (max-width: 400px)': {
+        marginTop: '40px',
+      },
+    },
+    Footer: {
+      marginTop: 'auto',
     },
   })
 );

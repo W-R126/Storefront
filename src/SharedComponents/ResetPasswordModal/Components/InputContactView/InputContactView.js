@@ -50,6 +50,13 @@ const InputContactView = ({ formData, onChange, gotoNext, gotoLogin }) => {
           });
         }
       },
+      onError(d) {
+        onChange({
+          ...formData.email,
+          validate: false,
+          errorMsg: 'This email is not exist',
+        });
+      },
     }
   );
 
