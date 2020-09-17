@@ -22,13 +22,11 @@ import ResetPassword from '../ResetPasswordModal';
 
 import * as types from '../../actions/actionTypes';
 import { GET_CATEGORIES } from '../../graphql/categories/categories-query';
-import { GET_STORE_SETTING_PRODUCT } from '../../graphql/store/store-query';
 import { getUserAvatar } from '../../utils/auth';
-import { getOrderedCategories } from '../../utils/category';
 
 import LogoSvg from '../../assets/img/logo.svg';
 
-const Header = ({ children, orderTypesList }) => {
+const Header = ({ children, orderTypesList, storeSettingData }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -41,9 +39,6 @@ const Header = ({ children, orderTypesList }) => {
   }, [dispatch, orderTypesList]);
 
   const { data, loading, error } = useQuery(GET_CATEGORIES);
-  const { loading: storeSettingLoading, error: storeSettingError, data: storeSettingData } = useQuery(
-    GET_STORE_SETTING_PRODUCT
-  );
 
   const [showLogin, setShowLogin] = useState(false);
   const [showUserDetail, setShowUserDetail] = useState(false);
@@ -59,16 +54,6 @@ const Header = ({ children, orderTypesList }) => {
     const uesrID = _.get(authInfo, 'id', null);
     if (uesrID === null) return false;
     return true;
-  };
-
-  const getCategoryMenuItems = () => {
-    const categories = getOrderedCategories(data, storeSettingData);
-    return [
-      { id: '-1', label: 'All' },
-      ...categories.map((item) => {
-        return { id: item.id, label: item.name };
-      }),
-    ];
   };
 
   return (

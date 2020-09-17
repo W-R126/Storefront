@@ -14,14 +14,14 @@ import { getIsShowSideCategory } from '../../../../../../utils/store';
 import { updateCatgoryFilterAction } from '../../../../../../actions/productAction';
 import DropDown from '../../../../../../SharedComponents/DropDown';
 
-const CategorySideBar = ({ storeSettingData, updateCatgoryFilterAction }) => {
+const CategorySideBar = ({ storeSettingData, updateCatgoryFilterAction, loading }) => {
   const classes = useStyles();
 
   const { filter } = useSelector((state) => ({
     filter: state.productReducer.filter,
   }));
 
-  const { data, loading, error } = useQuery(GET_CATEGORIES);
+  const { data, loading: categoryLoading, error } = useQuery(GET_CATEGORIES);
 
   if (!getIsShowSideCategory(storeSettingData)) {
     return null;
@@ -55,19 +55,21 @@ const CategorySideBar = ({ storeSettingData, updateCatgoryFilterAction }) => {
           >
             All
           </MenuItem>
-          {getOrderedCategories(data, storeSettingData).map((item, nIndex) => {
-            return (
-              <MenuItem
-                onClick={() => {
-                  handleChangeCategory(item.id);
-                }}
-                selected={item.id === filter.category}
-                key={nIndex}
-              >
-                {item.name}
-              </MenuItem>
-            );
-          })}
+          {!loading &&
+            !categoryLoading &&
+            getOrderedCategories(data, storeSettingData).map((item, nIndex) => {
+              return (
+                <MenuItem
+                  onClick={() => {
+                    handleChangeCategory(item.id);
+                  }}
+                  selected={item.id === filter.category}
+                  key={nIndex}
+                >
+                  {item.name}
+                </MenuItem>
+              );
+            })}
         </MenuList>
       </Box>
       <DropDown

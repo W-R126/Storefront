@@ -16,30 +16,16 @@ export const getOrderedCategories = (categoryData, storeSettingData) => {
         orderedCategories = [...categories];
       } else {
         if (productView.show_selected) {
-          let maxOrderValue = Math.max.apply(
-            Math,
-            categoryOrders.map(function (o) {
-              return o.position;
-            })
-          );
-
-          categories.forEach((item) => {
-            const findOne = categoryOrders.find((itemOne) => itemOne.id === item.id);
-            if (findOne)
-              orderedCategories.push({
-                ...item,
-                position: findOne.position,
-              });
-            else {
-              maxOrderValue++;
-              orderedCategories.push({
-                ...item,
-                position: maxOrderValue,
-              });
-            }
-          });
-
-          orderedCategories = [...orderedCategories.sort((a, b) => a.position - b.position)];
+          categoryOrders
+            .sort((a, b) => a.position - b.position)
+            .forEach((item) => {
+              const findOne = categories.find((itemOne) => itemOne.id === item.id);
+              if (findOne)
+                orderedCategories.push({
+                  ...findOne,
+                  position: item.position,
+                });
+            });
         } else {
           orderedCategories = [...categories];
         }

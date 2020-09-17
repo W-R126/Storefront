@@ -95,6 +95,7 @@ export const GET_STORE_SETTING_PRODUCT = gql`
                 position
               }
             }
+            order_types
           }
         }
       }

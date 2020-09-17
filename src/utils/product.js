@@ -20,30 +20,16 @@ export const getOrdredProducts = (productData, storeSettingData) => {
         orderedProducts = [...productData];
       } else {
         if (productView.show_selected) {
-          let maxOrderValue = Math.max.apply(
-            Math,
-            productsOrder.map(function (o) {
-              return o.position;
-            })
-          );
-
-          productData.forEach((item) => {
-            const findOne = productsOrder.find((orderItem) => orderItem.id === item.id);
-            if (findOne)
-              orderedProducts.push({
-                ...item,
-                position: findOne.position,
-              });
-            else {
-              maxOrderValue++;
-              orderedProducts.push({
-                ...item,
-                position: maxOrderValue,
-              });
-            }
-          });
-
-          orderedProducts = [...orderedProducts.sort((a, b) => a.position - b.position)];
+          productsOrder
+            .sort((a, b) => a.position - b.position)
+            .forEach((item) => {
+              const findOne = productData.find((itemOne) => itemOne.id === item.id);
+              if (findOne)
+                orderedProducts.push({
+                  ...findOne,
+                  position: item.position,
+                });
+            });
         } else {
           orderedProducts = [...productData];
         }

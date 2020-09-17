@@ -12,7 +12,6 @@ export default (state = initialState.product, action) => {
       };
     }
     case types.UPDATE_PRODUCT_LIST: {
-      console.log('UPDATE_PRODUCT_LIST');
       return {
         ...state,
         loading: false,

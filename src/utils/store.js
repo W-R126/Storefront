@@ -121,8 +121,22 @@ export const getStorePos = (storeInfo) => {
   return { lat: parseFloat(lat), lng: parseFloat(lng) };
 };
 
-export const getOrderTypes = (storeInfo) => {
+export const getOrderTypes = (storeInfo, storeSettingData) => {
   const store = _.get(storeInfo, 'store', null);
   if (!store) return [];
-  return _.get(store, 'order_types', []);
+  const orderTypes = _.get(store, 'order_types', []);
+  if (orderTypes.length === 0) return [];
+
+  if (!storeSettingData) return orderTypes;
+
+  const touchpoint_settings = storeSettingData.store.settings.touchpoint_settings;
+  const orderIds = touchpoint_settings.digital_front.order_types;
+  if (orderIds === null || orderIds.length === 0) return orderTypes;
+
+  const sortedOrderTypes = [];
+  orderIds.forEach((item) => {
+    const findOne = orderTypes.find((itemOne) => itemOne.id === item);
+    if (findOne) sortedOrderTypes.push(findOne);
+  });
+  return sortedOrderTypes;
 };

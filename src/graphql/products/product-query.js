@@ -4,11 +4,12 @@ interface Filter {
   page: Number;
   limit: Number;
   count?: Boolean;
+  name?: String;
 }
 
 export const GET_PRODUCTS = gql`
-  query getProducts($filter: Filter) {
-    products(filter: $filter) {
+  query getProducts($filter: Filter, $category_id: String, $touchpoint_type: String) {
+    products(filter: $filter, category_id: $category_id, touchpoint_type: $touchpoint_type) {
       id
       name
       images {
@@ -21,6 +22,10 @@ export const GET_PRODUCTS = gql`
       short_description
       measure_amount
       measure_type
+      category {
+        id
+        name
+      }
       prices {
         price_infos {
           price_type {

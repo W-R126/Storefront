@@ -47,7 +47,7 @@ const ProductContainer = ({ client, updateProducdtPageDataAction }) => {
         <Grid item md={12} xs={12} style={{ display: 'flex' }}>
           {getIsShowSideCategory(storeSettingData) && (
             <Box className={classes.MobileCategoryWrapper}>
-              <CategorySideBar storeSettingData={storeSettingData} />
+              <CategorySideBar storeSettingData={storeSettingData} loading={storeSettingLoading} />
             </Box>
           )}
           <SearchBar />
@@ -55,7 +55,7 @@ const ProductContainer = ({ client, updateProducdtPageDataAction }) => {
         <Grid item md={12} xs={12} className={classes.ProductContent}>
           {getIsShowSideCategory(storeSettingData) && (
             <Box className={classes.DesktopCateggoryWrapper}>
-              <CategorySideBar storeSettingData={storeSettingData} />
+              <CategorySideBar storeSettingData={storeSettingData} loading={storeSettingLoading} />
             </Box>
           )}
           <ProductList />
