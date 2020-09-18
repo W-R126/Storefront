@@ -1,3 +1,24 @@
+export const TEST_MERCHANT_ID = '4e20a0ea-9a66-4732-b53b-7e692ede0c45';
+export const TEST_STORE_ID = 'a0be564c-a982-471f-a4b5-5bdf6e29e1c2';
+
+export const setMerchantId = (merchantId) => {
+  localStorage.setItem('merchant', merchantId);
+};
+
+export const getMerchantId = () => {
+  // return localStorage.getItem('merchant');
+  return TEST_MERCHANT_ID;
+};
+
+export const setStoreId = (storeId) => {
+  localStorage.setItem('store', storeId);
+};
+
+export const getStoreId = () => {
+  // return localStorage.getItem('store');
+  return TEST_STORE_ID;
+};
+
 export const PRODUCT_PAGE_LIMIT = 100;
 
 export const countries = [

@@ -29,7 +29,7 @@ const ProductView = ({ open, hideModal, productId, currencyData, net_price, addP
 
   const [qtyCount, setQtyCount] = useState(1);
 
-  const { loading, error, data } = useQuery(GET_PRODUCT_BY_ID, {
+  const { loading, data } = useQuery(GET_PRODUCT_BY_ID, {
     variables: { id: productId },
   });
 

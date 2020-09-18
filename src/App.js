@@ -5,6 +5,7 @@ import { Switch, BrowserRouter as Router, Route } from 'react-router-dom';
 
 import StoreFrontPage from './Pages/StoreFront';
 import ResetPasswordPage from './Pages/ResetPassword';
+import EmailVerifiedPage from './Pages/EmailVerified';
 import './App.css';
 
 import { setLocalizationAction } from './actions/localizationAction';
@@ -24,7 +25,8 @@ const App = ({ setLocalizationAction }) => {
     <Router>
       <div className="App">
         <Switch>
-          <Route path="/reset/:code" component={ResetPasswordPage} />
+          <Route exact path="/guest/activate/:user_id/:code" component={EmailVerifiedPage} />
+          <Route exact path="/reset/:code" component={ResetPasswordPage} />
           <Route path="/" component={StoreFrontPage} />
         </Switch>
       </div>

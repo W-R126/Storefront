@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import _ from 'lodash';
-import { useQuery } from '@apollo/react-hooks';
 
+import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { AppBar, Toolbar, Avatar } from '@material-ui/core';
+import { AppBar, Toolbar, Avatar, Typography, Box } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
@@ -21,8 +20,7 @@ import SignUpModal from '../SignUpModal';
 import ResetPassword from '../ResetPasswordModal';
 
 import * as types from '../../actions/actionTypes';
-import { GET_CATEGORIES } from '../../graphql/categories/categories-query';
-import { getUserAvatar } from '../../utils/auth';
+import { getUserAvatar, getUserName, getMerchantName, checkUserMerchantRole } from '../../utils/auth';
 
 import LogoSvg from '../../assets/img/logo.svg';
 
@@ -38,8 +36,6 @@ const Header = ({ children, orderTypesList, storeSettingData }) => {
       });
   }, [dispatch, orderTypesList]);
 
-  const { data, loading, error } = useQuery(GET_CATEGORIES);
-
   const [showLogin, setShowLogin] = useState(false);
   const [showUserDetail, setShowUserDetail] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
@@ -54,6 +50,20 @@ const Header = ({ children, orderTypesList, storeSettingData }) => {
     const uesrID = _.get(authInfo, 'id', null);
     if (uesrID === null) return false;
     return true;
+  };
+
+  const renderUserInfo = () => {
+    if (!checkUserMerchantRole(authInfo)) return null;
+    const merchantName = getMerchantName(authInfo);
+    const userName = getUserName(authInfo);
+    return (
+      <Box className={classes.UserInfo}>
+        <Typography variant="h3" className="UserName">
+          {userName}
+        </Typography>
+        <Typography variant="h4">{merchantName}</Typography>
+      </Box>
+    );
   };
 
   return (
@@ -97,6 +107,7 @@ const Header = ({ children, orderTypesList, storeSettingData }) => {
               role="button"
               onClick={() => setShowUserDetail(true)}
             />
+            {renderUserInfo()}
           </>
         ) : (
           <>
@@ -283,6 +294,20 @@ const useStyles = makeStyles((theme: Theme) =>
     DropDownButtonClass: {
       '@media screen and (max-width: 480px)': {
         width: '100%',
+      },
+    },
+    UserInfo: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      marginLeft: '5px',
+      boxSizing: 'border-box',
+      '& .UserName': {
+        color: theme.palette.primary.text,
+      },
+
+      '@media screen and (max-width: 639px)': {
+        display: 'none',
       },
     },
   })

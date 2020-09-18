@@ -94,6 +94,41 @@ export const GET_PRODUCT_BY_ID = gql`
           measure_type
         }
       }
+      addons {
+        group
+        description
+        parent
+        allow_free
+        mandatory
+        mandatory
+        multi_selection
+        default_all
+        options {
+          inventory_id
+          id
+          name
+          force_charge
+          default
+          mandatory
+          position
+          extra
+          override_price
+          price {
+            price_infos {
+              price_type {
+                id
+                name
+              }
+              price
+              taxes {
+                id
+                rate
+                name
+              }
+            }
+          }
+        }
+      }
     }
   }
 `;

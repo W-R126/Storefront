@@ -68,6 +68,7 @@ export const THEME = createMuiTheme({
       containedPrimary: {
         color: '#fff',
         backgroundColor: '#1174f2',
+        fontSize: '16px',
         '&:hover': {
           backgroundImage: 'linear-gradient(to bottom, #0c7ebf, #1174f2)',
           color: '#FFF',
