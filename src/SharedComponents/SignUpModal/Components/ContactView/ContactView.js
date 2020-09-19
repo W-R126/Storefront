@@ -9,7 +9,7 @@ import { Button, TextField, InputAdornment, CircularProgress } from '@material-u
 
 import { getSignUpContactValidateionSchema } from '../../../../validators/signup-validation';
 import { CHECK_EMAIL_AVAILABILITY } from '../../../../graphql/auth/auth-query';
-import CloseIcons from '@material-ui/icons/Close';
+import CloseIcon from '@material-ui/icons/Close';
 
 const ContactView = ({ formData, onChange, gotoNext }) => {
   const classes = useStyles();
@@ -93,7 +93,7 @@ const ContactView = ({ formData, onChange, gotoNext }) => {
               endAdornment: (
                 <InputAdornment position="end">
                   {emailLoading && <CircularProgress size={20} />}
-                  {(emailData || !!contactFormSubmitProps.errors.email) && <CloseIcons color="error" />}
+                  {(emailData || !!contactFormSubmitProps.errors.email) && <CloseIcon color="error" />}
                 </InputAdornment>
               ),
             }}

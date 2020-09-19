@@ -1,12 +1,11 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import Avatar from '@material-ui/core/Avatar';
 import { Button } from '@material-ui/core';
+import CloseIconButton from '../../SharedComponents/CloseIconButton';
 import EditableLabel from '../EditableLabel';
 import { getUserAvatar, getUserName, getUserEmail } from '../../utils/auth';
 
@@ -18,9 +17,7 @@ const UserDialog = ({ hideModal }) => {
 
   return (
     <Paper className={classes.root}>
-      <IconButton onClick={hideModal} className={classes.CloseButton}>
-        <CloseIcon />
-      </IconButton>
+      <CloseIconButton onClick={hideModal} wrapperClass={classes.CloseButtonWrapper} />
       <Avatar src={getUserAvatar(authInfo)} className={classes.UserAvatar} />
       <EditableLabel
         value={getUserName(authInfo)}
@@ -59,9 +56,8 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
     },
-    CloseButton: {
-      width: '30px',
-      height: '30px',
+    CloseButtonWrapper: {
+      position: 'relative',
       padding: 0,
       marginLeft: 'auto',
     },

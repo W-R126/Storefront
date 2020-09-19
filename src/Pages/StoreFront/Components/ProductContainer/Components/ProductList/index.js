@@ -37,6 +37,7 @@ const ProductList = ({ client, getProductPaginationAction, loading }) => {
 
   useEffect(() => {
     getProductPaginationAction(client, filter, pageData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, pageData.current_page]);
 
   const getNetPriceStatus = () => {

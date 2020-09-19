@@ -7,7 +7,7 @@ import { Box, Button, TextField, Typography, InputAdornment, CircularProgress } 
 import { getEmailValidationSchema } from '../../../../validators/login-validation';
 import { CHECK_EMAIL_AVAILABILITY } from '../../../../graphql/auth/auth-query';
 import { SEND_RESET_CODE } from '../../../../graphql/auth/auth-mutation';
-import CloseIcons from '@material-ui/icons/Close';
+import CloseIcon from '@material-ui/icons/Close';
 
 const InputContactView = ({ formData, onChange, gotoNext, gotoLogin }) => {
   const classes = useStyles();
@@ -108,7 +108,7 @@ const InputContactView = ({ formData, onChange, gotoNext, gotoLogin }) => {
             endAdornment: (
               <InputAdornment position="end">
                 {emailLoading && <CircularProgress size={20} />}
-                {!formData.email.validate && <CloseIcons color="error" />}
+                {!formData.email.validate && <CloseIcon color="error" />}
               </InputAdornment>
             ),
           }}

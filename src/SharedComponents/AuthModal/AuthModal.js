@@ -2,8 +2,7 @@ import React from 'react';
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIconButton from '../CloseIconButton';
 
 const AuthModal = ({ isShow, hideModal, children, wrapperClass }) => {
   const classes = useStyles();
@@ -17,9 +16,7 @@ const AuthModal = ({ isShow, hideModal, children, wrapperClass }) => {
 
   return (
     <Paper className={rootClass.join(' ')}>
-      <IconButton onClick={handleClick} className={classes.CloseButton}>
-        <CloseIcon />
-      </IconButton>
+      <CloseIconButton onClick={handleClick} wrapperClass={classes.CloseButtonWrapper} />
       {children}
     </Paper>
   );
@@ -45,19 +42,9 @@ const useStyles = makeStyles((theme: Theme) =>
         right: 'calc(50% - 191.5px)',
       },
     },
-    CloseButton: {
-      width: '40px',
-      height: '40px',
-      padding: 0,
-      position: 'absolute',
-      right: '15px',
+    CloseButtonWrapper: {
       top: '15px',
-      borderRadius: '20px',
-      backgroundColor: 'rgba(186, 195, 201, 0.3)',
-      zIndex: 1,
-      '&: hover': {
-        backgroundColor: 'rgba(186, 195, 201, 0.6)',
-      },
+      right: '15px',
     },
   })
 );

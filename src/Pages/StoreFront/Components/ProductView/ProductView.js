@@ -7,11 +7,10 @@ import { useQuery } from '@apollo/react-hooks';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import Box from '@material-ui/core/Box';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import { Typography, TextField, Button } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 
+import CloseIconButton from '../../../../SharedComponents/CloseIconButton';
 import AllergyBox from './Components/AllergyBox';
 import IngredientsBox from './Components/IngredientsBox';
 
@@ -134,9 +133,7 @@ const ProductView = ({ open, hideModal, productId, currencyData, net_price, addP
   if (loading)
     return (
       <Dialog open={open} onClose={hideModal} fullWidth={true} maxWidth="md" className={classes.root}>
-        <IconButton onClick={hideModal} className={classes.CloseButton}>
-          <CloseIcon color="Primary.title" />
-        </IconButton>
+        <CloseIconButton onClick={hideModal} wrapperClass={classes.CloseButtonWrapper} />
         <Box className={classes.TopSection}>
           <Box className={classes.ShowMobile} style={{ flexDirection: 'column' }}>
             {renderTopInfo()}
@@ -166,9 +163,7 @@ const ProductView = ({ open, hideModal, productId, currencyData, net_price, addP
   else
     return (
       <Dialog open={open} onClose={hideModal} fullWidth={true} maxWidth="md" className={classes.root}>
-        <IconButton onClick={hideModal} className={classes.CloseButton}>
-          <CloseIcon color="Primary.title" />
-        </IconButton>
+        <CloseIconButton onClick={hideModal} wrapperClass={classes.CloseButtonWrapper} />
         <Box className={classes.TopSection}>
           <Box className={classes.ShowMobile} style={{ flexDirection: 'column' }}>
             {renderTopInfo()}
@@ -272,10 +267,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
       },
     },
-    CloseButton: {
-      width: '40px',
-      height: '40px',
-      backgroundColor: 'rgba(186, 195, 201, 0.3)',
+    CloseButtonWrapper: {
       position: 'absolute',
       top: '15px',
       right: '15px',
@@ -396,6 +388,8 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '120px',
       height: '50px',
       marginLeft: '15px',
+      paddingLeft: '13px',
+      paddingRight: '13px',
     },
     ShowDesktop: {
       display: 'flex',
