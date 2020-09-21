@@ -1,15 +1,15 @@
-import * as types from '../actions/actionTypes';
+import { ADD_PRODUCT_CART, UPDATE_PRODUCT_CART, UPDATE_PRODUCT_ADDON } from '../actions/actionTypes';
 import initialState from './initialState';
 
 export default (state = initialState.cart, action) => {
   switch (action.type) {
-    case types.ADD_PRODUCT_CART: {
+    case ADD_PRODUCT_CART: {
       return {
         ...state,
         cartList: [...state.cartList, action.payload],
       };
     }
-    case types.UPDATE_PRODUCT_CART: {
+    case UPDATE_PRODUCT_CART: {
       const addProduct = { ...action.payload };
       let updatedCart = [];
       if (addProduct.qty <= 0) {
@@ -36,6 +36,20 @@ export default (state = initialState.cart, action) => {
         cartList: [...updatedCart],
       };
     }
+    // case UPDATE_PRODUCT_ADDON: {
+    //   const { proudctId, cartInfo } = action.payload;
+    //   const updatedCartList = state.cartList.map(item => {
+    //     if (item.id === proudctId) {
+    //       const addOns = item.addOns.
+    //     }
+    //     return item;
+    //   })
+    //   return {
+    //     ...state,
+    //     cartList: [...updatedCartList],
+    //   };
+    // }
+
     default:
       return state;
   }

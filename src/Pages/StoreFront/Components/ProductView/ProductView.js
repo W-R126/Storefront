@@ -13,7 +13,7 @@ import Skeleton from '@material-ui/lab/Skeleton';
 import CloseIconButton from '../../../../SharedComponents/CloseIconButton';
 import AllergyBox from './Components/AllergyBox';
 import IngredientsBox from './Components/IngredientsBox';
-
+import AddOnView from '../AddOnView';
 import { getProductPriceInfo, getProductTotalAmount } from '../../../../utils/product';
 import { formatPrice } from '../../../../utils/string';
 import { getCurrency } from '../../../../utils/store';
@@ -27,9 +27,16 @@ const ProductView = ({ open, hideModal, productId, currencyData, net_price, addP
   const classes = useStyles();
 
   const [qtyCount, setQtyCount] = useState(1);
+  const [showAddOnView, setShowAddOnView] = useState(false);
+  const [selectedAddOns, setSelectedAddOns] = useState([]);
 
   const { loading, data } = useQuery(GET_PRODUCT_BY_ID, {
     variables: { id: productId },
+    onCompleted(d) {
+      const addOns = getAddOns(d);
+      if (addOns && addOns.length > 0) setShowAddOnView(true);
+      else setShowAddOnView(false);
+    },
   });
 
   const { orderType, cartList } = useSelector((state) => ({
@@ -49,6 +56,12 @@ const ProductView = ({ open, hideModal, productId, currencyData, net_price, addP
   const getProduct = () => {
     if (!data) return null;
     if (data.products.length > 0) return data.products[0];
+  };
+
+  const getAddOns = () => {
+    const product = getProduct();
+    if (!product) return [];
+    return _.get(product, 'addons', []);
   };
 
   const getProductImage = () => {
@@ -159,6 +172,19 @@ const ProductView = ({ open, hideModal, productId, currencyData, net_price, addP
           </Box>
         </Box>
       </Dialog>
+    );
+  else if (showAddOnView)
+    return (
+      <AddOnView
+        open={showAddOnView}
+        hideModal={() => setShowAddOnView(false)}
+        productId={productId}
+        addOnData={getAddOns()}
+        selectedAddOns={selectedAddOns}
+        setSelectedAddOns={(updatedAddOns) => {
+          setSelectedAddOns([...updatedAddOns]);
+        }}
+      />
     );
   else
     return (

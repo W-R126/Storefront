@@ -7,7 +7,7 @@ export const UPDATE_EMAIL = 'Update Email';
 // Cart Types
 export const ADD_PRODUCT_CART = 'Add producdt cart';
 export const UPDATE_PRODUCT_CART = 'Update product cart';
-
+export const UPDATE_PRODUCT_ADDON = 'UPdate product addon';
 // Store
 export const UPDATE_TRANS_TYPE = 'Update Trans Type';
 

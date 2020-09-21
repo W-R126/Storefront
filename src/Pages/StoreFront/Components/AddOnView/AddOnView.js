@@ -1,13 +1,34 @@
 import React from 'react';
 
+import _, { set } from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Dialog, Box, Button, Typography } from '@material-ui/core';
+import { Dialog, Box, Button, Typography, Grid } from '@material-ui/core';
 
 import AddOnItem from '../../../../SharedComponents/AddOnItem';
 import CloseIconButton from '../../../../SharedComponents/CloseIconButton';
 
-const AddOnView = ({ open, hideModal }) => {
+const AddOnView = ({ open, hideModal, productId, addOnData, selectedAddOns, setSelectedAddOns }) => {
   const classes = useStyles();
+
+  const getAddOnItemInfo = (optionItemId) => {
+    const findOne = selectedAddOns.find((item) => item.id === optionItemId);
+    return findOne;
+  };
+
+  const changeAddOnData = (newData) => {
+    if (newData.qty === 0) setSelectedAddOns([...selectedAddOns.filter((item) => item.id !== newData.id)]);
+    else {
+      const findOne = selectedAddOns.find((item) => item.id === newData.id);
+      if (findOne)
+        setSelectedAddOns([
+          ...selectedAddOns.map((item) => {
+            if (item.id === newData.id) return newData;
+            return item;
+          }),
+        ]);
+      else setSelectedAddOns([...selectedAddOns, newData]);
+    }
+  };
 
   return (
     <Dialog open={open} onClose={hideModal} fullWidth={true} maxWidth="md" className={classes.root}>
@@ -15,9 +36,31 @@ const AddOnView = ({ open, hideModal }) => {
       <Typography variant="h1" className={classes.Title}>
         Select Options
       </Typography>
-      <Box className={classes.Panel}>
-        <AddOnItem />
-      </Box>
+      {addOnData.map((item) => {
+        if (item.options.length === 0) return null;
+        return (
+          <Box className={classes.Panel}>
+            <Typography variant="h2" className="title">
+              {item.group}
+            </Typography>
+            <Grid container spacing={3}>
+              {item.options.map((itemOption) => {
+                return (
+                  <Grid item md={4} sm={12} xs={12}>
+                    <AddOnItem
+                      itemData={itemOption}
+                      selectedInfo={getAddOnItemInfo(itemOption.id)}
+                      setSelectedAddOns={(newData) => {
+                        changeAddOnData(newData);
+                      }}
+                    />
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </Box>
+        );
+      })}
       <Box className={classes.Footer}>
         <Typography variant="h1" className={classes.FooterPriceLabel}>
           Price:
@@ -67,6 +110,11 @@ const useStyles = makeStyles((theme: Theme) =>
     Panel: {
       display: 'flex',
       flexDirection: 'column',
+      margin: '30px 0 0 0',
+      '& .title': {
+        fontWeight: 500,
+        margin: '0 0 20px 0',
+      },
     },
     Footer: {
       display: 'flex',

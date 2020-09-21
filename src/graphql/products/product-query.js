@@ -105,6 +105,7 @@ export const GET_PRODUCT_BY_ID = gql`
         default_all
         options {
           inventory_id
+          #product_id
           id
           name
           force_charge

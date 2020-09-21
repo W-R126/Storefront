@@ -164,7 +164,8 @@ const ProductCard = ({
         <ProductView
           open={showProductView}
           hideModal={() => setShowProductView(false)}
-          productId={productInfo.id}
+          // productId={productInfo.id}
+          productId="1fe204f7-3051-4aca-9543-ac47c9deea6e"
           currencyData={currencyData}
           net_price={net_price}
         />
