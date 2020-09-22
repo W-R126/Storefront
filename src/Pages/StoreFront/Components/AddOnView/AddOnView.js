@@ -1,33 +1,63 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
-import _, { set } from 'lodash';
+import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Dialog, Box, Button, Typography, Grid } from '@material-ui/core';
+import { Dialog, Box, Button, Typography } from '@material-ui/core';
 
-import AddOnItem from '../../../../SharedComponents/AddOnItem';
+import AddOnGroup from '../../../../SharedComponents/AddOnGroup';
 import CloseIconButton from '../../../../SharedComponents/CloseIconButton';
 
 const AddOnView = ({ open, hideModal, productId, addOnData, selectedAddOns, setSelectedAddOns }) => {
   const classes = useStyles();
+  const [errorMsgs, setErrorMsgs] = useState([]);
 
-  const getAddOnItemInfo = (optionItemId) => {
-    const findOne = selectedAddOns.find((item) => item.id === optionItemId);
+  useEffect(() => {
+    setErrorMsgs([
+      ...addOnData.map((item) => {
+        return { id: item.id, errorMsg: '' };
+      }),
+    ]);
+  }, [addOnData]);
+
+  const changeAddOns = (groupAddOns) => {
+    const findOne = selectedAddOns.find((item) => item.id === groupAddOns.id);
+    if (findOne)
+      setSelectedAddOns([
+        ...selectedAddOns.map((item) => {
+          if (item.id === groupAddOns.id)
+            return {
+              ...groupAddOns,
+            };
+          else return item;
+        }),
+      ]);
+    else setSelectedAddOns([...selectedAddOns, groupAddOns]);
+  };
+
+  const getAddOnOptions = (groupId) => {
+    const findOne = selectedAddOns.find((item) => item.id === groupId);
     return findOne;
   };
 
-  const changeAddOnData = (newData) => {
-    if (newData.qty === 0) setSelectedAddOns([...selectedAddOns.filter((item) => item.id !== newData.id)]);
-    else {
-      const findOne = selectedAddOns.find((item) => item.id === newData.id);
-      if (findOne)
-        setSelectedAddOns([
-          ...selectedAddOns.map((item) => {
-            if (item.id === newData.id) return newData;
-            return item;
-          }),
-        ]);
-      else setSelectedAddOns([...selectedAddOns, newData]);
-    }
+  const handleClickAddCart = () => {
+    const errorMsgTemp = [];
+    addOnData.forEach((item) => {
+      const groupCart = selectedAddOns.find((itemCart) => itemCart.id === item.id);
+      const options = _.get(item, 'options', []);
+      const selectedOptions = _.get(groupCart, 'options', []);
+      if (options && options.length > 0) {
+        if (item.mandatory) {
+          if (!selectedOptions || selectedOptions.length === 0)
+            errorMsgTemp.push({ id: item.id, errorMsg: `Select an option from ${item.group}` });
+        }
+        if (!item.multi_selection) {
+          if (selectedOptions && selectedOptions.length > 1)
+            errorMsgTemp.push({ id: item.id, errorMsg: `Select one option ${item.group}` });
+        }
+      }
+    });
+    setErrorMsgs([...errorMsgTemp]);
+    if (errorMsgTemp.length > 0) return;
   };
 
   return (
@@ -39,26 +69,14 @@ const AddOnView = ({ open, hideModal, productId, addOnData, selectedAddOns, setS
       {addOnData.map((item) => {
         if (item.options.length === 0) return null;
         return (
-          <Box className={classes.Panel}>
-            <Typography variant="h2" className="title">
-              {item.group}
-            </Typography>
-            <Grid container spacing={3}>
-              {item.options.map((itemOption) => {
-                return (
-                  <Grid item md={4} sm={12} xs={12}>
-                    <AddOnItem
-                      itemData={itemOption}
-                      selectedInfo={getAddOnItemInfo(itemOption.id)}
-                      setSelectedAddOns={(newData) => {
-                        changeAddOnData(newData);
-                      }}
-                    />
-                  </Grid>
-                );
-              })}
-            </Grid>
-          </Box>
+          <AddOnGroup
+            groupInfo={item}
+            groupAddOns={getAddOnOptions(item.id)}
+            setGroupAddOns={(groupAddOns) => {
+              changeAddOns(groupAddOns);
+            }}
+            errorMsg={errorMsgs.find((itemMsg) => itemMsg.id === item.id)}
+          />
         );
       })}
       <Box className={classes.Footer}>
@@ -68,7 +86,7 @@ const AddOnView = ({ open, hideModal, productId, addOnData, selectedAddOns, setS
         <Typography variant="h1" className={classes.FooterPrice}>
           £19.50
         </Typography>
-        <Button variant="contained" color="primary" className={classes.AddCartButton}>
+        <Button variant="contained" color="primary" className={classes.AddCartButton} onClick={handleClickAddCart}>
           Add to cart
         </Button>
       </Box>
@@ -106,15 +124,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     Title: {
       fontWeight: 500,
-    },
-    Panel: {
-      display: 'flex',
-      flexDirection: 'column',
-      margin: '30px 0 0 0',
-      '& .title': {
-        fontWeight: 500,
-        margin: '0 0 20px 0',
-      },
     },
     Footer: {
       display: 'flex',

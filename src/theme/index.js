@@ -49,6 +49,7 @@ export const THEME = createMuiTheme({
       title: '#505c69',
       text: '#20272f',
       text1: '#ba000d',
+      red: '#f63333',
     },
     secondary: {
       light: '#2a88ff',

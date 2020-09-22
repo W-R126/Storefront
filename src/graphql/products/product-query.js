@@ -95,11 +95,11 @@ export const GET_PRODUCT_BY_ID = gql`
         }
       }
       addons {
+        id
         group
         description
         parent
         allow_free
-        mandatory
         mandatory
         multi_selection
         default_all

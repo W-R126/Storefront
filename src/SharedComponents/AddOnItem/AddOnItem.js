@@ -8,7 +8,7 @@ import AddIcon from '@material-ui/icons/Add';
 
 import PlaceHolderSvg from '../../assets/img/addon-item-placeholder.png';
 
-const AddOnItem = ({ wrapperClass, itemData, selectedInfo, setSelectedAddOns }) => {
+const AddOnItem = ({ wrapperClass, itemData, optionCartInfo, setOptionCartInfo }) => {
   const classes = useStyles();
 
   const getItemImage = () => {
@@ -24,31 +24,48 @@ const AddOnItem = ({ wrapperClass, itemData, selectedInfo, setSelectedAddOns }) 
   };
 
   const handleClickItem = () => {
-    if (selectedInfo) return null;
+    if (optionCartInfo) return null;
     else {
-      setSelectedAddOns({
-        id: itemData.id,
+      setOptionCartInfo({
+        ...itemData,
         qty: 1,
       });
     }
   };
 
   const getCurrentQty = () => {
-    return _.get(selectedInfo, 'qty', 0);
+    return _.get(optionCartInfo, 'qty', 0);
+  };
+
+  const getMinusButtonStatus = () => {
+    const mandatory = _.get(itemData, 'mandatory', false);
+    const qty = _.get(optionCartInfo, 'qty', 0);
+    if (mandatory && qty <= 1) return false;
+    return true;
+  };
+
+  const getPlusButtonStatus = () => {
+    const qty = _.get(optionCartInfo, 'qty', 0);
+    const extra = _.get(itemData, 'extra', -1);
+    if (extra >= 0 && qty >= extra + 1) {
+      return false;
+    }
+    return true;
   };
 
   const renderCartControl = () => {
-    if (selectedInfo) {
+    if (optionCartInfo) {
       return (
         <Box className={classes.ControlPanel}>
           <IconButton
             className={classes.AddItemButton}
             onClick={() => {
-              setSelectedAddOns({
-                ...selectedInfo,
-                qty: selectedInfo.qty - 1,
+              setOptionCartInfo({
+                ...itemData,
+                qty: optionCartInfo.qty - 1,
               });
             }}
+            disabled={!getMinusButtonStatus()}
           >
             <RemoveIcon color="#fff" />
           </IconButton>
@@ -58,11 +75,12 @@ const AddOnItem = ({ wrapperClass, itemData, selectedInfo, setSelectedAddOns }) 
           <IconButton
             className={classes.AddItemButton}
             onClick={() => {
-              setSelectedAddOns({
-                ...selectedInfo,
-                qty: selectedInfo.qty + 1,
+              setOptionCartInfo({
+                ...itemData,
+                qty: optionCartInfo.qty + 1,
               });
             }}
+            disabled={!getPlusButtonStatus()}
           >
             <AddIcon color="#fff" />
           </IconButton>
@@ -121,6 +139,10 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '20px',
       borderRadius: '9px',
       backgroundColor: 'rgba(32, 39, 47, 0.86)',
+      '&.Mui-disabled': {
+        backgroundColor: 'rgba(32, 39, 47, 0.86)',
+        opacity: 0.6,
+      },
       '&:hover': {
         backgroundColor: 'rgba(32, 39, 47, 0.66)',
       },
@@ -129,6 +151,11 @@ const useStyles = makeStyles((theme: Theme) =>
         height: '18px',
         color: 'white',
       },
+    },
+    DisableItemButton: {
+      opacity: 0.6,
+      cursor: 'none',
+      pointerEvents: 'none',
     },
     Count: {
       fontSize: '20px',

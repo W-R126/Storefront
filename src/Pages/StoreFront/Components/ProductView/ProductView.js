@@ -34,8 +34,10 @@ const ProductView = ({ open, hideModal, productId, currencyData, net_price, addP
     variables: { id: productId },
     onCompleted(d) {
       const addOns = getAddOns(d);
-      if (addOns && addOns.length > 0) setShowAddOnView(true);
-      else setShowAddOnView(false);
+      if (addOns && addOns.length > 0) {
+        setShowAddOnView(true);
+        setAddOnCartList(addOns);
+      } else setShowAddOnView(false);
     },
   });
 
@@ -49,8 +51,10 @@ const ProductView = ({ open, hideModal, productId, currencyData, net_price, addP
     const findOne = cartList.find(
       (item) => item.productId === productId && _.get(orderType, 'name', '') === item.orderType
     );
-    if (findOne) return setQtyCount(findOne.qty);
-    return setQtyCount(1);
+    if (findOne) setQtyCount(findOne.qty);
+    else setQtyCount(1);
+
+    // eslint-disable-next-line array-callback-return
   }, [cartList, orderType, productId]);
 
   const getProduct = () => {
@@ -85,6 +89,40 @@ const ProductView = ({ open, hideModal, productId, currencyData, net_price, addP
     const stocks = _.get(getProduct(), 'stocks', []);
     if (stocks.length === 0) return 0;
     return stocks[0].current_stock;
+  };
+
+  const setAddOnCartList = (addOns) => {
+    const productCart = cartList.find((item) => item.id === productId);
+    if (productCart) {
+      setSelectedAddOns([..._.get(productCart, 'addons', [])]);
+    } else {
+      const formatedAddOns = [];
+      addOns.forEach((item) => {
+        if (item.default_all) {
+          formatedAddOns.push({
+            ...item,
+            options: [
+              ...item.options.map((itemOption) => {
+                return {
+                  ...itemOption,
+                  qty: 1,
+                };
+              }),
+            ],
+          });
+        } else {
+          const tempAddOnItem = { ...item, options: [] };
+          item.options.forEach((itemOption) => {
+            if (itemOption.default) {
+              tempAddOnItem.options.push({ ...itemOption, qty: 1 });
+            }
+          });
+          if (tempAddOnItem.options.length > 0) formatedAddOns.push(tempAddOnItem);
+        }
+      });
+
+      setSelectedAddOns([...formatedAddOns]);
+    }
   };
 
   const renderPriceInfo = () => {
