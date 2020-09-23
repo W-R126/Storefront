@@ -10,7 +10,8 @@ export default {
 
 const PhoneNumberInputExample = () => {
   const [value, setValue] = useState({
-    code: '+44',
+    code: 'GB',
+    dial_code: '+44',
     number: '',
     validate: true,
     errorMsg: '',

@@ -3,15 +3,14 @@ import { connect } from 'react-redux';
 
 import _ from 'lodash';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import AddIcon from '@material-ui/icons/Add';
-import RemoveIcon from '@material-ui/icons/Remove';
 import Skeleton from '@material-ui/lab/Skeleton';
 
 import ProductView from '../../../ProductView';
+import CartAddItemButton from '../../../../../../SharedComponents/CartAddItemButton';
 import { getCurrency } from '../../../../../../utils/store';
-import { getProductCart, getProductPriceInfo, getProductTotalAmount } from '../../../../../../utils/product';
+import { getProductCart, getProductPriceInfo } from '../../../../../../utils/product';
 import { formatPrice } from '../../../../../../utils/string';
-import { updateProductCartAction, addProductCartAction } from '../../../../../../actions/cartAction';
+import { updateProductCartAction } from '../../../../../../actions/cartAction';
 
 import ProductPlaceHolderImg from '../../../../../../assets/img/product-card-placeholder.png';
 
@@ -22,7 +21,6 @@ const ProductCard = ({
   cartInfo,
   orderType,
   updateProductCartAction,
-  addProductCartAction,
   loading,
 }) => {
   const classes = useStyles();
@@ -51,9 +49,11 @@ const ProductCard = ({
       );
     } else {
       let priceValue = priceInfo.price;
+      let rateValue = 0;
       priceInfo.taxes.forEach((item) => {
-        priceValue += item.rate;
+        rateValue += item.rate;
       });
+      priceValue += priceValue * (rateValue / 100);
       return (
         <div className={classes.Price}>
           {getCurrency(currencyData)} {formatPrice(priceValue, currencyData)}
@@ -70,7 +70,7 @@ const ProductCard = ({
   const updateCarts = (addNumber) => {
     updateProductCartAction({
       ...getProductCart(cartInfo, productInfo.id, orderType),
-      qty: getCartCount().qty + addNumber,
+      qty: getCartCount() + addNumber,
     });
   };
 
@@ -78,6 +78,21 @@ const ProductCard = ({
     const stocks = _.get(productInfo, 'stocks', []);
     if (stocks.length === 0) return 0;
     return stocks[0].current_stock;
+  };
+
+  const getAddOnPossible = () => {
+    const addOns = _.get(productInfo, 'addons', []);
+    if (addOns.length === 0) return false;
+    else {
+      let isPossible = false;
+      addOns.forEach((item) => {
+        if (!isPossible) {
+          const options = _.get(item, 'options', []);
+          if (options.length > 0) isPossible = true;
+        }
+      });
+      return isPossible;
+    }
   };
 
   const renderBottom = () => {
@@ -92,25 +107,9 @@ const ProductCard = ({
     else
       return (
         <div className={classes.ProductCount}>
-          <div className={classes.CircleButton} onClick={() => updateCarts(-1)} role="button">
-            <RemoveIcon />
-          </div>
+          <CartAddItemButton onClick={() => updateCarts(-1)} type="minus" />
           <div className={classes.CountValue}>{getCartCount()}</div>
-          <div
-            className={classes.CircleButton}
-            onClick={() => {
-              addProductCartAction({
-                productId: productInfo.id,
-                name: productInfo.name,
-                qty: 1,
-                price: getProductTotalAmount(productInfo, orderType, net_price),
-                orderType: _.get(orderType, 'name', ''),
-              });
-            }}
-            role="button"
-          >
-            <AddIcon />
-          </div>
+          <CartAddItemButton onClick={() => updateCarts(1)} type="plus" />
         </div>
       );
   };
@@ -164,10 +163,10 @@ const ProductCard = ({
         <ProductView
           open={showProductView}
           hideModal={() => setShowProductView(false)}
-          // productId={productInfo.id}
-          productId="1fe204f7-3051-4aca-9543-ac47c9deea6e"
+          productId={productInfo.id}
           currencyData={currencyData}
           net_price={net_price}
+          addOnPossible={getAddOnPossible()}
         />
       )}
     </div>
@@ -286,20 +285,6 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: 'auto',
       display: 'flex',
       alignItems: 'center',
-      '& .MuiSvgIcon-root': {
-        width: '15px',
-      },
-    },
-    CircleButton: {
-      display: 'flex',
-      width: '18px',
-      height: '18px',
-      cursor: 'pointer',
-      borderRadius: '10px',
-      backgroundColor: '#41474e',
-      justifyContent: 'center',
-      alignItems: 'center',
-      color: '#fff',
     },
     CountValue: {
       fontSize: '20px',
@@ -320,4 +305,4 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default connect(null, { addProductCartAction, updateProductCartAction })(ProductCard);
+export default connect(null, { updateProductCartAction })(ProductCard);

@@ -1,15 +1,28 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
+import { useQuery } from '@apollo/react-hooks';
 import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Box, Typography, IconButton } from '@material-ui/core';
-import RemoveIcon from '@material-ui/icons/Remove';
-import AddIcon from '@material-ui/icons/Add';
+import { Box, Typography } from '@material-ui/core';
+import CartAddItemButton from '../CartAddItemButton';
+import { getAddOnOptionPriceInfo } from '../../utils/product';
+import { formatPrice } from '../../utils/string';
+import { getNetPriceStatus } from '../../utils/merchant';
+import { getCurrency } from '../../utils/store';
 
 import PlaceHolderSvg from '../../assets/img/addon-item-placeholder.png';
+import { GET_MERCHANT_NET_PRICE } from '../../graphql/merchant/merchant-query';
+import { GET_CURRENCY } from '../../graphql/localisation/localisation-query';
 
 const AddOnItem = ({ wrapperClass, itemData, optionCartInfo, setOptionCartInfo }) => {
+  const { data: merchantNetPrice } = useQuery(GET_MERCHANT_NET_PRICE);
+  const { data: currencyData } = useQuery(GET_CURRENCY);
+
   const classes = useStyles();
+  const { orderType } = useSelector((state) => ({
+    orderType: state.storeReducer.orderType,
+  }));
 
   const getItemImage = () => {
     const itemImg = _.get(itemData, 'backImg', '');
@@ -53,37 +66,63 @@ const AddOnItem = ({ wrapperClass, itemData, optionCartInfo, setOptionCartInfo }
     return true;
   };
 
+  const renderPriceInfo = () => {
+    const priceInfo = getAddOnOptionPriceInfo(itemData, orderType);
+    if (!priceInfo) return '';
+
+    const netPrice = getNetPriceStatus(merchantNetPrice);
+    if (netPrice) {
+      const netPriceNames = priceInfo.taxes.map((taxItem) => taxItem.name);
+      const netPriceStr = netPriceNames.join(', ');
+
+      return (
+        <Typography variant="h3" className={classes.Price}>
+          {getCurrency(currencyData)} {formatPrice(priceInfo.price, currencyData)}
+          {netPriceNames.length > 0 && <span>+{netPriceStr}</span>}
+        </Typography>
+      );
+    } else {
+      let priceValue = priceInfo.price;
+      let rateValue = 0;
+      priceInfo.taxes.forEach((item) => {
+        rateValue += item.rate;
+      });
+      priceValue += priceValue * (rateValue / 100);
+      return (
+        <Typography variant="h3" className={classes.Price}>
+          {getCurrency(currencyData)} {formatPrice(priceValue, currencyData)}
+        </Typography>
+      );
+    }
+  };
+
   const renderCartControl = () => {
     if (optionCartInfo) {
       return (
         <Box className={classes.ControlPanel}>
-          <IconButton
-            className={classes.AddItemButton}
+          <CartAddItemButton
             onClick={() => {
               setOptionCartInfo({
                 ...itemData,
                 qty: optionCartInfo.qty - 1,
               });
             }}
+            type="minus"
             disabled={!getMinusButtonStatus()}
-          >
-            <RemoveIcon color="#fff" />
-          </IconButton>
+          />
           <Typography variant="h2" className={classes.Count}>
             {getCurrentQty()}
           </Typography>
-          <IconButton
-            className={classes.AddItemButton}
+          <CartAddItemButton
             onClick={() => {
               setOptionCartInfo({
                 ...itemData,
                 qty: optionCartInfo.qty + 1,
               });
             }}
+            type="plus"
             disabled={!getPlusButtonStatus()}
-          >
-            <AddIcon color="#fff" />
-          </IconButton>
+          />
         </Box>
       );
     } else {
@@ -91,16 +130,17 @@ const AddOnItem = ({ wrapperClass, itemData, optionCartInfo, setOptionCartInfo }
     }
   };
 
+  const rootClass = [classes.root];
+  if (getCurrentQty() > 0) rootClass.push(classes.NoSelect);
+
   return (
-    <Box className={classes.root} role="button" onClick={handleClickItem}>
+    <Box className={rootClass.join(' ')} role="button" onClick={handleClickItem}>
       <Box className={classes.ImgBox} style={{ backgroundImage: `url(${getItemImage()})`, ...getBackImgStyle() }}></Box>
       {renderCartControl()}
       <Typography variant="h3" className={classes.ProductName}>
         {itemData.name}
       </Typography>
-      <Typography variant="h3" className={classes.Price}>
-        £0.50
-      </Typography>
+      {renderPriceInfo()}
     </Box>
   );
 };
@@ -118,44 +158,24 @@ const useStyles = makeStyles((theme: Theme) =>
         backgroundColor: 'rgba(186, 195, 201, 0.2)',
       },
     },
+    NoSelect: {
+      cursor: 'auto',
+      backgroundColor: '#fff !important',
+    },
     ImgBox: {
       boxSizing: 'border-box',
       backgroundSize: 'contain',
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center center',
-      width: '69px',
+      flex: '0 0 69px',
       margin: '0 17px 0 0',
       height: '100%',
     },
     ControlPanel: {
       boxSizing: 'border-box',
       display: 'flex',
+      flex: '0 0 70px',
       margin: '0 9px 0 0',
-    },
-    AddItemButton: {
-      boxSizing: 'border-box',
-      padding: '1px',
-      width: '20px',
-      height: '20px',
-      borderRadius: '9px',
-      backgroundColor: 'rgba(32, 39, 47, 0.86)',
-      '&.Mui-disabled': {
-        backgroundColor: 'rgba(32, 39, 47, 0.86)',
-        opacity: 0.6,
-      },
-      '&:hover': {
-        backgroundColor: 'rgba(32, 39, 47, 0.66)',
-      },
-      '& .MuiSvgIcon-root': {
-        width: '18px',
-        height: '18px',
-        color: 'white',
-      },
-    },
-    DisableItemButton: {
-      opacity: 0.6,
-      cursor: 'none',
-      pointerEvents: 'none',
     },
     Count: {
       fontSize: '20px',
@@ -165,10 +185,17 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'center',
     },
     ProductName: {
-      margin: '0 0 0 7px',
+      margin: '0 7px',
+      flex: '1 1 auto',
+      display: '-webkit-box',
+      '-webkit-line-clamp': 2,
+      '-webkit-box-orient': 'vertical',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
     },
     Price: {
       margin: '0 13px 0 auto',
+      flex: '0 0 50px',
     },
   })
 );

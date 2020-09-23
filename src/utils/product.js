@@ -2,7 +2,9 @@ import _ from 'lodash';
 import { getProductViewFromStoreSetting } from './store';
 
 export const getProductCart = (cartList, productId, orderType) => {
-  const findCart = cartList.find((item) => item.id === productId && item.orderType === _.get(orderType, 'name', ''));
+  const findCart = cartList.find(
+    (item) => item.productId === productId && item.orderType.id === _.get(orderType, 'id', '')
+  );
   return findCart;
 };
 
@@ -59,11 +61,65 @@ export const getProductTotalAmount = (productInfo, orderType, net_price) => {
 
   if (net_price) {
     let returnPrice = priceInfo.price;
+    let rateValue = 0;
     priceInfo.taxes.forEach((item) => {
-      returnPrice += item.rate;
+      rateValue += item.rate;
     });
+    returnPrice += (rateValue * rateValue) / 100;
     return returnPrice;
   } else {
     return priceInfo.price;
   }
+};
+
+export const getAddOnOptionPriceInfo = (optionInfo, orderType) => {
+  const priceInfos = _.get(optionInfo.price, 'price_infos', []);
+  if (priceInfos.length === 0) return null;
+  const findPrice = priceInfos.find((item) => {
+    const priceType = _.get(item, 'price_type', {});
+    return _.get(priceType, 'name', '').toLowerCase() === _.get(orderType, 'name', '').toLowerCase();
+  });
+  return findPrice;
+};
+
+export const getAddOnOptionPrice = (optionInfo, orderType, net_price) => {
+  const priceInfo = getAddOnOptionPriceInfo(optionInfo, orderType);
+  if (!priceInfo) return 0;
+  if (net_price) {
+    return _.get(priceInfo, 'price', 0);
+  } else {
+    let priceValue = priceInfo.price;
+    let rateValue = 0;
+    priceInfo.taxes.forEach((item) => {
+      rateValue += item.rate;
+    });
+    priceValue += (priceValue * rateValue) / 100;
+    return priceValue;
+  }
+};
+
+export const getAddOnGroupPrice = (groupCartInfo, orderType, net_price) => {
+  let allowFree = _.get(groupCartInfo, 'allow_free', 0);
+  const options = _.get(groupCartInfo, 'options', []);
+
+  let totalPrice = 0;
+  options.forEach((item, nIndex) => {
+    const force_charge = _.get(item, 'force_charge', false);
+    if (allowFree > 0 && nIndex < allowFree && !force_charge) {
+      allowFree--;
+    } else {
+      const qty = _.get(item, 'qty', 0);
+      totalPrice += getAddOnOptionPrice(item, orderType, net_price) * qty;
+    }
+  });
+  return totalPrice;
+};
+
+export const getAddOnCartPrice = (addOnCart, orderType, net_price) => {
+  if (!addOnCart || addOnCart.length === 0) return 0;
+  let totalValue = 0;
+  addOnCart.forEach((item) => {
+    totalValue += getAddOnGroupPrice(item, orderType, net_price);
+  });
+  return totalValue;
 };

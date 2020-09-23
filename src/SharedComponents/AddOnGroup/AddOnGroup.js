@@ -60,7 +60,7 @@ const AddOnGroup = ({ groupInfo, groupAddOns, setGroupAddOns, errorMsg }) => {
       <Grid container spacing={3}>
         {getOrderedItems().map((item) => {
           return (
-            <Grid item md={4} sm={12} xs={12}>
+            <Grid item className={classes.AddOnGridItem}>
               <AddOnItem
                 itemData={item}
                 optionCartInfo={getAddOnItemInfo(item.id)}
@@ -95,6 +95,19 @@ const useStyles = makeStyles((theme: Theme) =>
       '& .error-msg': {
         color: theme.palette.primary.red,
         margin: '5px 0 0 0',
+      },
+    },
+    AddOnGridItem: {
+      flexGrow: 0,
+      maxWidth: '33.333333%',
+      flexBasis: '33.333333%',
+      '@media screen and (max-width: 1279px)': {
+        maxWidth: '50%',
+        flexBasis: '50%',
+      },
+      '@media screen and (max-width: 768px)': {
+        maxWidth: '100%',
+        flexBasis: '100%',
       },
     },
   })

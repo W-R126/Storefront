@@ -43,6 +43,11 @@ export const GET_PRODUCTS = gql`
       stocks {
         current_stock
       }
+      addons {
+        options {
+          id
+        }
+      }
     }
   }
 `;
