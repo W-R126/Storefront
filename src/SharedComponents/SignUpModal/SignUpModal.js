@@ -69,7 +69,7 @@ const SignUpModal = ({ isShow, hideModal, gotoLogin }) => {
           hideModal();
         })
         .catch((err) => {
-          debugger;
+          console.log(err);
         });
     } catch (e) {
       console.log(e);

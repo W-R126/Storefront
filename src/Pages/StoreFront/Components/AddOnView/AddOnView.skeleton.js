@@ -10,18 +10,20 @@ const AddOnViewSkeleton = () => {
   return (
     <Box container className={classes.root}>
       <Skeleton style={{ width: '155px', height: '27px' }} />
-      <Skeleton style={{ width: '125px', height: '22px', marginTop: '30px' }} />
-      <Grid container style={{ marginTop: '10px' }} spacing={3}>
-        <Grid item className={classes.AddOnGridItem}>
-          <Skeleton className={classes.AddOnItem} />
+      <Box style={{ boxSizing: 'border-box', marginTop: '30px' }}>
+        <Skeleton style={{ width: '125px', height: '22px' }} />
+        <Grid container style={{ marginTop: '10px' }} spacing={3}>
+          <Grid item className={classes.AddOnGridItem}>
+            <Skeleton className={classes.AddOnItem} />
+          </Grid>
+          <Grid item className={classes.AddOnGridItem}>
+            <Skeleton className={classes.AddOnItem} />
+          </Grid>
+          <Grid item className={classes.AddOnGridItem}>
+            <Skeleton className={classes.AddOnItem} />
+          </Grid>
         </Grid>
-        <Grid item className={classes.AddOnGridItem}>
-          <Skeleton className={classes.AddOnItem} />
-        </Grid>
-        <Grid item className={classes.AddOnGridItem}>
-          <Skeleton className={classes.AddOnItem} />
-        </Grid>
-      </Grid>
+      </Box>
       <Box className={classes.Footer}>
         <Skeleton style={{ width: '150px', height: '50px' }} />
         <Skeleton style={{ width: '150px', height: '50px', marginLeft: '40px' }} />

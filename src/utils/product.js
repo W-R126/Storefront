@@ -100,7 +100,7 @@ export const getAddOnOptionPrice = (optionInfo, orderType, net_price) => {
 
 export const getAddOnGroupPrice = (groupCartInfo, orderType, net_price) => {
   let allowFree = _.get(groupCartInfo, 'allow_free', 0);
-  const options = _.get(groupCartInfo, 'options', []);
+  const options = _.get(groupCartInfo, 'addons', []);
 
   let totalPrice = 0;
   options.forEach((item, nIndex) => {
@@ -109,7 +109,7 @@ export const getAddOnGroupPrice = (groupCartInfo, orderType, net_price) => {
       allowFree--;
     } else {
       const qty = _.get(item, 'qty', 0);
-      totalPrice += getAddOnOptionPrice(item, orderType, net_price) * qty;
+      totalPrice += item.fixed_price * qty;
     }
   });
   return totalPrice;

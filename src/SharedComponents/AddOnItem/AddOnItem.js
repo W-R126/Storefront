@@ -1,28 +1,20 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 
 import { useQuery } from '@apollo/react-hooks';
 import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Box, Typography } from '@material-ui/core';
 import CartAddItemButton from '../CartAddItemButton';
-import { getAddOnOptionPriceInfo } from '../../utils/product';
 import { formatPrice } from '../../utils/string';
-import { getNetPriceStatus } from '../../utils/merchant';
 import { getCurrency } from '../../utils/store';
 
 import PlaceHolderSvg from '../../assets/img/addon-item-placeholder.png';
-import { GET_MERCHANT_NET_PRICE } from '../../graphql/merchant/merchant-query';
 import { GET_CURRENCY } from '../../graphql/localisation/localisation-query';
 
-const AddOnItem = ({ wrapperClass, itemData, optionCartInfo, setOptionCartInfo }) => {
-  const { data: merchantNetPrice } = useQuery(GET_MERCHANT_NET_PRICE);
+const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) => {
   const { data: currencyData } = useQuery(GET_CURRENCY);
 
   const classes = useStyles();
-  const { orderType } = useSelector((state) => ({
-    orderType: state.storeReducer.orderType,
-  }));
 
   const getItemImage = () => {
     const itemImg = _.get(itemData, 'backImg', '');
@@ -37,9 +29,9 @@ const AddOnItem = ({ wrapperClass, itemData, optionCartInfo, setOptionCartInfo }
   };
 
   const handleClickItem = () => {
-    if (optionCartInfo) return null;
+    if (itemCartInfo) return null;
     else {
-      setOptionCartInfo({
+      setItemCartInfo({
         ...itemData,
         qty: 1,
       });
@@ -47,18 +39,18 @@ const AddOnItem = ({ wrapperClass, itemData, optionCartInfo, setOptionCartInfo }
   };
 
   const getCurrentQty = () => {
-    return _.get(optionCartInfo, 'qty', 0);
+    return _.get(itemCartInfo, 'qty', 0);
   };
 
   const getMinusButtonStatus = () => {
     const mandatory = _.get(itemData, 'mandatory', false);
-    const qty = _.get(optionCartInfo, 'qty', 0);
+    const qty = _.get(itemCartInfo, 'qty', 0);
     if (mandatory && qty <= 1) return false;
     return true;
   };
 
   const getPlusButtonStatus = () => {
-    const qty = _.get(optionCartInfo, 'qty', 0);
+    const qty = _.get(itemCartInfo, 'qty', 0);
     const extra = _.get(itemData, 'extra', -1);
     if (extra >= 0 && qty >= extra + 1) {
       return false;
@@ -66,45 +58,16 @@ const AddOnItem = ({ wrapperClass, itemData, optionCartInfo, setOptionCartInfo }
     return true;
   };
 
-  const renderPriceInfo = () => {
-    const priceInfo = getAddOnOptionPriceInfo(itemData, orderType);
-    if (!priceInfo) return '';
-
-    const netPrice = getNetPriceStatus(merchantNetPrice);
-    if (netPrice) {
-      const netPriceNames = priceInfo.taxes.map((taxItem) => taxItem.name);
-      const netPriceStr = netPriceNames.join(', ');
-
-      return (
-        <Typography variant="h3" className={classes.Price}>
-          {getCurrency(currencyData)} {formatPrice(priceInfo.price, currencyData)}
-          {netPriceNames.length > 0 && <span>+{netPriceStr}</span>}
-        </Typography>
-      );
-    } else {
-      let priceValue = priceInfo.price;
-      let rateValue = 0;
-      priceInfo.taxes.forEach((item) => {
-        rateValue += item.rate;
-      });
-      priceValue += priceValue * (rateValue / 100);
-      return (
-        <Typography variant="h3" className={classes.Price}>
-          {getCurrency(currencyData)} {formatPrice(priceValue, currencyData)}
-        </Typography>
-      );
-    }
-  };
-
   const renderCartControl = () => {
-    if (optionCartInfo) {
+    const qty = _.get(itemCartInfo, 'qty', 0);
+    if (itemCartInfo && qty > 0) {
       return (
         <Box className={classes.ControlPanel}>
           <CartAddItemButton
             onClick={() => {
-              setOptionCartInfo({
+              setItemCartInfo({
                 ...itemData,
-                qty: optionCartInfo.qty - 1,
+                qty: itemCartInfo.qty - 1,
               });
             }}
             type="minus"
@@ -115,9 +78,9 @@ const AddOnItem = ({ wrapperClass, itemData, optionCartInfo, setOptionCartInfo }
           </Typography>
           <CartAddItemButton
             onClick={() => {
-              setOptionCartInfo({
+              setItemCartInfo({
                 ...itemData,
-                qty: optionCartInfo.qty + 1,
+                qty: itemCartInfo.qty + 1,
               });
             }}
             type="plus"
@@ -140,7 +103,9 @@ const AddOnItem = ({ wrapperClass, itemData, optionCartInfo, setOptionCartInfo }
       <Typography variant="h3" className={classes.ProductName}>
         {itemData.name}
       </Typography>
-      {renderPriceInfo()}
+      <Typography variant="h3" className={classes.Price}>
+        {getCurrency(currencyData)} {formatPrice(itemData.fixed_price, currencyData)}
+      </Typography>
     </Box>
   );
 };

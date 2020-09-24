@@ -82,17 +82,18 @@ const ProductCard = ({
 
   const getAddOnPossible = () => {
     const addOns = _.get(productInfo, 'addons', []);
-    if (addOns.length === 0) return false;
-    else {
-      let isPossible = false;
-      addOns.forEach((item) => {
-        if (!isPossible) {
-          const options = _.get(item, 'options', []);
-          if (options.length > 0) isPossible = true;
-        }
-      });
-      return isPossible;
-    }
+    if (addOns.length > 0) return true;
+    return false;
+    // else {
+    //   let isPossible = false;
+    //   addOns.forEach((item) => {
+    //     if (!isPossible) {
+    //       const options = _.get(item, 'options', []);
+    //       if (options.length > 0) isPossible = true;
+    //     }
+    //   });
+    //   return isPossible;
+    // }
   };
 
   const renderBottom = () => {
@@ -164,6 +165,7 @@ const ProductCard = ({
           open={showProductView}
           hideModal={() => setShowProductView(false)}
           productId={productInfo.id}
+          // productId="1fe204f7-3051-4aca-9543-ac47c9deea6e"
           currencyData={currencyData}
           net_price={net_price}
           addOnPossible={getAddOnPossible()}

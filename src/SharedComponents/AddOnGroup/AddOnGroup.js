@@ -1,33 +1,88 @@
-import React from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 
+import { useQuery } from '@apollo/react-hooks';
 import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Box, Typography, Grid } from '@material-ui/core';
 
 import AddOnItem from '../AddOnItem';
+import AddOnGroupSkeleton from './AddOnGroup.skeleton';
 
-const AddOnGroup = ({ groupInfo, groupAddOns, setGroupAddOns, errorMsg }) => {
+import { GET_ADDON_GROUPS } from '../../graphql/products/product-query';
+
+const AddOnGroup = forwardRef(({ productGroupAddonInfo, groupAddOns, setGroupAddOns }, ref) => {
   const classes = useStyles();
+  const [groupValidate, setGroupValidate] = useState({
+    validate: true,
+    errorMsg: '',
+  });
+
+  const { loading, data: addonGroups } = useQuery(GET_ADDON_GROUPS, {
+    variables: {
+      id: productGroupAddonInfo.id,
+    },
+  });
+
+  const getGroupInfo = () => {
+    const addonGroupsTemp = _.get(addonGroups, 'addonGroups', []);
+    if (!addonGroupsTemp || addonGroupsTemp.length === 0) return null;
+    return {
+      ...addonGroupsTemp[0],
+      ...productGroupAddonInfo,
+    };
+  };
+
+  useImperativeHandle(ref, () => ({
+    checkValidate() {
+      const groupInfo = getGroupInfo();
+      const groupAddons = _.get(groupInfo, 'addons', []);
+      const addonCarts = _.get(groupAddOns, 'addons', []);
+      let tempGroupValidate = {
+        validate: true,
+        errorMsg: '',
+      };
+      if (groupAddons && groupAddons.length > 0) {
+        if (groupInfo.mandatory) {
+          if (!addonCarts || addonCarts.length === 0)
+            tempGroupValidate = {
+              validate: false,
+              errorMsg: 'Select an at least one option',
+            };
+        }
+        if (!groupInfo.multi_selection) {
+          if (addonCarts && addonCarts.length > 1)
+            tempGroupValidate = {
+              validate: false,
+              errorMsg: 'Select only one option',
+            };
+        }
+      }
+      setGroupValidate({
+        ...tempGroupValidate,
+      });
+      return tempGroupValidate.validate;
+    },
+  }));
 
   const getAddOnItemInfo = (optionId) => {
-    const options = _.get(groupAddOns, 'options', []);
-    return options.find((item) => item.id === optionId);
+    const addons = _.get(groupAddOns, 'addons', []);
+    return addons.find((item) => item.id === optionId);
   };
 
   const changeAddOnData = (newData) => {
-    const options = _.get(groupAddOns, 'options', []);
-    if (newData.qty === 0)
+    const addons = _.get(groupAddOns, 'addons', []);
+    if (newData.qty === 0) {
       setGroupAddOns({
-        ...groupInfo,
-        options: options.filter((item) => item.id !== newData.id),
+        ...getGroupInfo(),
+        addons: [...addons.filter((item) => item.id !== newData.id)],
       });
-    else {
-      const findOne = options.find((item) => item.id === newData.id);
+    } else {
+      const findOne = addons.find((item) => item.id === newData.id);
       if (findOne) {
         setGroupAddOns({
-          ...groupAddOns,
-          options: [
-            ...options.map((item) => {
+          ...getGroupInfo(),
+          addons: [
+            ...addons.map((item) => {
               if (item.id === newData.id) return newData;
               return item;
             }),
@@ -35,17 +90,19 @@ const AddOnGroup = ({ groupInfo, groupAddOns, setGroupAddOns, errorMsg }) => {
         });
       } else {
         setGroupAddOns({
-          ...groupInfo,
-          options: [...options, newData],
+          ...getGroupInfo(),
+          addons: [...addons, newData],
         });
       }
     }
   };
 
   const getOrderedItems = () => {
-    const { options } = groupInfo;
-    const positioned = options.filter((item) => item.position && item.position >= 0);
-    const nonPositioned = options.filter((item) => !item.position || item.position < 0);
+    const groupInfo = getGroupInfo();
+    const addons = _.get(groupInfo, 'addons', []);
+
+    const positioned = addons.filter((item) => item.position && item.position >= 0);
+    const nonPositioned = addons.filter((item) => !item.position || item.position < 0);
     return [
       ...positioned.sort((a, b) => a.position - b.position),
       ...nonPositioned.sort((a, b) => a.name.toLowerCase() - b.name.toLowerCase()),
@@ -54,32 +111,38 @@ const AddOnGroup = ({ groupInfo, groupAddOns, setGroupAddOns, errorMsg }) => {
 
   return (
     <Box className={classes.root}>
-      <Typography variant="h2" className="title">
-        {groupInfo.group}
-      </Typography>
-      <Grid container spacing={3}>
-        {getOrderedItems().map((item) => {
-          return (
-            <Grid item className={classes.AddOnGridItem}>
-              <AddOnItem
-                itemData={item}
-                optionCartInfo={getAddOnItemInfo(item.id)}
-                setOptionCartInfo={(newData) => {
-                  changeAddOnData(newData);
-                }}
-              />
-            </Grid>
-          );
-        })}
-      </Grid>
-      {errorMsg && (
-        <Typography variant="h6" className="error-msg">
-          {errorMsg.errorMsg}
-        </Typography>
+      {loading ? (
+        <AddOnGroupSkeleton />
+      ) : (
+        <>
+          <Typography variant="h2" className="title">
+            {_.get(getGroupInfo(), 'group', '')}
+          </Typography>
+          <Grid container spacing={3}>
+            {getOrderedItems().map((item) => {
+              return (
+                <Grid item className={classes.AddOnGridItem}>
+                  <AddOnItem
+                    itemData={item}
+                    itemCartInfo={getAddOnItemInfo(item.id)}
+                    setItemCartInfo={(newData) => {
+                      changeAddOnData(newData);
+                    }}
+                  />
+                </Grid>
+              );
+            })}
+          </Grid>
+          {!groupValidate.validate && (
+            <Typography variant="h6" className="error-msg">
+              {groupValidate.errorMsg}
+            </Typography>
+          )}
+        </>
       )}
     </Box>
   );
-};
+});
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

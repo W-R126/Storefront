@@ -28,6 +28,9 @@ export const getProductPaginationAction = (client, filter, pageData) => (dispatc
       },
     })
     .then((res) => {
+      console.log('***********');
+      console.log(res.data.products);
+
       const extensions = _.get(res.data, 'extensions', null);
 
       let pageData = {

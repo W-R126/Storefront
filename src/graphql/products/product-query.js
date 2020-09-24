@@ -44,8 +44,27 @@ export const GET_PRODUCTS = gql`
         current_stock
       }
       addons {
+        id
+        group
+        description
+        parent
+        allow_free
+        mandatory
+        multi_selection
+        default_all
         options {
+          inventory_id
+          #product_id
           id
+          name
+          force_charge
+          default
+          position
+          extra
+          override_price
+          price {
+            fixed_price
+          }
         }
       }
     }
@@ -120,20 +139,50 @@ export const GET_PRODUCT_BY_ID = gql`
           extra
           override_price
           price {
-            price_infos {
-              price_type {
-                id
-                name
-              }
-              price
-              taxes {
-                id
-                rate
-                name
-              }
-            }
+            fixed_price
+            # price_infos {
+            #   price_type {
+            #     id
+            #     name
+            #   }
+            #   price
+            #   taxes {
+            #     id
+            #     rate
+            #     name
+            #   }
+            # }
           }
         }
+      }
+    }
+  }
+`;
+
+export const GET_ADDON_GROUPS = gql`
+  query getAddOnGroups($id: String) {
+    addonGroups(id: $id) {
+      id
+      group
+      description
+      parent
+      allow_free
+      mandatory
+      multi_selection
+      default_all
+      addons {
+        id
+        name
+        inventory_id
+        default
+        force_charge
+        extra
+        override_price
+        fixed_price
+        productCount
+        measure_id
+        measure_amount
+        measure_type
       }
     }
   }

@@ -102,33 +102,6 @@ const ProductView = ({
     const productCart = cartList.find((item) => item.productId === productId);
     if (productCart) {
       setSelectedAddOns([..._.get(productCart, 'addons', [])]);
-    } else {
-      const formatedAddOns = [];
-      addOns.forEach((item) => {
-        if (item.default_all) {
-          formatedAddOns.push({
-            ...item,
-            options: [
-              ...item.options.map((itemOption) => {
-                return {
-                  ...itemOption,
-                  qty: 1,
-                };
-              }),
-            ],
-          });
-        } else {
-          const tempAddOnItem = { ...item, options: [] };
-          item.options.forEach((itemOption) => {
-            if (itemOption.default) {
-              tempAddOnItem.options.push({ ...itemOption, qty: 1 });
-            }
-          });
-          if (tempAddOnItem.options.length > 0) formatedAddOns.push(tempAddOnItem);
-        }
-      });
-
-      setSelectedAddOns([...formatedAddOns]);
     }
   };
 
@@ -169,13 +142,13 @@ const ProductView = ({
         open={showAddOnView}
         hideModal={() => setShowAddOnView(false)}
         productId={productId}
-        addOnData={getAddOns()}
+        productAddons={getAddOns()}
         selectedAddOns={selectedAddOns}
         currencyData={currencyData}
         setSelectedAddOns={(updatedAddOns) => {
           setSelectedAddOns([...updatedAddOns]);
         }}
-        loading={loading}
+        productLoading={loading}
       />
     );
   else {

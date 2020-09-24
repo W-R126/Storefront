@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, useRef } from 'react';
 
-import { useQuery } from '@apollo/react-hooks';
 import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Dialog, Box, Button, Typography } from '@material-ui/core';
@@ -9,9 +7,7 @@ import { Dialog, Box, Button, Typography } from '@material-ui/core';
 import AddOnGroup from '../../../../SharedComponents/AddOnGroup';
 import CloseIconButton from '../../../../SharedComponents/CloseIconButton';
 import AddOnViewSkeleton from './AddOnView.skeleton';
-import { GET_MERCHANT_NET_PRICE } from '../../../../graphql/merchant/merchant-query';
 import { formatPrice } from '../../../../utils/string';
-import { getNetPriceStatus } from '../../../../utils/merchant';
 import { getCurrency } from '../../../../utils/store';
 import { getAddOnCartPrice } from '../../../../utils/product';
 
@@ -19,95 +15,86 @@ const AddOnView = ({
   open,
   hideModal,
   productId,
-  addOnData,
+  productAddons,
   selectedAddOns,
   setSelectedAddOns,
   currencyData,
-  loading,
+  productLoading,
 }) => {
-  const { data: merchantNetPrice } = useQuery(GET_MERCHANT_NET_PRICE);
-  const { orderType } = useSelector((state) => ({
-    orderType: state.storeReducer.orderType,
-  }));
-
   const classes = useStyles();
-  const [errorMsgs, setErrorMsgs] = useState([]);
+  const [addonCarts, setAddonCarts] = useState([...selectedAddOns]);
+
+  const groupRefs = useRef([]);
 
   useEffect(() => {
-    setErrorMsgs([
-      ...addOnData.map((item) => {
-        return { id: item.id, errorMsg: '' };
-      }),
-    ]);
-  }, [addOnData]);
+    setAddonCarts([...selectedAddOns]);
+  }, [selectedAddOns]);
+
+  useEffect(() => {
+    groupRefs.current = new Array(productAddons.length);
+  }, [productAddons]);
 
   const changeAddOns = (groupAddOns) => {
-    const findOne = selectedAddOns.find((item) => item.id === groupAddOns.id);
-    if (findOne)
-      setSelectedAddOns([
-        ...selectedAddOns.map((item) => {
-          if (item.id === groupAddOns.id)
-            return {
-              ...groupAddOns,
-            };
-          else return item;
-        }),
-      ]);
-    else setSelectedAddOns([...selectedAddOns, groupAddOns]);
+    const findOne = addonCarts.find((item) => item.id === groupAddOns.id);
+    if (findOne) {
+      const addons = _.get(groupAddOns, 'addons', []);
+      if (addons.length === 0) {
+        setAddonCarts([...addonCarts.filter((item) => item.id !== groupAddOns.id)]);
+      } else {
+        setAddonCarts([
+          ...addonCarts.map((item) => {
+            if (item.id === groupAddOns.id)
+              return {
+                ...groupAddOns,
+              };
+            else return item;
+          }),
+        ]);
+      }
+    } else setAddonCarts([...addonCarts, groupAddOns]);
   };
 
   const getAddOnOptions = (groupId) => {
-    const findOne = selectedAddOns.find((item) => item.id === groupId);
+    const findOne = addonCarts.find((item) => item.id === groupId);
     return findOne;
   };
 
   const handleClickAddCart = () => {
-    const errorMsgTemp = [];
-    addOnData.forEach((item) => {
-      const groupCart = selectedAddOns.find((itemCart) => itemCart.id === item.id);
-      const options = _.get(item, 'options', []);
-      const selectedOptions = _.get(groupCart, 'options', []);
-      if (options && options.length > 0) {
-        if (item.mandatory) {
-          if (!selectedOptions || selectedOptions.length === 0)
-            errorMsgTemp.push({ id: item.id, errorMsg: `Select an option from ${item.group}` });
-        }
-        if (!item.multi_selection) {
-          if (selectedOptions && selectedOptions.length > 1)
-            errorMsgTemp.push({ id: item.id, errorMsg: `Select one option ${item.group}` });
-        }
-      }
+    let validate = true;
+    groupRefs.current.forEach((item) => {
+      const groupValidate = item.checkValidate();
+      if (!groupValidate) validate = groupValidate;
     });
-    setErrorMsgs([...errorMsgTemp]);
-    if (errorMsgTemp.length > 0) return;
+    if (!validate) return;
+    setSelectedAddOns([...addonCarts]);
   };
 
   const getAddOnPrice = () => {
-    const netPrice = getNetPriceStatus(merchantNetPrice);
-    const totalPrice = getAddOnCartPrice(selectedAddOns, orderType, netPrice);
+    const totalPrice = getAddOnCartPrice(addonCarts, null, null);
     return `${getCurrency(currencyData)} ${formatPrice(totalPrice, currencyData)}`;
   };
 
   return (
     <Dialog open={open} onClose={hideModal} fullWidth={true} maxWidth="md" className={classes.root}>
       <CloseIconButton onClick={hideModal} wrapperClass={classes.CloseButtonWrapper} />
-      {loading ? (
+      {productLoading ? (
         <AddOnViewSkeleton />
       ) : (
         <>
           <Typography variant="h1" className={classes.Title}>
             Select Options
           </Typography>
-          {addOnData.map((item) => {
-            if (item.options.length === 0) return null;
+          {productAddons.map((item, nIndex) => {
             return (
               <AddOnGroup
-                groupInfo={item}
+                groupId={item.id}
+                productGroupAddonInfo={item}
                 groupAddOns={getAddOnOptions(item.id)}
                 setGroupAddOns={(groupAddOns) => {
                   changeAddOns(groupAddOns);
                 }}
-                errorMsg={errorMsgs.find((itemMsg) => itemMsg.id === item.id)}
+                ref={(el) => (groupRefs.current[nIndex] = el)}
+                // ref={groupRefs.current[nIndex]}
               />
             );
           })}
