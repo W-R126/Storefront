@@ -20,7 +20,8 @@ import { base64ToMerchantStoreId, TESTBASE64_URL } from '../../constants';
 const StoreFrontPage = () => {
   const { base64 } = useParams();
   useEffect(() => {
-    base64ToMerchantStoreId(TESTBASE64_URL);
+    if (base64) base64ToMerchantStoreId(base64);
+    else base64ToMerchantStoreId(TESTBASE64_URL);
   }, [base64]);
 
   const classes = useStyles();

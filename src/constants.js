@@ -1,7 +1,7 @@
 export const TEST_MERCHANT_ID = '4e20a0ea-9a66-4732-b53b-7e692ede0c45';
 export const TEST_STORE_ID = 'a0be564c-a982-471f-a4b5-5bdf6e29e1c2';
 export const TESTBASE64_URL =
-  'myda.app/NGUyMGEwZWEtOWE2Ni00NzMyLWI1M2ItN2U2OTJlZGUwYzQ1/YTBiZTU2NGMtYTk4Mi00NzFmLWE0YjUtNWJkZjZlMjllMWMy';
+  'myda.app/NGUyMGEwZWEtOWE2Ni00NzMyLWI1M2ItN2U2OTJlZGUwYzQ1L2EwYmU1NjRjLWE5ODItNDcxZi1hNGI1LTViZGY2ZTI5ZTFjMg==';
 
 export const setMerchantId = (merchantId) => {
   localStorage.setItem('merchant', merchantId);
@@ -27,11 +27,18 @@ export const base64ToMerchantStoreId = (base64) => {
   if (!base64) return '';
   try {
     const identifier = 'myda.app/';
-    const encodedUrl = base64.substring(base64.indexOf(identifier) + identifier.length, base64.length);
-    const index = encodedUrl.indexOf('/');
-    const merchantId = atob(encodedUrl.substring(0, index));
+    const identifierIndex = base64.indexOf(identifier);
+
+    let encodedUrl;
+    if (identifierIndex >= 0)
+      encodedUrl = base64.substring(base64.indexOf(identifier) + identifier.length, base64.length);
+    else encodedUrl = base64;
+    const decodeUrl = atob(encodedUrl);
+
+    const index = decodeUrl.indexOf('/');
+    const merchantId = decodeUrl.substring(0, index);
     setMerchantId(merchantId);
-    const storeId = atob(encodedUrl.substring(index + 1, encodedUrl.length));
+    const storeId = decodeUrl.substring(index + 1, decodeUrl.length);
     setStoreId(storeId);
   } catch (err) {
     console.log(err);
