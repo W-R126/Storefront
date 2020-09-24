@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -11,17 +12,23 @@ import Footer from '../../SharedComponents/Footer';
 import OpeningHoursModal from './Components/OpeningHoursModal';
 import { GET_STORE_DATA } from '../../graphql/store/store-query';
 import { GET_STORE_SETTING_PRODUCT } from '../../graphql/store/store-query';
-
 import { getOrderTypes } from '../../utils/store';
-
+import { getStoreId } from '../../constants';
 import BannerPlaceHolder from '../../assets/img/store-banner-placeholder.png';
+import { base64ToMerchantStoreId, TESTBASE64_URL } from '../../constants';
 
 const StoreFrontPage = () => {
+  const { base64 } = useParams();
+  useEffect(() => {
+    base64ToMerchantStoreId(TESTBASE64_URL);
+  }, [base64]);
+
   const classes = useStyles();
   const [showOpeningHourModal, setShowOpeningHourModal] = useState(false);
   const { loading: storeLoading, error: storeError, data: storeData } = useQuery(GET_STORE_DATA, {
-    variables: { id: 'a0be564c-a982-471f-a4b5-5bdf6e29e1c2' },
+    variables: { id: getStoreId() },
   });
+
   const { loading: storeSettingLoading, error: storeSettingError, data: storeSettingData } = useQuery(
     GET_STORE_SETTING_PRODUCT
   );

@@ -17,7 +17,7 @@ const Footer = ({ setLocalizationAction }) => {
   }));
 
   return (
-    <div fullWidth className={classes.root}>
+    <div className={classes.root}>
       <div className={classes.TopSection}>
         <div className={`${classes.CopyRight} ${classes.ShowDesktop}`}>© Myda 2020.</div>
         <div className={classes.FooterLinkDiv}>

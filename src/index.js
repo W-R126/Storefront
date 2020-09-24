@@ -15,7 +15,7 @@ import store from './store';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-
+import { getStoreId, getMerchantId } from './constants';
 import CONFIG from './config';
 
 const uploadLink = createUploadLink({
@@ -44,19 +44,15 @@ const authorizationLink = new ApolloLink(
   (operation, forward) =>
     new Observable((observer) => {
       const token = localStorage.getItem('token');
-      // const merchant = localStorage.getItem('merchant');
-      // const storeJson = localStorage.getItem('store');
-      // const store = storeJson ? JSON.parse(storeJson) : null;
-      const merchant = '4e20a0ea-9a66-4732-b53b-7e692ede0c45';
-      const storeId = 'a0be564c-a982-471f-a4b5-5bdf6e29e1c2';
+      const merchantId = getMerchantId();
+      const storeId = getStoreId();
 
       operation.setContext({
         headers: {
           authorization: token ? `Bearer ${token}` : 'Bearer Guest',
           'Content-Type': 'application/json',
-          ...(merchant && { 'X-Myda-Merchant': merchant }),
-          // ...(store && { 'X-Myda-Store': store.id }),
-          'X-Myda-Store': storeId,
+          ...(merchantId && { 'X-Myda-Merchant': merchantId }),
+          ...(storeId && { 'X-Myda-Store': storeId }),
         },
       });
 

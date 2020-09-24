@@ -17,6 +17,7 @@ import { GET_CURRENCY } from '../../../../../../graphql/localisation/localisatio
 import { getIsShowSideCategory } from '../../../../../../utils/store';
 import { getOrdredProducts } from '../../../../../../utils/product';
 import { getProductPaginationAction } from '../../../../../../actions/productAction';
+import { getMerchantId, getStoreId } from '../../../../../../constants';
 
 const ProductList = ({ client, getProductPaginationAction, loading }) => {
   const classes = useStyles();
@@ -35,10 +36,12 @@ const ProductList = ({ client, getProductPaginationAction, loading }) => {
   const { data: merchantNetPrice } = useQuery(GET_MERCHANT_NET_PRICE);
   const { data: currencyData } = useQuery(GET_CURRENCY);
 
+  const storeId = getStoreId();
+  const merchantId = getMerchantId();
   useEffect(() => {
-    getProductPaginationAction(client, filter, pageData);
+    if (storeId && merchantId) getProductPaginationAction(client, filter, pageData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, pageData.current_page]);
+  }, [filter, pageData.current_page, storeId, merchantId]);
 
   const getNetPriceStatus = () => {
     const merchantSettings = _.get(merchantNetPrice, 'merchantSettings', null);
