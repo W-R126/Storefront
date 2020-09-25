@@ -44,6 +44,13 @@ const AddOnGroup = forwardRef(({ productId, groupId, productGroupAddonInfo, grou
       return _.assign(item, _.find(options, ['id', item.id]));
     });
 
+    console.log({
+      ...addonGroupsTemp[0],
+      ...tempInfo,
+      ...productGroupAddonInfo,
+      addons: [...mergeAddons],
+    });
+
     return {
       ...addonGroupsTemp[0],
       ...tempInfo,
@@ -184,7 +191,7 @@ const AddOnGroup = forwardRef(({ productId, groupId, productGroupAddonInfo, grou
             })}
           </Grid>
           {!groupValidate.validate && (
-            <Typography variant="h6" className="error-msg">
+            <Typography variant="h4" className="error-msg">
               {groupValidate.errorMsg}
             </Typography>
           )}

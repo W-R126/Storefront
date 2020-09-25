@@ -106,7 +106,7 @@ const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) =>
         {itemData.name}
       </Typography>
       <Typography variant="h3" className={classes.Price}>
-        {getCurrency(currencyData)} {formatPrice(itemData.fixed_price, currencyData)}
+        {`${getCurrency(currencyData)} ${formatPrice(itemData.fixed_price, currencyData)}`}
       </Typography>
     </Box>
   );
@@ -162,8 +162,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     Price: {
       margin: '0 13px 0 auto',
-      flex: '0 1 50px',
+      flex: '1 0 auto',
       textAlign: 'right',
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
     },
   })
 );

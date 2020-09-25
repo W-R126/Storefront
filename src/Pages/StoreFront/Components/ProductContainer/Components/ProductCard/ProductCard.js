@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import _ from 'lodash';
@@ -14,6 +14,7 @@ import { formatPrice } from '../../../../../../utils/string';
 import { updateProductCartAction } from '../../../../../../actions/cartAction';
 
 import ProductPlaceHolderImg from '../../../../../../assets/img/product-card-placeholder.png';
+import { getMeasureTypStr } from '../../../../../../utils/product';
 
 const ProductCard = ({
   productInfo,
@@ -106,11 +107,12 @@ const ProductCard = ({
 
   const renderQtySection = () => {
     if (productInfo.pack_qty > 1) {
-      return `${productInfo.pack_qty} x ${productInfo.pack_item.measure_amount}${
-        productInfo.pack_item.measure_type === 'qty' ? '' : productInfo.pack_item.measure_type
-      }`;
-    } else if (productInfo.measure_type === 'qty') return productInfo.measure_amount;
-    else return `${productInfo.measure_amount} ${productInfo.measure_type}`;
+      return `${productInfo.pack_qty} x ${productInfo.pack_item.measure_amount}${getMeasureTypStr(
+        productInfo.pack_item.measure_type
+      )}`;
+    } else {
+      return `${productInfo.measure_amount}${getMeasureTypStr(productInfo.measure_type)}`;
+    }
   };
 
   const renderBottom = () => {

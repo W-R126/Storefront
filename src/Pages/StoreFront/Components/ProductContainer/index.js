@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { useQuery } from '@apollo/react-hooks';
-import { withApollo } from '@apollo/react-hoc';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
@@ -15,14 +14,16 @@ import { getIsShowSideCategory } from '../../../../utils/store';
 import { GET_STORE_SETTING_PRODUCT } from '../../../../graphql/store/store-query';
 import { updateProducdtPageDataAction } from '../../../../actions/productAction';
 
-const ProductContainer = ({ client, updateProducdtPageDataAction }) => {
+const ProductContainer = ({ updateProducdtPageDataAction }) => {
   const classes = useStyles();
 
   const { pageData } = useSelector((state) => ({
     pageData: state.productReducer.pageData,
   }));
 
-  const { loading: storeSettingLoading, data: storeSettingData } = useQuery(GET_STORE_SETTING_PRODUCT);
+  const { loading: storeSettingLoading, data: storeSettingData, error: storeSetingError } = useQuery(
+    GET_STORE_SETTING_PRODUCT
+  );
 
   const showLoadMore = () => {
     if (!pageData) return false;
@@ -43,7 +44,7 @@ const ProductContainer = ({ client, updateProducdtPageDataAction }) => {
     <div className={classes.root}>
       <Grid container className={classes.MainContent}>
         <Grid item md={12} xs={12} style={{ display: 'flex' }}>
-          {getIsShowSideCategory(storeSettingData) && (
+          {getIsShowSideCategory(storeSettingData) && !storeSetingError && (
             <Box className={classes.MobileCategoryWrapper}>
               <CategorySideBar storeSettingData={storeSettingData} loading={storeSettingLoading} />
             </Box>
@@ -51,7 +52,7 @@ const ProductContainer = ({ client, updateProducdtPageDataAction }) => {
           <SearchBar />
         </Grid>
         <Grid item md={12} xs={12} className={classes.ProductContent}>
-          {getIsShowSideCategory(storeSettingData) && (
+          {getIsShowSideCategory(storeSettingData) && !storeSetingError && (
             <Box className={classes.DesktopCateggoryWrapper}>
               <CategorySideBar storeSettingData={storeSettingData} loading={storeSettingLoading} />
             </Box>
@@ -132,4 +133,4 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-export default withApollo(connect(null, { updateProducdtPageDataAction })(ProductContainer));
+export default connect(null, { updateProducdtPageDataAction })(ProductContainer);

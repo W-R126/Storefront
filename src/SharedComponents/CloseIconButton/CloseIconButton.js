@@ -10,7 +10,7 @@ const CloseIconButton = ({ onClick, wrapperClass }) => {
   if (wrapperClass) rootClasses.push(wrapperClass);
   return (
     <IconButton onClick={onClick} className={rootClasses.join(' ')}>
-      <CloseIcon color="Primary.title" />
+      <CloseIcon />
     </IconButton>
   );
 };
@@ -27,6 +27,9 @@ const useStyles = makeStyles((theme: Theme) =>
       zIndex: 1,
       '&: hover': {
         backgroundColor: 'rgba(186, 195, 201, 0.6)',
+      },
+      '& .MuiSvgIcon-root': {
+        color: theme.palette.primary.title,
       },
     },
   })

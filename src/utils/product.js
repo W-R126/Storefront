@@ -123,3 +123,11 @@ export const getAddOnCartPrice = (addOnCart, orderType, net_price) => {
   });
   return totalValue;
 };
+
+export const getMeasureTypStr = (measureType) => {
+  if (!measureType) return '';
+  if (measureType === 'qty') return '';
+  else if (measureType === 'grams') return 'g';
+  else if (measureType === 'kilograms') return 'k';
+  else return '';
+};

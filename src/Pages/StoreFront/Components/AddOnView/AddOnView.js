@@ -34,7 +34,6 @@ const AddOnView = ({
 
   useEffect(() => {
     setAddonCarts([...storeAddonCart]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeAddonCart]);
 
   const getProductAddons = () => {

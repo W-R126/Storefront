@@ -13,7 +13,12 @@ import CloseIconButton from '../../../../SharedComponents/CloseIconButton';
 import AllergyBox from './Components/AllergyBox';
 import IngredientsBox from './Components/IngredientsBox';
 import ProductViewSkeleton from './ProductView.skeleton';
-import { getAddOnCartPrice, getProductPriceInfo, getProductTotalAmount } from '../../../../utils/product';
+import {
+  getAddOnCartPrice,
+  getProductPriceInfo,
+  getProductTotalAmount,
+  getMeasureTypStr,
+} from '../../../../utils/product';
 import { formatPrice } from '../../../../utils/string';
 import { getCurrency } from '../../../../utils/store';
 
@@ -108,12 +113,14 @@ const ProductView = ({
   };
 
   const getProductLabel = () => {
-    const product = getProduct();
-    if (product) {
-      if (product.measure_amount === null || product.measure_type === null) return '';
-      return `${product.measure_amount} ${product.measure_type}`;
+    const productInfo = getProduct();
+    if (productInfo.pack_qty > 1) {
+      return `${productInfo.pack_qty} x ${productInfo.pack_item.measure_amount}${getMeasureTypStr(
+        productInfo.pack_item.measure_type
+      )}`;
+    } else {
+      return `${productInfo.measure_amount}${getMeasureTypStr(productInfo.measure_type)}`;
     }
-    return '';
   };
 
   const getStock = () => {

@@ -8,7 +8,7 @@ const AddOnViewSkeleton = () => {
   const classes = useStyles();
 
   return (
-    <Box container className={classes.root}>
+    <Box className={classes.root}>
       <Skeleton style={{ width: '155px', height: '27px' }} />
       <Box style={{ boxSizing: 'border-box', marginTop: '30px' }}>
         <Skeleton style={{ width: '125px', height: '22px' }} />

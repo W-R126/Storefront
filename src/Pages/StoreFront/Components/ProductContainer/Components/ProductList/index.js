@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
 import { useQuery } from '@apollo/react-hooks';
 import { withApollo } from '@apollo/react-hoc';
 
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import styled from 'styled-components';
 import Grid from '@material-ui/core/Grid';
 
 import ProductCard from '../ProductCard';
@@ -20,7 +20,6 @@ import { getProductPaginationAction } from '../../../../../../actions/productAct
 import { getMerchantId, getStoreId } from '../../../../../../constants';
 
 const ProductList = ({ client, getProductPaginationAction, loading }) => {
-  const classes = useStyles();
   const { productList, cartInfo, orderType, filter, pageData, productLoading } = useSelector((state) => ({
     productList: state.productReducer.productList,
     cartInfo: state.cartReducer.cartList,
@@ -37,67 +36,6 @@ const ProductList = ({ client, getProductPaginationAction, loading }) => {
   const storeId = getStoreId();
   const merchantId = getMerchantId();
 
-  const [gridItemStyle, setGridItemStyle] = useState({
-    maxWidth: '25%',
-    flexBasis: '25%',
-  });
-
-  useEffect(() => {
-    const handleResize = () => {
-      const sidebarShow = getIsShowSideCategory(storeSettingData);
-      if (sidebarShow) {
-        if (window.innerWidth >= 1900) {
-          setGridItemStyle({
-            maxWidth: '25%',
-            flexBasis: '25%',
-          });
-        } else if (window.innerWidth >= 1440) {
-          setGridItemStyle({
-            maxWidth: '33.33%',
-            flexBasis: '33.33%',
-          });
-        } else if (window.innerWidth >= 1100) {
-          setGridItemStyle({
-            maxWidth: '50%',
-            flexBasis: '50%',
-          });
-        } else
-          setGridItemStyle({
-            maxWidth: '100%',
-            flexBasis: '100%',
-          });
-      } else {
-        if (window.innerWidth >= 1600) {
-          setGridItemStyle({
-            maxWidth: '25%',
-            flexBasis: '25%',
-          });
-        } else if (window.innerWidth >= 1100) {
-          setGridItemStyle({
-            maxWidth: '33.33%',
-            flexBasis: '33.33%',
-          });
-        } else if (window.innerWidth >= 768) {
-          setGridItemStyle({
-            maxWidth: '50%',
-            flexBasis: '50%',
-          });
-        } else
-          setGridItemStyle({
-            maxWidth: '100%',
-            flexBasis: '100%',
-          });
-      }
-    };
-
-    handleResize();
-
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [storeSettingData]);
-
   useEffect(() => {
     if (storeId && merchantId) getProductPaginationAction(client, filter, pageData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -113,7 +51,7 @@ const ProductList = ({ client, getProductPaginationAction, loading }) => {
     const renderCards = [];
     for (let i = 0; i < 9; i++) {
       renderCards.push(
-        <Grid style={{ flexGrow: '0', ...gridItemStyle }} item key={i}>
+        <CardGrid item key={i} isSidebar={getIsShowSideCategory(storeSettingData)}>
           <ProductCard
             productInfo={undefined}
             currencyData={currencyData}
@@ -122,7 +60,7 @@ const ProductList = ({ client, getProductPaginationAction, loading }) => {
             orderType={orderType}
             loading={true}
           />
-        </Grid>
+        </CardGrid>
       );
     }
     return renderCards;
@@ -146,13 +84,13 @@ const ProductList = ({ client, getProductPaginationAction, loading }) => {
   // };
 
   return (
-    <Grid container className={classes.root} style={{}}>
+    <Grid container>
       <Grid item xs={12}>
         <Grid container spacing={2}>
           {productLoading && pageData.total_pages === 0 && renderLoadingCards()}
           {getOrdredProducts(productList, storeSettingData).map((item, nIndex) => {
             return (
-              <Grid item style={{ flexGrow: '0', ...gridItemStyle }} key={nIndex}>
+              <CardGrid item key={nIndex} isSidebar={getIsShowSideCategory(storeSettingData)}>
                 <ProductCard
                   productInfo={item}
                   currencyData={currencyData}
@@ -161,7 +99,7 @@ const ProductList = ({ client, getProductPaginationAction, loading }) => {
                   orderType={orderType}
                   loading={false}
                 />
-              </Grid>
+              </CardGrid>
             );
           })}
           {productLoading &&
@@ -174,11 +112,16 @@ const ProductList = ({ client, getProductPaginationAction, loading }) => {
   );
 };
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {},
-  })
-);
+const CardGrid = styled(Grid)`
+  ${(props) => {
+    if (props.isSidebar) {
+      return 'max-width: 100%; flex-basis: 100%; @media screen and (min-width: 1100px) {max-width: 50%; flex-basis: 50%}; @media screen and (min-width: 1440px) {max-width: 33.33%; flex-basis: 33.33%}; @media screen and (min-width: 1900px) {max-width: 25%; flex-basis: 25%};';
+    } else {
+      return 'max-width: 100%; flex-basis: 100%; @media screen and (min-width: 768px) {max-width: 50%; flex-basis: 50%}; @media screen and (min-width: 1100px) {max-width: 33.33%; flex-basis: 33.33%}; @media screen and (min-width: 1600px) {max-width: 25%; flex-basis: 25%};';
+    }
+  }}
+`;
+
 export default withApollo(
   connect(null, {
     getProductPaginationAction,

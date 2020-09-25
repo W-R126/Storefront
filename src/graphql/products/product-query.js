@@ -68,8 +68,13 @@ export const GET_PRODUCT_BY_ID = gql`
         url
       }
       description
-      measure_type
       measure_amount
+      measure_type
+      pack_qty
+      pack_item {
+        measure_amount
+        measure_type
+      }
       stocks {
         current_stock
       }
