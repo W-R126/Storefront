@@ -128,6 +128,6 @@ export const getMeasureTypStr = (measureType) => {
   if (!measureType) return '';
   if (measureType === 'qty') return '';
   else if (measureType === 'grams') return 'g';
-  else if (measureType === 'kilograms') return 'k';
+  else if (measureType === 'kilograms') return 'Kg';
   else return '';
 };

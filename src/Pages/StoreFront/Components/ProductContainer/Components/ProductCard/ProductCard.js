@@ -111,6 +111,9 @@ const ProductCard = ({
         productInfo.pack_item.measure_type
       )}`;
     } else {
+      if (!productInfo.measure_amount || !productInfo.measure_type) return '';
+      if (parseInt(productInfo.measure_amount) === 1 && getMeasureTypStr(productInfo.measure_type).length === 0)
+        return '';
       return `${productInfo.measure_amount}${getMeasureTypStr(productInfo.measure_type)}`;
     }
   };
@@ -193,9 +196,7 @@ const ProductCard = ({
         }}
       >
         <div className={classes.ProductImg} style={{ backgroundImage: `url(${getProductImage()})` }}>
-          {productInfo.measure_type !== null && productInfo.measure_amount !== null && (
-            <div className={classes.ProductLabel}>{renderQtySection()}</div>
-          )}
+          {renderQtySection().length > 0 && <div className={classes.ProductLabel}>{renderQtySection()}</div>}
         </div>
         <div className={classes.ProductContent}>
           <div className={classes.TopSection}>

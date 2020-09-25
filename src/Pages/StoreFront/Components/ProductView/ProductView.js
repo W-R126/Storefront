@@ -119,6 +119,9 @@ const ProductView = ({
         productInfo.pack_item.measure_type
       )}`;
     } else {
+      if (!productInfo.measure_amount || !productInfo.measure_type) return '';
+      if (parseInt(productInfo.measure_amount) === 1 && getMeasureTypStr(productInfo.measure_type).length === 0)
+        return '';
       return `${productInfo.measure_amount}${getMeasureTypStr(productInfo.measure_type)}`;
     }
   };
@@ -137,6 +140,7 @@ const ProductView = ({
   // };
 
   const renderPriceInfo = () => {
+    debugger;
     const priceInfo = getProductPriceInfo(getProduct(), orderType, net_price);
     const addOnPrice = getAddOnCartPrice(productCart.addons, orderType, net_price);
 

@@ -21,6 +21,7 @@ export const formatPrice = (value, localisationInfo) => {
   if (localisation == null) return value;
 
   if (localisation.currency_decimal) {
+    if (value === null) return '0.00';
     return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   } else return value;
 };
