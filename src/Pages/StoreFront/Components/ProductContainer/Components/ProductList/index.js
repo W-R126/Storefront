@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
@@ -30,14 +30,74 @@ const ProductList = ({ client, getProductPaginationAction, loading }) => {
     productLoading: state.productReducer.loading,
   }));
 
-  const { loading: storeSettingLoading, error: storeSettingError, data: storeSettingData } = useQuery(
-    GET_STORE_SETTING_PRODUCT
-  );
+  const { data: storeSettingData } = useQuery(GET_STORE_SETTING_PRODUCT);
   const { data: merchantNetPrice } = useQuery(GET_MERCHANT_NET_PRICE);
   const { data: currencyData } = useQuery(GET_CURRENCY);
 
   const storeId = getStoreId();
   const merchantId = getMerchantId();
+
+  const [gridItemStyle, setGridItemStyle] = useState({
+    maxWidth: '25%',
+    flexBasis: '25%',
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      const sidebarShow = getIsShowSideCategory(storeSettingData);
+      if (sidebarShow) {
+        if (window.innerWidth >= 1900) {
+          setGridItemStyle({
+            maxWidth: '25%',
+            flexBasis: '25%',
+          });
+        } else if (window.innerWidth >= 1440) {
+          setGridItemStyle({
+            maxWidth: '33.33%',
+            flexBasis: '33.33%',
+          });
+        } else if (window.innerWidth >= 1100) {
+          setGridItemStyle({
+            maxWidth: '50%',
+            flexBasis: '50%',
+          });
+        } else
+          setGridItemStyle({
+            maxWidth: '100%',
+            flexBasis: '100%',
+          });
+      } else {
+        if (window.innerWidth >= 1600) {
+          setGridItemStyle({
+            maxWidth: '25%',
+            flexBasis: '25%',
+          });
+        } else if (window.innerWidth >= 1100) {
+          setGridItemStyle({
+            maxWidth: '33.33%',
+            flexBasis: '33.33%',
+          });
+        } else if (window.innerWidth >= 768) {
+          setGridItemStyle({
+            maxWidth: '50%',
+            flexBasis: '50%',
+          });
+        } else
+          setGridItemStyle({
+            maxWidth: '100%',
+            flexBasis: '100%',
+          });
+      }
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [storeSettingData]);
+
   useEffect(() => {
     if (storeId && merchantId) getProductPaginationAction(client, filter, pageData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -51,11 +111,9 @@ const ProductList = ({ client, getProductPaginationAction, loading }) => {
 
   const renderLoadingCards = () => {
     const renderCards = [];
-    const limitValue = 4;
-    // const limitValue = getIsShowSideCategory(storeSettingData) ? 4 : 3;
     for (let i = 0; i < 9; i++) {
       renderCards.push(
-        <Grid item lg={limitValue} md={6} xs={12} key={i}>
+        <Grid style={{ flexGrow: '0', ...gridItemStyle }} item key={i}>
           <ProductCard
             productInfo={undefined}
             currencyData={currencyData}
@@ -94,7 +152,7 @@ const ProductList = ({ client, getProductPaginationAction, loading }) => {
           {productLoading && pageData.total_pages === 0 && renderLoadingCards()}
           {getOrdredProducts(productList, storeSettingData).map((item, nIndex) => {
             return (
-              <Grid item lg={getIsShowSideCategory(storeSettingData) ? 4 : 3} md={6} xs={12} key={nIndex}>
+              <Grid item style={{ flexGrow: '0', ...gridItemStyle }} key={nIndex}>
                 <ProductCard
                   productInfo={item}
                   currencyData={currencyData}

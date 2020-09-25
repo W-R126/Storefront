@@ -1,5 +1,8 @@
 export const TEST_MERCHANT_ID = '4e20a0ea-9a66-4732-b53b-7e692ede0c45';
 export const TEST_STORE_ID = 'a0be564c-a982-471f-a4b5-5bdf6e29e1c2';
+// export const TEST_MERCHANT_ID = '5d6c4961-d123-49a6-b43b-d52c89ababa6';
+// export const TEST_STORE_ID = '534723ac-bddc-4be6-bef1-dcb332981967';
+
 export const TESTBASE64_URL =
   'myda.app/NGUyMGEwZWEtOWE2Ni00NzMyLWI1M2ItN2U2OTJlZGUwYzQ1L2EwYmU1NjRjLWE5ODItNDcxZi1hNGI1LTViZGY2ZTI5ZTFjMg==';
 

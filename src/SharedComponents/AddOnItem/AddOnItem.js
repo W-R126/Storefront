@@ -8,7 +8,7 @@ import CartAddItemButton from '../CartAddItemButton';
 import { formatPrice } from '../../utils/string';
 import { getCurrency } from '../../utils/store';
 
-import PlaceHolderSvg from '../../assets/img/addon-item-placeholder.png';
+// import PlaceHolderSvg from '../../assets/img/addon-item-placeholder.png';
 import { GET_CURRENCY } from '../../graphql/localisation/localisation-query';
 
 const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) => {
@@ -16,16 +16,18 @@ const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) =>
 
   const classes = useStyles();
 
-  const getItemImage = () => {
-    const itemImg = _.get(itemData, 'backImg', '');
-    if (itemImg.length > 0) return itemImg;
-    else return PlaceHolderSvg;
-  };
+  // const getItemImage = () => {
+  //   if (itemImg.length > 0) return itemImg;
+  //   else return PlaceHolderSvg;
+  // };
 
   const getBackImgStyle = () => {
     const itemImg = _.get(itemData, 'backImg', '');
-    if (itemImg.length > 0) return null;
-    else return { backgroundColor: '#e1eaf1' };
+    if (itemImg.length > 0) {
+      return { backgroundImage: `url(${itemImg})` };
+    } else {
+      return { backgroundColor: 'rgba(225, 234, 241, 0.5)' };
+    }
   };
 
   const handleClickItem = () => {
@@ -98,7 +100,7 @@ const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) =>
 
   return (
     <Box className={rootClass.join(' ')} role="button" onClick={handleClickItem}>
-      <Box className={classes.ImgBox} style={{ backgroundImage: `url(${getItemImage()})`, ...getBackImgStyle() }}></Box>
+      <Box className={classes.ImgBox} style={{ ...getBackImgStyle() }}></Box>
       {renderCartControl()}
       <Typography variant="h3" className={classes.ProductName}>
         {itemData.name}
@@ -132,7 +134,7 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundSize: 'contain',
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center center',
-      flex: '0 0 69px',
+      flex: '0 0 60px',
       margin: '0 17px 0 0',
       height: '100%',
     },
@@ -160,7 +162,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     Price: {
       margin: '0 13px 0 auto',
-      flex: '0 0 50px',
+      flex: '0 1 50px',
+      textAlign: 'right',
     },
   })
 );

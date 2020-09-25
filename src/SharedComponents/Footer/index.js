@@ -42,7 +42,7 @@ const Footer = ({ setLocalizationAction }) => {
         </div>
       </div>
       <div className={classes.BottomSection}>
-        <Link className={classes.FooterLogo}>
+        <Link to="/" className={classes.FooterLogo}>
           <img className={classes.Logo} src={LogoWhiteSvg} alt="Footer Logo" />
         </Link>
         <CountryDropDown

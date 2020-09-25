@@ -18,7 +18,7 @@ const SearchBar = ({ updateSearchStrProductAction }) => {
     filterSearchStr: state.productReducer.filter.searchStr,
   }));
   const [textSearchFocus, setTextSearchFocus] = useState(false);
-  const [searchStr, setSearchStr] = useState('');
+  const [searchStr, setSearchStr] = useState(filterSearchStr);
 
   const debouncedSearchTerm = useDebounce(searchStr, 500);
 
@@ -30,7 +30,7 @@ const SearchBar = ({ updateSearchStrProductAction }) => {
     if (debouncedSearchTerm) {
       updateSearchStrProductAction(searchStr);
     }
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, searchStr, updateSearchStrProductAction]);
 
   return (
     <Box className={classes.ComponentContainer}>

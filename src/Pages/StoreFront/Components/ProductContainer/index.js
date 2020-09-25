@@ -22,9 +22,7 @@ const ProductContainer = ({ client, updateProducdtPageDataAction }) => {
     pageData: state.productReducer.pageData,
   }));
 
-  const { loading: storeSettingLoading, error: storeSettingError, data: storeSettingData } = useQuery(
-    GET_STORE_SETTING_PRODUCT
-  );
+  const { loading: storeSettingLoading, data: storeSettingData } = useQuery(GET_STORE_SETTING_PRODUCT);
 
   const showLoadMore = () => {
     if (!pageData) return false;

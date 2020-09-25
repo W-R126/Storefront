@@ -70,13 +70,13 @@ const Header = ({ children, orderTypesList, storeSettingData }) => {
     <AppBar className={classes.Root}>
       <Toolbar>
         <MDIconButton aria-label="open drawer" wrapperClass={classes.MenuIconButton}>
-          <MenuIcon color="Primary.text1" />
+          <MenuIcon />
         </MDIconButton>
         <Link to="/" className={classes.LogoBrand}>
           <img className={classes.Logo} src={LogoSvg} alt="header logo" />
         </Link>
         <MDIconButton aria-label="header back" wrapperClass={classes.BackButton}>
-          <KeyboardBackspaceIcon color="Primary.text1" />
+          <KeyboardBackspaceIcon />
         </MDIconButton>
         <SearchInput />
         <DropDown
@@ -205,6 +205,7 @@ const useStyles = makeStyles((theme: Theme) =>
       '& .MuiSvgIcon-root': {
         width: '30px',
         height: '30px',
+        color: theme.palette.primary.title,
       },
     },
     LogoBrand: {
@@ -227,6 +228,9 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: '34px',
       '@media screen and (max-width: 767px)': {
         marginLeft: '13px',
+      },
+      '& .MuiSvgIcon-root': {
+        color: theme.palette.primary.title,
       },
     },
     OrderTypeDropDown: {

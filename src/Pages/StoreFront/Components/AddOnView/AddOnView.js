@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+import { useQuery } from '@apollo/react-hooks';
 import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Dialog, Box, Button, Typography } from '@material-ui/core';
@@ -10,28 +11,45 @@ import AddOnViewSkeleton from './AddOnView.skeleton';
 import { formatPrice } from '../../../../utils/string';
 import { getCurrency } from '../../../../utils/store';
 import { getAddOnCartPrice } from '../../../../utils/product';
+import { GET_PRODUCT_ADDONS } from '../../../../graphql/products/product-query';
 
 const AddOnView = ({
   open,
   hideModal,
   productId,
-  productAddons,
-  selectedAddOns,
-  setSelectedAddOns,
+  storeAddonCart,
   currencyData,
-  productLoading,
+  productPrice,
+  updateStoreAddonCart,
 }) => {
-  const classes = useStyles();
-  const [addonCarts, setAddonCarts] = useState([...selectedAddOns]);
+  const { loading: productAddonsLoading, data: productAddons } = useQuery(GET_PRODUCT_ADDONS, {
+    variables: {
+      id: productId,
+    },
+  });
 
+  const classes = useStyles();
+  const [addonCarts, setAddonCarts] = useState([]);
   const groupRefs = useRef([]);
 
   useEffect(() => {
-    setAddonCarts([...selectedAddOns]);
-  }, [selectedAddOns]);
+    setAddonCarts([...storeAddonCart]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storeAddonCart]);
+
+  const getProductAddons = () => {
+    const products = _.get(productAddons, 'products', []);
+    if (!products || products.length === 0) return [];
+    return _.get(products[0], 'addons', []);
+  };
+
+  // useEffect(() => {
+  //   setAddonCarts([...selectedAddOns]);
+  // }, [selectedAddOns]);
 
   useEffect(() => {
-    groupRefs.current = new Array(productAddons.length);
+    groupRefs.current = new Array(getProductAddons().length);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productAddons]);
 
   const changeAddOns = (groupAddOns) => {
@@ -66,27 +84,31 @@ const AddOnView = ({
       if (!groupValidate) validate = groupValidate;
     });
     if (!validate) return;
-    setSelectedAddOns([...addonCarts]);
+    // setSelectedAddOns([...addonCarts]);
+    updateStoreAddonCart(addonCarts);
+    hideModal();
   };
 
   const getAddOnPrice = () => {
-    const totalPrice = getAddOnCartPrice(addonCarts, null, null);
+    const totalPrice = getAddOnCartPrice(addonCarts, null, null) + productPrice;
     return `${getCurrency(currencyData)} ${formatPrice(totalPrice, currencyData)}`;
   };
 
   return (
     <Dialog open={open} onClose={hideModal} fullWidth={true} maxWidth="md" className={classes.root}>
       <CloseIconButton onClick={hideModal} wrapperClass={classes.CloseButtonWrapper} />
-      {productLoading ? (
+      {productAddonsLoading ? (
         <AddOnViewSkeleton />
       ) : (
         <>
           <Typography variant="h1" className={classes.Title}>
             Select Options
           </Typography>
-          {productAddons.map((item, nIndex) => {
+          {getProductAddons().map((item, nIndex) => {
             return (
               <AddOnGroup
+                key={item.id}
+                productId={productId}
                 groupId={item.id}
                 productGroupAddonInfo={item}
                 groupAddOns={getAddOnOptions(item.id)}
@@ -94,7 +116,6 @@ const AddOnView = ({
                   changeAddOns(groupAddOns);
                 }}
                 ref={(el) => (groupRefs.current[nIndex] = el)}
-                // ref={groupRefs.current[nIndex]}
               />
             );
           })}

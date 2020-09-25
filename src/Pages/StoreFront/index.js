@@ -30,9 +30,7 @@ const StoreFrontPage = () => {
     variables: { id: getStoreId() },
   });
 
-  const { loading: storeSettingLoading, error: storeSettingError, data: storeSettingData } = useQuery(
-    GET_STORE_SETTING_PRODUCT
-  );
+  const { data: storeSettingData } = useQuery(GET_STORE_SETTING_PRODUCT);
 
   const getBannerImg = () => {
     const store = _.get(storeData, 'store', null);

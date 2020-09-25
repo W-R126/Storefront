@@ -12,7 +12,6 @@ import { Typography, TextField, Button } from '@material-ui/core';
 import CloseIconButton from '../../../../SharedComponents/CloseIconButton';
 import AllergyBox from './Components/AllergyBox';
 import IngredientsBox from './Components/IngredientsBox';
-import AddOnView from '../AddOnView';
 import ProductViewSkeleton from './ProductView.skeleton';
 import { getAddOnCartPrice, getProductPriceInfo, getProductTotalAmount } from '../../../../utils/product';
 import { formatPrice } from '../../../../utils/string';
@@ -29,14 +28,14 @@ const ProductView = ({
   productId,
   currencyData,
   net_price,
+  showAddOnView,
   updateProductCartAction,
-  addOnPossible,
 }) => {
   const classes = useStyles();
 
-  const [qtyCount, setQtyCount] = useState(1);
-  const [showAddOnView, setShowAddOnView] = useState(addOnPossible);
-  const [selectedAddOns, setSelectedAddOns] = useState([]);
+  const [productCart, setProductCart] = useState({
+    qty: 1,
+  });
 
   const { loading, data } = useQuery(GET_PRODUCT_BY_ID, {
     variables: { id: productId },
@@ -47,23 +46,6 @@ const ProductView = ({
     cartList: state.cartReducer.cartList,
   }));
 
-  useEffect(
-    () => {
-      if (cartList.length === 0) setQtyCount(1);
-      const findOne = cartList.find(
-        (item) => item.productId === productId && _.get(orderType, 'id', '') === item.orderType.id
-      );
-      if (findOne) {
-        setQtyCount(findOne.qty);
-      } else setQtyCount(1);
-
-      const addOns = getAddOns(data);
-      setAddOnCartList(addOns);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [cartList, orderType, productId, data]
-  );
-
   const getProduct = () => {
     if (!data) return null;
     if (data.products.length > 0) return data.products[0];
@@ -72,8 +54,50 @@ const ProductView = ({
   const getAddOns = () => {
     const product = getProduct();
     if (!product) return [];
-    return _.get(product, 'addons', []);
+    const addons = _.get(product, 'addons', []);
+    if (addons && addons.length > 0) {
+      const filterAddons = [];
+      addons.forEach((item) => {
+        const { options } = item;
+        const optionsTemp = options.map((item) => {
+          if (item.default) return { ...item, qty: 1 };
+          else return item;
+        });
+        let itemTemp = { ...item };
+        delete itemTemp.options;
+        filterAddons.push({
+          ...item,
+          addons: [...optionsTemp],
+        });
+      });
+      return filterAddons;
+    } else return [];
   };
+
+  const setDefaultProductCart = () => {
+    setProductCart({
+      productId: productId,
+      name: _.get(getProduct(), 'name', ''),
+      qty: 1,
+      price: getProductTotalAmount(getProduct(), orderType, net_price),
+      orderType: orderType,
+      addons: getAddOns(),
+    });
+  };
+
+  useEffect(
+    () => {
+      if (cartList.length === 0) setDefaultProductCart();
+      const findOne = cartList.find(
+        (item) => item.productId === productId && _.get(orderType, 'id', '') === item.orderType.id
+      );
+      if (findOne) {
+        setProductCart({ ...findOne });
+      } else setDefaultProductCart();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [cartList, orderType, productId, data]
+  );
 
   const getProductImage = () => {
     const product = getProduct();
@@ -98,18 +122,23 @@ const ProductView = ({
     return stocks[0].current_stock;
   };
 
-  const setAddOnCartList = (addOns) => {
-    const productCart = cartList.find((item) => item.productId === productId);
-    if (productCart) {
-      setSelectedAddOns([..._.get(productCart, 'addons', [])]);
-    }
-  };
+  // const setAddOnCartList = (addOns) => {
+  //   const productCart = cartList.find((item) => item.productId === productId);
+  //   if (productCart) {
+  //     setSelectedAddOns([..._.get(productCart, 'addons', [])]);
+  //   }
+  // };
 
   const renderPriceInfo = () => {
     const priceInfo = getProductPriceInfo(getProduct(), orderType, net_price);
-    if (!priceInfo) return <div className={classes.Price}></div>;
+    const addOnPrice = getAddOnCartPrice(productCart.addons, orderType, net_price);
 
-    const addOnPrice = getAddOnCartPrice(selectedAddOns, orderType, net_price);
+    if (!priceInfo)
+      return (
+        <div className={classes.Price}>
+          {getCurrency(currencyData)} {formatPrice(addOnPrice, currencyData)}
+        </div>
+      );
 
     if (net_price) {
       const netPriceNames = priceInfo.taxes.map((taxItem) => taxItem.name);
@@ -136,31 +165,36 @@ const ProductView = ({
     }
   };
 
-  if (showAddOnView)
-    return (
-      <AddOnView
-        open={showAddOnView}
-        hideModal={() => setShowAddOnView(false)}
-        productId={productId}
-        productAddons={getAddOns()}
-        selectedAddOns={selectedAddOns}
-        currencyData={currencyData}
-        setSelectedAddOns={(updatedAddOns) => {
-          setSelectedAddOns([...updatedAddOns]);
-        }}
-        productLoading={loading}
-      />
-    );
-  else {
-    return (
-      <Dialog open={open} onClose={hideModal} fullWidth={true} maxWidth="md" className={classes.root}>
-        {loading ? (
-          <ProductViewSkeleton hideModal={hideModal} />
-        ) : (
-          <>
-            <CloseIconButton onClick={hideModal} wrapperClass={classes.CloseButtonWrapper} />
-            <Box className={classes.TopSection}>
-              <Box className={classes.ShowMobile} style={{ flexDirection: 'column' }}>
+  return (
+    <Dialog open={open} onClose={hideModal} fullWidth={true} maxWidth="md" className={classes.root}>
+      {loading ? (
+        <ProductViewSkeleton hideModal={hideModal} />
+      ) : (
+        <>
+          <CloseIconButton onClick={hideModal} wrapperClass={classes.CloseButtonWrapper} />
+          <Box className={classes.TopSection}>
+            <Box className={classes.ShowMobile} style={{ flexDirection: 'column' }}>
+              <Typography className={classes.ProductTitle} variant="h1">
+                {_.get(getProduct(), 'name', '')}
+              </Typography>
+              {_.get(getProduct(), 'stocked', false) && (
+                <>
+                  <Typography variant="h3" style={{ marginTop: '5px' }}>
+                    {`Barcode: ${_.get(getProduct(), 'bar_code', '')}`}
+                  </Typography>
+                  <Typography variant="h3" style={{ marginTop: '5px' }}>
+                    {`SKU: ${_.get(getProduct(), 'SKU', '')}`}
+                  </Typography>
+                </>
+              )}
+            </Box>
+
+            <div className={classes.ProductImg} style={{ backgroundImage: `url(${getProductImage()})` }}>
+              {getProductLabel().length > 0 && <div className={classes.ProductLabel}>{getProductLabel()}</div>}
+            </div>
+
+            <Box className={classes.ProductInfoDiv}>
+              <Box className={classes.ShowDesktop} style={{ flexDirection: 'column' }}>
                 <Typography className={classes.ProductTitle} variant="h1">
                   {_.get(getProduct(), 'name', '')}
                 </Typography>
@@ -174,96 +208,80 @@ const ProductView = ({
                     </Typography>
                   </>
                 )}
-              </Box>
 
-              <div className={classes.ProductImg} style={{ backgroundImage: `url(${getProductImage()})` }}>
-                {getProductLabel().length > 0 && <div className={classes.ProductLabel}>{getProductLabel()}</div>}
-              </div>
-
-              <Box className={classes.ProductInfoDiv}>
-                <Box className={classes.ShowDesktop} style={{ flexDirection: 'column' }}>
-                  <Typography className={classes.ProductTitle} variant="h1">
-                    {_.get(getProduct(), 'name', '')}
-                  </Typography>
-                  {_.get(getProduct(), 'stocked', false) && (
-                    <>
-                      <Typography variant="h3" style={{ marginTop: '5px' }}>
-                        {`Barcode: ${_.get(getProduct(), 'bar_code', '')}`}
-                      </Typography>
-                      <Typography variant="h3" style={{ marginTop: '5px' }}>
-                        {`SKU: ${_.get(getProduct(), 'SKU', '')}`}
-                      </Typography>
-                    </>
-                  )}
-
-                  <Typography variant="h3" style={{ marginTop: '19px', flexDirection: 'column' }}>
-                    {ReactHtmlParser(_.get(getProduct(), 'description', ''))}
-                  </Typography>
-                </Box>
-                <Box className={classes.CartBox}>
-                  <Box style={{ boxSizing: 'border-box', flex: '1 1 auto' }}>
-                    <Typography variant="h2" style={{ display: 'flex' }}>
-                      Stock: <div className={classes.StockValue}>{getStock()}</div>
-                    </Typography>
-                    <Typography variant="h2" style={{ marginTop: '5px', display: 'flex' }}>
-                      {`Price:`} {renderPriceInfo()}
-                    </Typography>
-                  </Box>
-                  <Box className={classes.CartControlField}>
-                    <TextField
-                      className={classes.CartInput}
-                      id="cart-input"
-                      label="Qty"
-                      value={qtyCount}
-                      onChange={(e) => {
-                        setQtyCount(e.target.value.replace(/\D/, ''));
-                      }}
-                      error={qtyCount === null || qtyCount.toString().length === 0}
-                    />
-                    <Button
-                      className={classes.CartButton}
-                      variant="contained"
-                      color="primary"
-                      disabled={getProduct() === null || qtyCount === null || qtyCount.toString().length === 0}
-                      onClick={() =>
-                        updateProductCartAction({
-                          productId,
-                          name: getProduct().name,
-                          qty: parseInt(qtyCount),
-                          price: getProductTotalAmount(getProduct(), orderType, net_price),
-                          orderType: orderType,
-                          addons: [...selectedAddOns],
-                        })
-                      }
-                    >
-                      Add to cart
-                    </Button>
-                  </Box>
-                </Box>
-
-                <Typography
-                  variant="h3"
-                  className={classes.ShowMobile}
-                  style={{ marginTop: '31px', flexDirection: 'column' }}
-                >
+                <Typography variant="h3" style={{ marginTop: '19px', flexDirection: 'column' }}>
                   {ReactHtmlParser(_.get(getProduct(), 'description', ''))}
                 </Typography>
               </Box>
+              <Box className={classes.CartBox}>
+                <Box style={{ boxSizing: 'border-box', flex: '1 1 auto' }}>
+                  <Typography variant="h2" style={{ display: 'flex' }}>
+                    Stock: <div className={classes.StockValue}>{getStock()}</div>
+                  </Typography>
+                  <Typography variant="h2" style={{ marginTop: '5px', display: 'flex' }}>
+                    {`Price:`} {renderPriceInfo()}
+                  </Typography>
+                </Box>
+                <Box className={classes.CartControlField}>
+                  <TextField
+                    className={classes.CartInput}
+                    id="cart-input"
+                    label="Qty"
+                    value={_.get(productCart, 'qty', 0)}
+                    onChange={(e) => {
+                      setProductCart({
+                        ...productCart,
+                        qty: e.target.value.replace(/\D/, ''),
+                      });
+                    }}
+                    error={
+                      _.get(productCart, 'qty', 0) === null || _.get(productCart, 'qty', 0).toString().length === 0
+                    }
+                  />
+                  <Button
+                    className={classes.CartButton}
+                    variant="contained"
+                    color="primary"
+                    disabled={
+                      getProduct() === null ||
+                      _.get(productCart, 'qty', 0) === null ||
+                      _.get(productCart, 'qty', 0).toString().length === 0
+                    }
+                    onClick={() => {
+                      updateProductCartAction(productCart);
+                      if (getAddOns().length > 0) {
+                        hideModal();
+                        showAddOnView();
+                      }
+                    }}
+                  >
+                    Add to cart
+                  </Button>
+                </Box>
+              </Box>
+
+              <Typography
+                variant="h3"
+                className={classes.ShowMobile}
+                style={{ marginTop: '31px', flexDirection: 'column' }}
+              >
+                {ReactHtmlParser(_.get(getProduct(), 'description', ''))}
+              </Typography>
             </Box>
-            {_.get(getProduct(), 'allergies', []).length > 0 && (
-              <AllergyBox allergyData={_.get(getProduct(), 'allergies', [])} wrapperClass={classes.AllergyWrapper} />
-            )}
-            {_.get(getProduct(), 'ingredients', []).length > 0 && (
-              <IngredientsBox
-                ingredientData={_.get(getProduct(), 'ingredients', [])}
-                wrapperClass={classes.IngredientsWrapper}
-              />
-            )}
-          </>
-        )}
-      </Dialog>
-    );
-  }
+          </Box>
+          {_.get(getProduct(), 'allergies', []).length > 0 && (
+            <AllergyBox allergyData={_.get(getProduct(), 'allergies', [])} wrapperClass={classes.AllergyWrapper} />
+          )}
+          {_.get(getProduct(), 'ingredients', []).length > 0 && (
+            <IngredientsBox
+              ingredientData={_.get(getProduct(), 'ingredients', [])}
+              wrapperClass={classes.IngredientsWrapper}
+            />
+          )}
+        </>
+      )}
+    </Dialog>
+  );
 };
 
 const useStyles = makeStyles((theme: Theme) =>

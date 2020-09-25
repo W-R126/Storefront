@@ -22,6 +22,11 @@ export const GET_PRODUCTS = gql`
       short_description
       measure_amount
       measure_type
+      pack_qty
+      pack_item {
+        measure_amount
+        measure_type
+      }
       category {
         id
         name
@@ -46,26 +51,6 @@ export const GET_PRODUCTS = gql`
       addons {
         id
         group
-        description
-        parent
-        allow_free
-        mandatory
-        multi_selection
-        default_all
-        options {
-          inventory_id
-          #product_id
-          id
-          name
-          force_charge
-          default
-          position
-          extra
-          override_price
-          price {
-            fixed_price
-          }
-        }
       }
     }
   }
@@ -140,18 +125,37 @@ export const GET_PRODUCT_BY_ID = gql`
           override_price
           price {
             fixed_price
-            # price_infos {
-            #   price_type {
-            #     id
-            #     name
-            #   }
-            #   price
-            #   taxes {
-            #     id
-            #     rate
-            #     name
-            #   }
-            # }
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_PRODUCT_ADDONS = gql`
+  query getProductAddons($id: String) {
+    products(id: $id) {
+      addons {
+        id
+        group
+        description
+        parent
+        allow_free
+        mandatory
+        multi_selection
+        default_all
+        options {
+          inventory_id
+          #product_id
+          id
+          name
+          force_charge
+          default
+          position
+          extra
+          override_price
+          price {
+            fixed_price
           }
         }
       }

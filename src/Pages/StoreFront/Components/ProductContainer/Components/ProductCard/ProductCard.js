@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import _ from 'lodash';
@@ -6,9 +6,10 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Skeleton from '@material-ui/lab/Skeleton';
 
 import ProductView from '../../../ProductView';
+import AddOnView from '../../../AddOnView';
 import CartAddItemButton from '../../../../../../SharedComponents/CartAddItemButton';
 import { getCurrency } from '../../../../../../utils/store';
-import { getProductCart, getProductPriceInfo } from '../../../../../../utils/product';
+import { getProductCart, getProductPriceInfo, getProductTotalAmount } from '../../../../../../utils/product';
 import { formatPrice } from '../../../../../../utils/string';
 import { updateProductCartAction } from '../../../../../../actions/cartAction';
 
@@ -26,6 +27,7 @@ const ProductCard = ({
   const classes = useStyles();
 
   const [showProductView, setShowProductView] = useState(false);
+  const [showAddOnView, setShowAddOnView] = useState(false);
 
   const getProductImage = () => {
     const imgArr = _.get(productInfo, 'images', []);
@@ -74,6 +76,22 @@ const ProductCard = ({
     });
   };
 
+  const updateStoreAddonCart = (addonCarts) => {
+    const productCart = getProductCart(cartInfo, productInfo.id, orderType);
+    updateProductCartAction({
+      ...(productCart
+        ? productCart
+        : {
+            productId: productInfo.id,
+            name: productInfo.name,
+            qty: 1,
+            price: getProductTotalAmount(productInfo, orderType, net_price),
+            orderType: orderType,
+          }),
+      addons: [...addonCarts],
+    });
+  };
+
   const getStock = () => {
     const stocks = _.get(productInfo, 'stocks', []);
     if (stocks.length === 0) return 0;
@@ -84,16 +102,15 @@ const ProductCard = ({
     const addOns = _.get(productInfo, 'addons', []);
     if (addOns.length > 0) return true;
     return false;
-    // else {
-    //   let isPossible = false;
-    //   addOns.forEach((item) => {
-    //     if (!isPossible) {
-    //       const options = _.get(item, 'options', []);
-    //       if (options.length > 0) isPossible = true;
-    //     }
-    //   });
-    //   return isPossible;
-    // }
+  };
+
+  const renderQtySection = () => {
+    if (productInfo.pack_qty > 1) {
+      return `${productInfo.pack_qty} x ${productInfo.pack_item.measure_amount}${
+        productInfo.pack_item.measure_type === 'qty' ? '' : productInfo.pack_item.measure_type
+      }`;
+    } else if (productInfo.measure_type === 'qty') return productInfo.measure_amount;
+    else return `${productInfo.measure_amount} ${productInfo.measure_type}`;
   };
 
   const renderBottom = () => {
@@ -101,16 +118,43 @@ const ProductCard = ({
 
     if (getCartCount() === 0)
       return (
-        <div className={classes.AddCart} onClick={() => setShowProductView(true)} role="button">
+        <div
+          className={classes.AddCart}
+          onClick={(e) => {
+            if (getAddOnPossible()) {
+              e.stopPropagation();
+              setShowAddOnView(true);
+            }
+          }}
+          role="button"
+        >
           Add to cart
         </div>
       );
     else
       return (
-        <div className={classes.ProductCount}>
-          <CartAddItemButton onClick={() => updateCarts(-1)} type="minus" />
+        <div
+          className={classes.ProductCount}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          role="button"
+        >
+          <CartAddItemButton
+            onClick={(e) => {
+              e.stopPropagation();
+              updateCarts(-1);
+            }}
+            type="minus"
+          />
           <div className={classes.CountValue}>{getCartCount()}</div>
-          <CartAddItemButton onClick={() => updateCarts(1)} type="plus" />
+          <CartAddItemButton
+            onClick={(e) => {
+              e.stopPropagation();
+              updateCarts(1);
+            }}
+            type="plus"
+          />
         </div>
       );
   };
@@ -138,40 +182,65 @@ const ProductCard = ({
     );
 
   return (
-    <div className={classes.root}>
-      <div className={classes.ProductImg} style={{ backgroundImage: `url(${getProductImage()})` }}>
-        {productInfo.measure_type !== null && productInfo.measure_amount !== null && (
-          <div className={classes.ProductLabel}>
-            {productInfo.measure_amount} {productInfo.measure_type}
-          </div>
-        )}
-      </div>
-      <div className={classes.ProductContent}>
-        <div className={classes.TopSection}>
-          <div className={classes.LeftInfo}>
-            <div className={classes.Title}>{productInfo.name}</div>
-            {_.get(productInfo, 'stocked', false) && <div className={classes.Status}>Code: {productInfo.bar_code}</div>}
-          </div>
-          <div className={classes.Value}>
-            {renderPriceInfo()}
-            <div className={classes.Stock}>{`${getStock()} in stock`}</div>
-          </div>
+    <>
+      <div
+        className={classes.root}
+        role="button"
+        onClick={() => {
+          setShowProductView(true);
+        }}
+      >
+        <div className={classes.ProductImg} style={{ backgroundImage: `url(${getProductImage()})` }}>
+          {productInfo.measure_type !== null && productInfo.measure_amount !== null && (
+            <div className={classes.ProductLabel}>{renderQtySection()}</div>
+          )}
         </div>
-        <div className={classes.Description}>{productInfo.short_description}</div>
-        <div className={classes.Bottom}>{renderBottom()}</div>
+        <div className={classes.ProductContent}>
+          <div className={classes.TopSection}>
+            <div className={classes.LeftInfo}>
+              <div className={classes.Title}>{productInfo.name}</div>
+              {_.get(productInfo, 'stocked', false) && (
+                <div className={classes.Status}>Code: {productInfo.bar_code}</div>
+              )}
+            </div>
+            <div className={classes.Value}>
+              {renderPriceInfo()}
+              <div className={classes.Stock}>{`${getStock()} in stock`}</div>
+            </div>
+          </div>
+          <div className={classes.Description}>{productInfo.short_description}</div>
+          <div className={classes.Bottom}>{renderBottom()}</div>
+        </div>
       </div>
       {showProductView && (
         <ProductView
           open={showProductView}
-          hideModal={() => setShowProductView(false)}
+          hideModal={() => {
+            setShowProductView(false);
+          }}
           productId={productInfo.id}
           // productId="1fe204f7-3051-4aca-9543-ac47c9deea6e"
           currencyData={currencyData}
           net_price={net_price}
-          addOnPossible={getAddOnPossible()}
+          showAddOnView={() => {
+            setShowAddOnView(true);
+          }}
         />
       )}
-    </div>
+      {showAddOnView && (
+        <AddOnView
+          open={showAddOnView}
+          hideModal={() => {
+            setShowAddOnView(false);
+          }}
+          productId={productInfo.id}
+          storeAddonCart={_.get(getProductCart(cartInfo, productInfo.id, orderType), 'addons', [])}
+          currencyData={currencyData}
+          productPrice={getProductTotalAmount(productInfo, orderType, net_price)}
+          updateStoreAddonCart={updateStoreAddonCart}
+        />
+      )}
+    </>
   );
 };
 
@@ -185,6 +254,7 @@ const useStyles = makeStyles((theme: Theme) =>
       boxShadow: '0 1px 6px 0 rgba(0, 0, 0, 0.05)',
       border: 'solid 0.5px rgba(186, 195, 201, 0.5)',
       color: theme.palette.primary.text,
+      cursor: 'pointer',
     },
     ProductImg: {
       backgroundPosition: 'center center',
@@ -201,7 +271,8 @@ const useStyles = makeStyles((theme: Theme) =>
     ProductLabel: {
       position: 'absolute',
       marginTop: 'auto',
-      width: '38px',
+      minWidth: '38px',
+      width: 'auto',
       height: '38px',
       backgroundColor: 'rgba(20, 54, 106, 0.89)',
       display: 'flex',
@@ -212,7 +283,12 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '12px',
       bottom: '5px',
       left: '5px',
-      borderRadius: '19px',
+      borderRadius: '50%',
+      textAlign: 'center',
+      paddingLeft: '5px',
+      paddingRight: '5px',
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
     },
     ProductContent: {
       flex: '1 1 100%',
