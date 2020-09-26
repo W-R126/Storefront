@@ -7,19 +7,13 @@ export default (state = initialState.cart, action) => {
       const addProduct = { ...action.payload };
       let updatedCart = [];
       if (addProduct.qty <= 0) {
-        updatedCart = state.cartList.filter((item) => {
-          if (item.productId && item.orderType.id === addProduct.orderType.id) return false;
-          else return true;
-        });
+        updatedCart = state.cartList.filter((item) => item.id !== addProduct.id);
       } else {
-        const findOne = state.cartList.find(
-          (item) => item.productId === addProduct.productId && item.orderType.id === addProduct.orderType.id
-        );
+        const findOne = state.cartList.find((item) => item.id === addProduct.id);
 
         if (findOne) {
           updatedCart = state.cartList.map((item) => {
-            if (item.productId === addProduct.productId && item.orderType.id === addProduct.orderType.id)
-              return addProduct;
+            if (item.id === addProduct.id) return addProduct;
             else return item;
           });
         } else {

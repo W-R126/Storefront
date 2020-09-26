@@ -16,9 +16,9 @@ import { getOrderTypes } from '../../utils/store';
 import { getStoreId } from '../../constants';
 import BannerPlaceHolder from '../../assets/img/store-banner-placeholder.png';
 import { base64ToMerchantStoreId, TESTBASE64_URL } from '../../constants';
-
 const StoreFrontPage = () => {
   const { base64 } = useParams();
+
   useEffect(() => {
     if (base64) base64ToMerchantStoreId(base64);
     else base64ToMerchantStoreId(TESTBASE64_URL);
@@ -28,6 +28,19 @@ const StoreFrontPage = () => {
   const [showOpeningHourModal, setShowOpeningHourModal] = useState(false);
   const { loading: storeLoading, error: storeError, data: storeData } = useQuery(GET_STORE_DATA, {
     variables: { id: getStoreId() },
+    onCompleted(d) {
+      if (d.store.merchant.tname) {
+        document.title = `${d.store.merchant.tname} | Storefront | Myda`;
+      }
+      try {
+        if (d.store.merchant.logo.url) {
+          const favicon = document.getElementById('favicon');
+          favicon.href = d.store.merchant.logo.url;
+        }
+      } catch (err) {
+        console.log('Set Page Icon error');
+      }
+    },
   });
 
   const { data: storeSettingData } = useQuery(GET_STORE_SETTING_PRODUCT);

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { getProductViewFromStoreSetting } from './store';
 
 export const getProductCart = (cartList, productId, orderType) => {
-  const findCart = cartList.find(
+  const findCart = cartList.filter(
     (item) => item.productId === productId && item.orderType.id === _.get(orderType, 'id', '')
   );
   return findCart;

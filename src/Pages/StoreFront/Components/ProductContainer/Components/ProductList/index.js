@@ -20,9 +20,8 @@ import { getProductPaginationAction } from '../../../../../../actions/productAct
 import { getMerchantId, getStoreId } from '../../../../../../constants';
 
 const ProductList = ({ client, getProductPaginationAction, loading }) => {
-  const { productList, cartInfo, orderType, filter, pageData, productLoading } = useSelector((state) => ({
+  const { productList, orderType, filter, pageData, productLoading } = useSelector((state) => ({
     productList: state.productReducer.productList,
-    cartInfo: state.cartReducer.cartList,
     orderType: state.storeReducer.orderType,
     filter: state.productReducer.filter,
     pageData: state.productReducer.pageData,
@@ -56,7 +55,6 @@ const ProductList = ({ client, getProductPaginationAction, loading }) => {
             productInfo={undefined}
             currencyData={currencyData}
             net_price={getNetPriceStatus()}
-            cartInfo={cartInfo}
             orderType={orderType}
             loading={true}
           />
@@ -95,7 +93,6 @@ const ProductList = ({ client, getProductPaginationAction, loading }) => {
                   productInfo={item}
                   currencyData={currencyData}
                   net_price={getNetPriceStatus()}
-                  cartInfo={cartInfo}
                   orderType={orderType}
                   loading={false}
                 />

@@ -1,34 +1,37 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
+import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import Skeleton from '@material-ui/lab/Skeleton';
 
+import ProductCardSkeleton from './ProductCard.skeleton';
 import ProductView from '../../../ProductView';
 import AddOnView from '../../../AddOnView';
 import CartAddItemButton from '../../../../../../SharedComponents/CartAddItemButton';
 import { getCurrency } from '../../../../../../utils/store';
-import { getProductCart, getProductPriceInfo, getProductTotalAmount } from '../../../../../../utils/product';
+import {
+  getAddOnCartPrice,
+  getProductCart,
+  getProductPriceInfo,
+  getProductTotalAmount,
+} from '../../../../../../utils/product';
 import { formatPrice } from '../../../../../../utils/string';
 import { updateProductCartAction } from '../../../../../../actions/cartAction';
 
 import ProductPlaceHolderImg from '../../../../../../assets/img/product-card-placeholder.png';
 import { getMeasureTypStr } from '../../../../../../utils/product';
 
-const ProductCard = ({
-  productInfo,
-  currencyData,
-  net_price,
-  cartInfo,
-  orderType,
-  updateProductCartAction,
-  loading,
-}) => {
+const ProductCard = ({ productInfo, currencyData, net_price, orderType, updateProductCartAction, loading }) => {
   const classes = useStyles();
+
+  const { cartInfo } = useSelector((state) => ({
+    cartInfo: state.cartReducer.cartList,
+  }));
 
   const [showProductView, setShowProductView] = useState(false);
   const [showAddOnView, setShowAddOnView] = useState(false);
+  const [tempProductCart, setTempProductCart] = useState();
 
   const getProductImage = () => {
     const imgArr = _.get(productInfo, 'images', []);
@@ -67,30 +70,55 @@ const ProductCard = ({
 
   const getCartCount = () => {
     const productCart = getProductCart(cartInfo, productInfo.id, orderType);
-    return _.get(productCart, 'qty', 0);
+    if (productCart.length > 0) return productCart[productCart.length - 1].qty;
+    return 0;
   };
 
   const updateCarts = (addNumber) => {
+    const productCart = getProductCart(cartInfo, productInfo.id, orderType);
     updateProductCartAction({
-      ...getProductCart(cartInfo, productInfo.id, orderType),
+      ...productCart[productCart.length - 1],
       qty: getCartCount() + addNumber,
     });
   };
 
-  const updateStoreAddonCart = (addonCarts) => {
-    const productCart = getProductCart(cartInfo, productInfo.id, orderType);
-    updateProductCartAction({
-      ...(productCart
-        ? productCart
-        : {
-            productId: productInfo.id,
-            name: productInfo.name,
-            qty: 1,
-            price: getProductTotalAmount(productInfo, orderType, net_price),
-            orderType: orderType,
-          }),
-      addons: [...addonCarts],
+  const getAddOns = (product) => {
+    if (!product) return [];
+    const addons = _.get(product, 'addons', []);
+    if (addons && addons.length > 0) {
+      const filterAddons = [];
+      addons.forEach((item) => {
+        const { options } = item;
+        const optionsTemp = options.map((item) => {
+          if (item.default) return { ...item, qty: 1 };
+          else return item;
+        });
+        let itemTemp = { ...item };
+        delete itemTemp.options;
+        filterAddons.push({
+          ...item,
+          addons: [...optionsTemp],
+        });
+      });
+      return filterAddons;
+    } else return [];
+  };
+
+  const handleClickAddCart = (e) => {
+    e.stopPropagation();
+    const productAddonCart = getAddOns();
+    setTempProductCart({
+      id: uuidv4(),
+      productId: productInfo.id,
+      name: productInfo.name,
+      qty: 1,
+      price:
+        getProductTotalAmount(productInfo, orderType, net_price) +
+        getAddOnCartPrice(productAddonCart, orderType, net_price),
+      orderType: orderType,
+      addons: [...productAddonCart],
     });
+    setShowAddOnView(true);
   };
 
   const getStock = () => {
@@ -127,8 +155,7 @@ const ProductCard = ({
           className={classes.AddCart}
           onClick={(e) => {
             if (getAddOnPossible()) {
-              e.stopPropagation();
-              setShowAddOnView(true);
+              handleClickAddCart(e);
             }
           }}
           role="button"
@@ -164,28 +191,6 @@ const ProductCard = ({
       );
   };
 
-  if (loading)
-    return (
-      <div className={classes.root}>
-        <Skeleton className={classes.SkelotonProductImg} />
-        <div className={classes.ProductContent}>
-          <div className={classes.TopSection}>
-            <div className={classes.LeftInfo}>
-              <Skeleton className={classes.SkeletonTitle} animation="pulse" />
-              <Skeleton className={classes.SkeltonStatus} />
-            </div>
-            <div className={classes.Value}>
-              <Skeleton className={classes.SkeltonStatus} />
-            </div>
-          </div>
-          <Skeleton variant="rect" height={40} />
-          <div className={classes.Bottom}>
-            <Skeleton width={60} style={{ marginLeft: 'auto' }} />
-          </div>
-        </div>
-      </div>
-    );
-
   return (
     <>
       <div
@@ -195,26 +200,33 @@ const ProductCard = ({
           setShowProductView(true);
         }}
       >
-        <div className={classes.ProductImg} style={{ backgroundImage: `url(${getProductImage()})` }}>
-          {renderQtySection().length > 0 && <div className={classes.ProductLabel}>{renderQtySection()}</div>}
-        </div>
-        <div className={classes.ProductContent}>
-          <div className={classes.TopSection}>
-            <div className={classes.LeftInfo}>
-              <div className={classes.Title}>{productInfo.name}</div>
-              {_.get(productInfo, 'stocked', false) && (
-                <div className={classes.Status}>Code: {productInfo.bar_code}</div>
-              )}
+        {loading ? (
+          <ProductCardSkeleton />
+        ) : (
+          <>
+            <div className={classes.ProductImg} style={{ backgroundImage: `url(${getProductImage()})` }}>
+              {renderQtySection().length > 0 && <div className={classes.ProductLabel}>{renderQtySection()}</div>}
             </div>
-            <div className={classes.Value}>
-              {renderPriceInfo()}
-              <div className={classes.Stock}>{`${getStock()} in stock`}</div>
+            <div className={classes.ProductContent}>
+              <div className={classes.TopSection}>
+                <div className={classes.LeftInfo}>
+                  <div className={classes.Title}>{productInfo.name}</div>
+                  {_.get(productInfo, 'stocked', false) && (
+                    <div className={classes.Status}>Code: {productInfo.bar_code}</div>
+                  )}
+                </div>
+                <div className={classes.Value}>
+                  {renderPriceInfo()}
+                  <div className={classes.Stock}>{`${getStock()} in stock`}</div>
+                </div>
+              </div>
+              <div className={classes.Description}>{productInfo.short_description}</div>
+              <div className={classes.Bottom}>{renderBottom()}</div>
             </div>
-          </div>
-          <div className={classes.Description}>{productInfo.short_description}</div>
-          <div className={classes.Bottom}>{renderBottom()}</div>
-        </div>
+          </>
+        )}
       </div>
+
       {showProductView && (
         <ProductView
           open={showProductView}
@@ -225,7 +237,10 @@ const ProductCard = ({
           // productId="1fe204f7-3051-4aca-9543-ac47c9deea6e"
           currencyData={currencyData}
           net_price={net_price}
-          showAddOnView={() => {
+          setCurProductCart={(cartOne) => {
+            setTempProductCart({ ...cartOne });
+          }}
+          setShowAddonView={() => {
             setShowAddOnView(true);
           }}
         />
@@ -237,10 +252,9 @@ const ProductCard = ({
             setShowAddOnView(false);
           }}
           productId={productInfo.id}
-          storeAddonCart={_.get(getProductCart(cartInfo, productInfo.id, orderType), 'addons', [])}
+          curProductCart={tempProductCart}
           currencyData={currencyData}
           productPrice={getProductTotalAmount(productInfo, orderType, net_price)}
-          updateStoreAddonCart={updateStoreAddonCart}
         />
       )}
     </>
@@ -371,17 +385,6 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '20px',
       textAlign: 'center',
       width: '30px',
-    },
-    SkelotonProductImg: {
-      flex: '0 0 95px',
-      height: '100%',
-      transform: 'scale(1, 1)',
-    },
-    SkeletonTitle: {
-      width: '100px',
-    },
-    SkeltonStatus: {
-      width: '60px',
     },
   })
 );
