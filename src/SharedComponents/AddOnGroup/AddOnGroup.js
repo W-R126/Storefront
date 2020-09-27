@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useQuery } from '@apollo/react-hooks';
 import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Box, Typography, Grid } from '@material-ui/core';
+import { Box, Typography, Grid, Zoom } from '@material-ui/core';
 
 import AddOnItem from '../AddOnItem';
 import AddOnGroupSkeleton from './AddOnGroup.skeleton';
@@ -42,13 +42,6 @@ const AddOnGroup = forwardRef(({ productId, groupId, productGroupAddonInfo, grou
     const addons = addonGroupsTemp[0].addons;
     const mergeAddons = _.map(addons, (item) => {
       return _.assign(item, _.find(options, ['id', item.id]));
-    });
-
-    console.log({
-      ...addonGroupsTemp[0],
-      ...tempInfo,
-      ...productGroupAddonInfo,
-      addons: [...mergeAddons],
     });
 
     return {
@@ -166,15 +159,42 @@ const AddOnGroup = forwardRef(({ productId, groupId, productGroupAddonInfo, grou
     ];
   };
 
+  const getGroupTitle = () => {
+    const group = _.get(getGroupInfo(), 'group', '');
+
+    const allow_free = _.get(getGroupInfo(), 'allow_free', 0);
+    if (allow_free > 0) {
+      return `${group} (${allow_free} for free)`;
+    }
+    return group;
+  };
+
+  const renderDescription = () => {
+    const description = _.get(getGroupInfo(), 'description', '');
+    return (
+      <Typography className={classes.Description} variant="h3">
+        {description}
+      </Typography>
+    );
+  };
+
   return (
     <Box className={classes.root}>
       {loading ? (
         <AddOnGroupSkeleton />
       ) : (
         <>
-          <Typography variant="h2" className="title">
-            {_.get(getGroupInfo(), 'group', '')}
-          </Typography>
+          <Box className={classes.TitleBox}>
+            <Typography variant="h2" className={classes.GroupTitle}>
+              {getGroupTitle()}
+            </Typography>
+            <Zoom in={!groupValidate.validate}>
+              <Typography variant="h3" className={classes.ErrorMsg}>
+                {groupValidate.errorMsg}
+              </Typography>
+            </Zoom>
+          </Box>
+          {renderDescription()}
           <Grid container spacing={3}>
             {getOrderedItems().map((item) => {
               return (
@@ -190,11 +210,6 @@ const AddOnGroup = forwardRef(({ productId, groupId, productGroupAddonInfo, grou
               );
             })}
           </Grid>
-          {!groupValidate.validate && (
-            <Typography variant="h4" className="error-msg">
-              {groupValidate.errorMsg}
-            </Typography>
-          )}
         </>
       )}
     </Box>
@@ -208,14 +223,28 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
       margin: '30px 0 0 0',
       position: 'relative',
-      '& .title': {
-        fontWeight: 500,
-        margin: '0 0 20px 0',
-      },
-      '& .error-msg': {
-        color: theme.palette.primary.red,
-        margin: '5px 0 0 0',
-      },
+    },
+    TitleBox: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+    },
+    GroupTitle: {
+      fontWeight: 500,
+      margin: '0 16px 10px 0',
+    },
+    ErrorMsg: {
+      background: '#f63333',
+      lineHeight: '27px',
+      fontWeight: 'normal',
+      color: '#fff',
+      padding: '0 25px',
+      margin: '0 0 10px 0',
+      borderRadius: '13.5px',
+    },
+    Description: {
+      color: theme.palette.primary.contrastText,
+      margin: '0 0 10px 0',
     },
     AddOnGridItem: {
       flexGrow: 0,

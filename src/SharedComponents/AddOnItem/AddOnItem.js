@@ -3,7 +3,7 @@ import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Box, Typography } from '@material-ui/core';
+import { ListItem, Box, Typography } from '@material-ui/core';
 import CartAddItemButton from '../CartAddItemButton';
 import { formatPrice } from '../../utils/string';
 import { getCurrency } from '../../utils/store';
@@ -30,8 +30,8 @@ const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) =>
     }
   };
 
-  const handleClickItem = () => {
-    if (itemCartInfo) return null;
+  const handleClickItem = (e) => {
+    if (itemCartInfo) return false;
     else {
       setItemCartInfo({
         ...itemData,
@@ -66,7 +66,8 @@ const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) =>
       return (
         <Box className={classes.ControlPanel}>
           <CartAddItemButton
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               setItemCartInfo({
                 ...itemData,
                 qty: itemCartInfo.qty - 1,
@@ -79,7 +80,8 @@ const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) =>
             {getCurrentQty()}
           </Typography>
           <CartAddItemButton
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               setItemCartInfo({
                 ...itemData,
                 qty: itemCartInfo.qty + 1,
@@ -99,7 +101,15 @@ const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) =>
   if (getCurrentQty() > 0) rootClass.push(classes.NoSelect);
 
   return (
-    <Box className={rootClass.join(' ')} role="button" onClick={handleClickItem}>
+    <ListItem
+      button={!(getCurrentQty() > 0)}
+      className={rootClass.join(' ')}
+      onClick={(e) => {
+        setTimeout(() => {
+          handleClickItem(e);
+        }, 300);
+      }}
+    >
       <Box className={classes.ImgBox} style={{ ...getBackImgStyle() }}></Box>
       {renderCartControl()}
       <Typography variant="h3" className={classes.ProductName}>
@@ -108,7 +118,7 @@ const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) =>
       <Typography variant="h3" className={classes.Price}>
         {`${getCurrency(currencyData)} ${formatPrice(itemData.fixed_price, currencyData)}`}
       </Typography>
-    </Box>
+    </ListItem>
   );
 };
 const useStyles = makeStyles((theme: Theme) =>
@@ -121,6 +131,7 @@ const useStyles = makeStyles((theme: Theme) =>
       border: 'solid 1px rgba(186, 195, 201, 0.5)',
       position: 'relative',
       cursor: 'pointer',
+      padding: 0,
       '&:hover': {
         backgroundColor: 'rgba(186, 195, 201, 0.2)',
       },
