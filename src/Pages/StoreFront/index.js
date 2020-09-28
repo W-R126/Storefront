@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useQuery } from '@apollo/react-hooks';
 
-import Header from '../../SharedComponents/Header';
+import Header from './Components/Header';
 import StoreInfo from './Components/StoreInfo';
 import ProductContainer from './Components/ProductContainer';
 import Footer from '../../SharedComponents/Footer';

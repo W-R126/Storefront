@@ -58,30 +58,39 @@ const ProductView = ({
       const filterAddons = [];
       addons.forEach((item) => {
         const { options } = item;
-        const optionsTemp = options.map((item) => {
-          if (item.default) return { ...item, qty: 1 };
-          else return item;
-        });
-        let itemTemp = { ...item };
-        delete itemTemp.options;
-        filterAddons.push({
-          ...item,
-          addons: [...optionsTemp],
-        });
+        if (options.length > 0) {
+          const optionsTemp = [];
+          options.forEach((optionItem) => {
+            const optionItemTemp = { ...optionItem };
+            delete optionItemTemp.price;
+            if (optionItem.default)
+              optionsTemp.push({ ...optionItemTemp, fixed_price: optionItem.price.fixed_price, qty: 1 });
+          });
+
+          let itemTemp = { ...item };
+          delete itemTemp.options;
+          filterAddons.push({
+            ...itemTemp,
+            addons: [...optionsTemp],
+          });
+        }
       });
       return filterAddons;
     } else return [];
   };
 
   const setDefaultProductCart = (product) => {
+    const addons = getAddOns(product);
+    const productTotalPrice = getProductTotalAmount(product, orderType, net_price);
+    const addonPrice = getAddOnCartPrice(addons);
     setProductCart({
       id: uuidv4(),
       productId: productId,
       name: product.name,
       qty: 1,
-      price: getProductTotalAmount(product, orderType, net_price),
+      price: productTotalPrice + addonPrice,
       orderType: orderType,
-      addons: getAddOns(product),
+      addons: [...addons],
     });
   };
 

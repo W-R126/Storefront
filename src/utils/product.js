@@ -109,7 +109,8 @@ export const getAddOnGroupPrice = (groupCartInfo, orderType, net_price) => {
       allowFree--;
     } else {
       const qty = _.get(item, 'qty', 0);
-      totalPrice += item.fixed_price * qty;
+      const fixed_price = _.get(item, 'fixed_price', 0);
+      totalPrice += fixed_price * qty;
     }
   });
   return totalPrice;

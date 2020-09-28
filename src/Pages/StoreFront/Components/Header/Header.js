@@ -7,22 +7,22 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { AppBar, Toolbar, Avatar, Typography, Box } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone';
+import NotificationsNoneOutlinedIcon from '@material-ui/icons/NotificationsNoneOutlined';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
-import SearchInput from '../SearchInput';
-import MDIconButton from '../../SharedComponents/MDIconButton';
-import DropDown from '../DropDown';
-import LoginModal from '../LoginModal';
-import UserDialog from '../UserDialog';
-import SignUpModal from '../SignUpModal';
-import ResetPassword from '../ResetPasswordModal';
+import SearchInput from '../../../../SharedComponents/SearchInput';
+import MDIconButton from '../../../../SharedComponents/MDIconButton';
+import DropDown from '../../../../SharedComponents/DropDown';
+import LoginModal from '../../../../SharedComponents/LoginModal';
+import UserDialog from '../../../../SharedComponents/UserDialog';
+import SignUpModal from '../../../../SharedComponents/SignUpModal';
+import ResetPassword from '../../../../SharedComponents/ResetPasswordModal';
+import CartButton from './Components/CartButton';
 
-import * as types from '../../actions/actionTypes';
-import { getUserAvatar, getUserName, getMerchantName, checkUserMerchantRole } from '../../utils/auth';
+import * as types from '../../../../actions/actionTypes';
+import { getUserAvatar, getUserName, getMerchantName, checkUserMerchantRole } from '../../../../utils/auth';
 
-import LogoSvg from '../../assets/img/logo.svg';
+import LogoSvg from '../../../../assets/img/logo.svg';
 
 const Header = ({ children, orderTypesList, storeSettingData }) => {
   const classes = useStyles();
@@ -93,13 +93,11 @@ const Header = ({ children, orderTypesList, storeSettingData }) => {
           }}
           buttonClass={classes.DropDownButtonClass}
         />
-        <MDIconButton wrapperClass={classes.CartButton} aria-label="shopping-cart">
-          <ShoppingCartIcon />
-        </MDIconButton>
+        <CartButton wrapperClass={classes.CartButton} orderTypesList={orderTypesList} />
         {checkIsLogin() ? (
           <>
             <MDIconButton wrapperClass={classes.NotiButton}>
-              <NotificationsNoneIcon />
+              <NotificationsNoneOutlinedIcon />
             </MDIconButton>
             <Avatar
               className={classes.UserAvatar}
@@ -243,7 +241,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     CartButton: {
-      marginLeft: '52px',
+      marginLeft: '45px',
       '@media screen and (max-width: 767px)': {
         marginLeft: '10px',
       },

@@ -29,6 +29,8 @@ const AddOnView = ({
     },
   });
 
+  console.log(productAddons);
+
   const classes = useStyles();
   const [addonCarts, setAddonCarts] = useState([]);
   const groupRefs = useRef([]);

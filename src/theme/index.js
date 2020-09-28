@@ -78,6 +78,11 @@ export const THEME = createMuiTheme({
           opacity: 0.6,
         },
       },
+      contained: {
+        color: '#939da8',
+        fontSize: '16px',
+        backgroundColor: '#f3f5f7',
+      },
     },
   },
 });

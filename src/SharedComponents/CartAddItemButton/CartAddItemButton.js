@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: 'rgba(32, 39, 47, 0.86)',
       '&.Mui-disabled': {
         backgroundColor: 'rgba(32, 39, 47, 0.86)',
-        opacity: 0.6,
+        opacity: 0.5,
       },
       '&:hover': {
         backgroundColor: 'rgba(32, 39, 47, 0.66)',

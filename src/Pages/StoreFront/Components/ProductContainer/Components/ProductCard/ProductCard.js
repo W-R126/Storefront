@@ -104,8 +104,7 @@ const ProductCard = ({ productInfo, currencyData, net_price, orderType, updatePr
     } else return [];
   };
 
-  const handleClickAddCart = (e) => {
-    e.stopPropagation();
+  const handleClickAddCart = () => {
     const productAddonCart = getAddOns();
     setTempProductCart({
       id: uuidv4(),
@@ -154,8 +153,22 @@ const ProductCard = ({ productInfo, currencyData, net_price, orderType, updatePr
         <div
           className={classes.AddCart}
           onClick={(e) => {
+            e.stopPropagation();
             if (getAddOnPossible()) {
-              handleClickAddCart(e);
+              handleClickAddCart();
+            } else {
+              const productAddonCart = getAddOns();
+              updateProductCartAction({
+                id: uuidv4(),
+                productId: productInfo.id,
+                name: productInfo.name,
+                qty: 1,
+                price:
+                  getProductTotalAmount(productInfo, orderType, net_price) +
+                  getAddOnCartPrice(productAddonCart, orderType, net_price),
+                orderType: orderType,
+                addons: [...productAddonCart],
+              });
             }
           }}
           role="button"
