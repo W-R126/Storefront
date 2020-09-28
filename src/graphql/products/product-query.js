@@ -205,6 +205,10 @@ export const GET_ADDON_GROUPS = gql`
         measure_id
         measure_amount
         measure_type
+        images {
+          id
+          thumbnail
+        }
       }
     }
   }

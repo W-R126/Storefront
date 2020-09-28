@@ -9,30 +9,18 @@ import { formatPrice } from '../../utils/string';
 import { getCurrency } from '../../utils/store';
 
 // import PlaceHolderSvg from '../../assets/img/addon-item-placeholder.png';
-import { GET_PRODUCT_IMAGE } from '../../graphql/products/product-query';
 import { GET_CURRENCY } from '../../graphql/localisation/localisation-query';
 
 const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) => {
   const { data: currencyData } = useQuery(GET_CURRENCY);
 
-  const { data: productImage } = useQuery(GET_PRODUCT_IMAGE, {
-    variables: {
-      id: itemData.inventory_id,
-    },
-  });
-
   const classes = useStyles();
 
   const getItemImage = () => {
-    if (!productImage) return '';
-    if (productImage.products.length === 0) return '';
-
-    const product = productImage.products[0];
-
-    const imgArr = _.get(product, 'images', []);
+    const imgArr = _.get(itemData, 'images', []);
     if (imgArr.length === 0) return '';
-    else if (imgArr[0].url === '' || imgArr[0].url === null) return '';
-    else return imgArr[0].url;
+    else if (imgArr[0].thumbnail === '' || imgArr[0].thumbnail === null) return '';
+    else return imgArr[0].thumbnail;
   };
 
   const getBackImgStyle = () => {

@@ -49,8 +49,6 @@ export const getStoreId = () => {
 };
 
 export const base64ToMerchantStoreId = (base64) => {
-  // setMerchantId(TEST_MERCHANT_ID);
-  // setStoreId(TEST_STORE_ID);
   if (!base64) return '';
   try {
     const identifier = 'myda.app/';
