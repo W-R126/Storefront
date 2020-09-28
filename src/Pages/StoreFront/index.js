@@ -11,7 +11,6 @@ import ProductContainer from './Components/ProductContainer';
 import Footer from '../../SharedComponents/Footer';
 import OpeningHoursModal from './Components/OpeningHoursModal';
 import { GET_STORE_DATA } from '../../graphql/store/store-query';
-import { GET_STORE_SETTING_PRODUCT } from '../../graphql/store/store-query';
 import { getOrderTypes } from '../../utils/store';
 import { getStoreId } from '../../constants';
 import BannerPlaceHolder from '../../assets/img/store-banner-placeholder.png';
@@ -43,8 +42,6 @@ const StoreFrontPage = () => {
     },
   });
 
-  const { data: storeSettingData } = useQuery(GET_STORE_SETTING_PRODUCT);
-
   const getBannerImg = () => {
     const store = _.get(storeData, 'store', null);
     if (!store || !store.settings.touchpoint_settings.digital_front.banner.url) {
@@ -61,7 +58,7 @@ const StoreFrontPage = () => {
 
   return (
     <>
-      <Header orderTypesList={getOrderTypes(storeData, storeSettingData)} storeSettingData={storeSettingData} />
+      <Header orderTypesList={getOrderTypes(storeData)} />
 
       <div className={classes.TopBanner} style={{ backgroundImage: `url(${getBannerImg()})` }}></div>
 

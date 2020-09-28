@@ -24,7 +24,7 @@ import { getUserAvatar, getUserName, getMerchantName, checkUserMerchantRole } fr
 
 import LogoSvg from '../../../../assets/img/logo.svg';
 
-const Header = ({ children, orderTypesList, storeSettingData }) => {
+const Header = ({ children, orderTypesList }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -82,13 +82,13 @@ const Header = ({ children, orderTypesList, storeSettingData }) => {
         <DropDown
           value={{ id: orderType.id, label: orderType.name }}
           menuList={orderTypesList.map((item) => {
-            return { id: item.id, label: item.name };
+            return { id: item.id, label: item.name, pricing_type: item.pricing_type };
           })}
           wrapperClass={classes.OrderTypeDropDown}
           onChange={(selected) => {
             dispatch({
               type: types.UPDATE_TRANS_TYPE,
-              payload: { id: selected.id, name: selected.label },
+              payload: { id: selected.id, name: selected.label, pricing_type: selected.pricing_type },
             });
           }}
           buttonClass={classes.DropDownButtonClass}

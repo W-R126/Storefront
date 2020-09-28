@@ -6,27 +6,51 @@ export const TEST_STORE_ID = 'a0be564c-a982-471f-a4b5-5bdf6e29e1c2';
 export const TESTBASE64_URL =
   'myda.app/NGUyMGEwZWEtOWE2Ni00NzMyLWI1M2ItN2U2OTJlZGUwYzQ1L2EwYmU1NjRjLWE5ODItNDcxZi1hNGI1LTViZGY2ZTI5ZTFjMg==';
 
+export const TESTBASE64_URL1 =
+  'myda.app/NWQ2YzQ5NjEtZDEyMy00OWE2LWI0M2ItZDUyYzg5YWJhYmE2LzUzNDcyM2FjLWJkZGMtNGJlNi1iZWYxLWRjYjMzMjk4MTk2Nw==';
+
+// export const setMerchantId = (merchantId) => {
+//   localStorage.setItem('merchant', merchantId);
+// };
+
+// export const getMerchantId = () => {
+//   const merchantId = localStorage.getItem('merchant');
+//   if (merchantId) return merchantId;
+//   return '';
+// };
+
+// export const setStoreId = (storeId) => {
+//   localStorage.setItem('store', storeId);
+// };
+
+// export const getStoreId = () => {
+//   const storeId = localStorage.getItem('store');
+//   if (storeId) return storeId;
+//   return '';
+// };
+
+let StoreId = '';
+let MerchantId = '';
+
 export const setMerchantId = (merchantId) => {
-  localStorage.setItem('merchant', merchantId);
+  MerchantId = merchantId;
 };
 
 export const getMerchantId = () => {
-  const merchantId = localStorage.getItem('merchant');
-  if (merchantId) return merchantId;
-  return '';
+  return MerchantId;
 };
 
 export const setStoreId = (storeId) => {
-  localStorage.setItem('store', storeId);
+  StoreId = storeId;
 };
 
 export const getStoreId = () => {
-  const storeId = localStorage.getItem('store');
-  if (storeId) return storeId;
-  return '';
+  return StoreId;
 };
 
 export const base64ToMerchantStoreId = (base64) => {
+  // setMerchantId(TEST_MERCHANT_ID);
+  // setStoreId(TEST_STORE_ID);
   if (!base64) return '';
   try {
     const identifier = 'myda.app/';

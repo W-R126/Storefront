@@ -33,6 +33,7 @@ export const GET_STORE_DATA = gql`
       order_types {
         id
         name
+        pricing_type
       }
       settings {
         touchpoint_settings {
@@ -43,6 +44,19 @@ export const GET_STORE_DATA = gql`
               url
             }
             order_types
+            product_view {
+              by_category
+              sort_by_name
+              show_selected
+              categories {
+                id
+                position
+              }
+              products {
+                id
+                position
+              }
+            }
           }
         }
       }

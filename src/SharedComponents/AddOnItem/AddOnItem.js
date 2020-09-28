@@ -9,22 +9,36 @@ import { formatPrice } from '../../utils/string';
 import { getCurrency } from '../../utils/store';
 
 // import PlaceHolderSvg from '../../assets/img/addon-item-placeholder.png';
+import { GET_PRODUCT_IMAGE } from '../../graphql/products/product-query';
 import { GET_CURRENCY } from '../../graphql/localisation/localisation-query';
 
 const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) => {
   const { data: currencyData } = useQuery(GET_CURRENCY);
 
+  const { data: productImage } = useQuery(GET_PRODUCT_IMAGE, {
+    variables: {
+      id: itemData.inventory_id,
+    },
+  });
+
   const classes = useStyles();
 
-  // const getItemImage = () => {
-  //   if (itemImg.length > 0) return itemImg;
-  //   else return PlaceHolderSvg;
-  // };
+  const getItemImage = () => {
+    if (!productImage) return '';
+    if (productImage.products.length === 0) return '';
+
+    const product = productImage.products[0];
+
+    const imgArr = _.get(product, 'images', []);
+    if (imgArr.length === 0) return '';
+    else if (imgArr[0].url === '' || imgArr[0].url === null) return '';
+    else return imgArr[0].url;
+  };
 
   const getBackImgStyle = () => {
-    const itemImg = _.get(itemData, 'backImg', '');
-    if (itemImg.length > 0) {
-      return { backgroundImage: `url(${itemImg})` };
+    const imgBack = getItemImage();
+    if (imgBack.length > 0) {
+      return { backgroundImage: `url(${imgBack})` };
     } else {
       return { backgroundColor: 'rgba(225, 234, 241, 0.5)' };
     }
@@ -116,7 +130,8 @@ const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) =>
         {itemData.name}
       </Typography>
       <Typography variant="h3" className={classes.Price}>
-        {`${getCurrency(currencyData)} ${formatPrice(itemData.fixed_price, currencyData)}`}
+        <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(currencyData) }}></div>
+        {formatPrice(itemData.fixed_price, currencyData)}
       </Typography>
     </ListItem>
   );
@@ -177,6 +192,8 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'right',
       whiteSpace: 'nowrap',
       overflow: 'hidden',
+      display: 'flex',
+      flexWrap: 'nowrap',
     },
   })
 );

@@ -107,8 +107,8 @@ export const getCurrency = (localisationInfo) => {
   if (store === null) return '';
   const localisation = _.get(store, 'localisation', null);
   if (localisation == null) return '';
-  const symbole = _.get(localisation, 'currency_symbol', '');
-  if (symbole === '&#163;') return '£';
+  let symbol = _.get(localisation, 'currency_symbol', '');
+  return symbol;
 };
 
 export const getStorePos = (storeInfo) => {
@@ -121,15 +121,13 @@ export const getStorePos = (storeInfo) => {
   return { lat: parseFloat(lat), lng: parseFloat(lng) };
 };
 
-export const getOrderTypes = (storeInfo, storeSettingData) => {
+export const getOrderTypes = (storeInfo) => {
   const store = _.get(storeInfo, 'store', null);
   if (!store) return [];
   const orderTypes = _.get(store, 'order_types', []);
   if (orderTypes.length === 0) return [];
 
-  if (!storeSettingData) return orderTypes;
-
-  const touchpoint_settings = storeSettingData.store.settings.touchpoint_settings;
+  const touchpoint_settings = storeInfo.store.settings.touchpoint_settings;
   const orderIds = touchpoint_settings.digital_front.order_types;
   if (orderIds === null || orderIds.length === 0) return orderTypes;
 

@@ -56,10 +56,10 @@ const OrderView = ({ hideModal, orderTypesList }) => {
 
   const setFirstOrderType = () => {
     const findDelivery = orderTypesList.find((item) => item.name.toLowerCase() === 'delivery');
-    if (storeOrderType.id === findDelivery.id) return { storeOrderType };
+    if (storeOrderType.name === findDelivery.name) return { storeOrderType };
 
     const findCollect = orderTypesList.find((item) => item.name.toLowerCase() === 'collection');
-    if (storeOrderType.id === findCollect.id) return { storeOrderType };
+    if (storeOrderType.name === findCollect.name) return { storeOrderType };
 
     return findDelivery;
   };
@@ -80,7 +80,7 @@ const OrderView = ({ hideModal, orderTypesList }) => {
   return (
     <Paper className={classes.root} ref={ref}>
       <CloseIconButton onClick={hideModal} wrapperClass={classes.CloseButtonWrapper} />
-      <Box clssName={classes.TopSection}>
+      <Box className={classes.TopSection}>
         <Typography variant="h4" align="center">
           Order Number
         </Typography>

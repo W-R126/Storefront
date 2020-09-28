@@ -61,8 +61,18 @@ export const OrderDatePicker = ({ date, onChange }) => {
           />
           <KeyboardTimePicker
             margin="normal"
-            id="time-picker"
+            id="time-picker-start"
             label="Start Time"
+            value={date}
+            onChange={onChange}
+            KeyboardButtonProps={{
+              'aria-label': 'change time',
+            }}
+          />
+          <KeyboardTimePicker
+            margin="normal"
+            id="time-picker-end"
+            label="End Time"
             value={date}
             onChange={onChange}
             KeyboardButtonProps={{

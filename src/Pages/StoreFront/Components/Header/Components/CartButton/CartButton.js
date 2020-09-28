@@ -22,9 +22,9 @@ const CartButton = ({ wrapperClass, orderTypesList }) => {
         }}
       >
         <ShoppingCartOutlinedIcon className={classes.CartIcon} />
-        <Typography className={classes.Price} variant="h2">
+        {/* <Typography className={classes.Price} variant="h2">
           45.00
-        </Typography>
+        </Typography> */}
       </Button>
       {showOrderView && (
         <OrderView

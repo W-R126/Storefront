@@ -49,7 +49,8 @@ const ProductCard = ({ productInfo, currencyData, net_price, orderType, updatePr
 
       return (
         <div className={classes.Price}>
-          {getCurrency(currencyData)} {formatPrice(priceInfo.price, currencyData)}
+          <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(currencyData) }}></div>
+          {formatPrice(priceInfo.price, currencyData)}`}
           {netPriceNames.length > 0 && <span>+{netPriceStr}</span>}
         </div>
       );
@@ -57,12 +58,13 @@ const ProductCard = ({ productInfo, currencyData, net_price, orderType, updatePr
       let priceValue = priceInfo.price;
       let rateValue = 0;
       priceInfo.taxes.forEach((item) => {
-        rateValue += item.rate;
+        if (item.rate > 0) rateValue += item.rate;
       });
       priceValue += priceValue * (rateValue / 100);
       return (
         <div className={classes.Price}>
-          {getCurrency(currencyData)} {formatPrice(priceValue, currencyData)}
+          <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(currencyData) }}></div>
+          {formatPrice(priceValue, currencyData)}
         </div>
       );
     }
@@ -360,6 +362,8 @@ const useStyles = makeStyles((theme: Theme) =>
       lineHeight: '18px',
       fontSize: '14px',
       paddingTop: '2px',
+      display: 'flex',
+      flexWrap: 'nowrap',
       '& span': {
         fontSize: '12px',
         fontWeight: 300,

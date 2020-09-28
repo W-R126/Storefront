@@ -29,8 +29,6 @@ const AddOnView = ({
     },
   });
 
-  console.log(productAddons);
-
   const classes = useStyles();
   const [addonCarts, setAddonCarts] = useState([]);
   const groupRefs = useRef([]);
@@ -120,9 +118,11 @@ const AddOnView = ({
             <Typography variant="h1" className={classes.FooterPriceLabel}>
               Price:
             </Typography>
-            <Typography variant="h1" className={classes.FooterPrice}>
-              {getAddOnPrice()}
-            </Typography>
+            <Typography
+              variant="h1"
+              className={classes.FooterPrice}
+              dangerouslySetInnerHTML={{ __html: getAddOnPrice() }}
+            ></Typography>
             <Button variant="contained" color="primary" className={classes.AddCartButton} onClick={handleClickAddCart}>
               Add to cart
             </Button>

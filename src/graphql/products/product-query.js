@@ -66,6 +66,7 @@ export const GET_PRODUCT_BY_ID = gql`
       images {
         id
         url
+        thumbnail
       }
       description
       measure_amount
@@ -132,6 +133,18 @@ export const GET_PRODUCT_BY_ID = gql`
             fixed_price
           }
         }
+      }
+    }
+  }
+`;
+
+export const GET_PRODUCT_IMAGE = gql`
+  query getProductImage($id: String) {
+    products(id: $id) {
+      images {
+        id
+        url
+        thumbnail
       }
     }
   }

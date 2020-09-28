@@ -142,7 +142,9 @@ const ProductView = ({
     if (!priceInfo)
       return (
         <div className={classes.Price}>
-          {getCurrency(currencyData)} {formatPrice(addOnPrice, currencyData)}
+          <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(currencyData) }}></div>
+
+          {formatPrice(addOnPrice, currencyData)}
         </div>
       );
 
@@ -152,7 +154,8 @@ const ProductView = ({
 
       return (
         <div className={classes.Price}>
-          {getCurrency(currencyData)} {formatPrice(priceInfo.price + addOnPrice, currencyData)}
+          <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(currencyData) }}></div>
+          {formatPrice(priceInfo.price + addOnPrice, currencyData)}
           {netPriceNames.length > 0 && <span>+{netPriceStr}</span>}
         </div>
       );
@@ -160,12 +163,13 @@ const ProductView = ({
       let priceValue = priceInfo.price;
       let rateValue = 0;
       priceInfo.taxes.forEach((item) => {
-        rateValue += item.rate;
+        if (item.rate > 0) rateValue += item.rate;
       });
       priceValue = priceValue + priceValue * (rateValue / 100) + addOnPrice;
       return (
         <div className={classes.Price}>
-          {getCurrency(currencyData)} {formatPrice(priceValue, currencyData)}
+          <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(currencyData) }}></div>
+          {formatPrice(priceValue, currencyData)}
         </div>
       );
     }
@@ -392,6 +396,8 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 500,
       minWidth: '65px',
       textAlign: 'right',
+      display: 'flex',
+      flexWrap: 'nowrap',
       '@media screen and (max-width: 768px)': {
         textAlign: 'left',
         paddingLeft: '10px',

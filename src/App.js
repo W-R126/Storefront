@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { getCountryCode } from './apis';
 import { Switch, BrowserRouter as Router, Route } from 'react-router-dom';
 
+import { withApollo } from '@apollo/react-hoc';
 import StoreFrontPage from './Pages/StoreFront';
 import ResetPasswordPage from './Pages/ResetPassword';
 import EmailVerifiedPage from './Pages/EmailVerified';
@@ -10,7 +11,7 @@ import './App.css';
 
 import { setLocalizationAction } from './actions/localizationAction';
 
-const App = ({ setLocalizationAction }) => {
+const App = ({ client, setLocalizationAction }) => {
   useEffect(() => {
     getCountryCode()
       .then((res) => {
@@ -35,4 +36,4 @@ const App = ({ setLocalizationAction }) => {
   );
 };
 
-export default connect(null, { setLocalizationAction })(App);
+export default withApollo(connect(null, { setLocalizationAction })(App));

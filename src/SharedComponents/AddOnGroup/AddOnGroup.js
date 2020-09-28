@@ -54,7 +54,7 @@ const AddOnGroup = forwardRef(({ productId, groupId, productGroupAddonInfo, grou
 
   useEffect(() => {
     const groupInfo = getGroupInfo();
-    const findProductCart = cartList.find((item) => item.id === productId && item.orderType.id === orderType.id);
+    const findProductCart = cartList.find((item) => item.id === productId && item.orderType.name === orderType.name);
     if (!groupInfo || !groupInfo.addons || groupInfo.addons.length === 0) return;
     if (!findProductCart) {
       if (_.get(groupInfo, 'default_all', false)) {

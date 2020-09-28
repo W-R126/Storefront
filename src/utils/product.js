@@ -3,7 +3,7 @@ import { getProductViewFromStoreSetting } from './store';
 
 export const getProductCart = (cartList, productId, orderType) => {
   const findCart = cartList.filter(
-    (item) => item.productId === productId && item.orderType.id === _.get(orderType, 'id', '')
+    (item) => item.productId === productId && item.orderType.name === _.get(orderType, 'name', '')
   );
   return findCart;
 };
@@ -50,7 +50,7 @@ export const getProductPriceInfo = (productInfo, orderType) => {
   if (prices.length === 0) return null;
   const findPrice = prices[0].price_infos.find((item) => {
     const priceType = _.get(item, 'price_type', {});
-    return _.get(priceType, 'name', '').toLowerCase() === _.get(orderType, 'name', '').toLowerCase();
+    return _.get(priceType, 'name', '').toLowerCase() === _.get(orderType, 'pricing_type', '').toLowerCase();
   });
   return findPrice;
 };
@@ -63,7 +63,7 @@ export const getProductTotalAmount = (productInfo, orderType, net_price) => {
     let returnPrice = priceInfo.price;
     let rateValue = 0;
     priceInfo.taxes.forEach((item) => {
-      rateValue += item.rate;
+      if (item.rate > 0) rateValue += item.rate;
     });
     returnPrice += (rateValue * rateValue) / 100;
     return returnPrice;
@@ -77,7 +77,7 @@ export const getAddOnOptionPriceInfo = (optionInfo, orderType) => {
   if (priceInfos.length === 0) return null;
   const findPrice = priceInfos.find((item) => {
     const priceType = _.get(item, 'price_type', {});
-    return _.get(priceType, 'name', '').toLowerCase() === _.get(orderType, 'name', '').toLowerCase();
+    return _.get(priceType, 'name', '').toLowerCase() === _.get(orderType, 'pricing_type', '').toLowerCase();
   });
   return findPrice;
 };
@@ -91,7 +91,7 @@ export const getAddOnOptionPrice = (optionInfo, orderType, net_price) => {
     let priceValue = priceInfo.price;
     let rateValue = 0;
     priceInfo.taxes.forEach((item) => {
-      rateValue += item.rate;
+      if (item.rate > 0) rateValue += item.rate;
     });
     priceValue += (priceValue * rateValue) / 100;
     return priceValue;
