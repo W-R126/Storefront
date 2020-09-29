@@ -10,14 +10,44 @@ import OrderAddonItem from '../OrderAddonItem';
 import { updateProductCartAction } from '../../../../../../actions/cartAction';
 import { formatPrice } from '../../../../../../utils/string';
 import { GET_CURRENCY } from '../../../../../../graphql/localisation/localisation-query';
+import { getAddOnGroupPrice } from '../../../../../../utils/product';
 
-const OrderItem = ({ wrapperClass, orderInfo, updateProductCartAction }) => {
-  debugger;
+const OrderItem = ({ wrapperClass, orderInfo, net_price, updateProductCartAction }) => {
   const classes = useStyles();
   const { data: currencyData } = useQuery(GET_CURRENCY);
 
   const rootClasses = [classes.root];
   if (wrapperClass) rootClasses.push(wrapperClass);
+
+  const renderPrice = () => {
+    const priceInfo = orderInfo.priceInfo;
+    const addonsCartPrice = getAddOnGroupPrice(orderInfo.addons, net_price);
+
+    if (!priceInfo) return '';
+    if (net_price) {
+      const netPriceNames = priceInfo.taxes.filter((item) => item.rate > 0).map((taxItem) => taxItem.name);
+      const netPriceStr = netPriceNames.join(', ');
+
+      return (
+        <Typography className={classes.ProductPrice} variant="h2">
+          {formatPrice((priceInfo.price + addonsCartPrice) * orderInfo.qty, currencyData)}
+          {netPriceNames.length > 0 && <span>+{netPriceStr}</span>}
+        </Typography>
+      );
+    } else {
+      let priceValue = priceInfo.price;
+      let rateValue = 0;
+      priceInfo.taxes.forEach((item) => {
+        if (item.rate > 0) rateValue += item.rate;
+      });
+      priceValue += priceValue * (rateValue / 100) + addonsCartPrice;
+      return (
+        <Typography className={classes.ProductPrice} variant="h2">
+          {formatPrice(priceValue * orderInfo.qty, currencyData)}
+        </Typography>
+      );
+    }
+  };
 
   return (
     <Box className={classes.root}>
@@ -61,9 +91,7 @@ const OrderItem = ({ wrapperClass, orderInfo, updateProductCartAction }) => {
           });
         })}
       </Box>
-      <Typography className={classes.ProductPrice} variant="h2">
-        {formatPrice(orderInfo.price * orderInfo.qty, currencyData)}
-      </Typography>
+      {renderPrice()}
     </Box>
   );
 };
@@ -109,8 +137,10 @@ const useStyles = makeStyles((theme: Theme) =>
       lineHeight: '30px',
     },
     ProductPrice: {
+      display: 'flex',
       marginLeft: 'auto',
       lineHeight: '30px',
+      whiteSpace: 'nowrap',
     },
   })
 );

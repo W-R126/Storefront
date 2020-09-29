@@ -6,6 +6,7 @@ export const GET_CURRENCY = gql`
       localisation {
         currency_symbol
         currency_decimal
+        digit_separator
       }
     }
   }

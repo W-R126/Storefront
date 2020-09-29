@@ -99,13 +99,6 @@ const AddOnGroup = forwardRef(({ productId, groupId, productGroupAddonInfo, grou
               errorMsg: 'Select an at least one option',
             };
         }
-        if (!groupInfo.multi_selection) {
-          if (addonCarts && addonCarts.length > 1)
-            tempGroupValidate = {
-              validate: false,
-              errorMsg: 'Select only one option',
-            };
-        }
       }
       setGroupValidate({
         ...tempGroupValidate,
@@ -120,7 +113,9 @@ const AddOnGroup = forwardRef(({ productId, groupId, productGroupAddonInfo, grou
   };
 
   const changeAddOnData = (newData) => {
+    const groupInfo = getGroupInfo();
     const addons = _.get(groupAddOns, 'addons', []);
+
     if (newData.qty === 0) {
       setGroupAddOns({
         ...getGroupInfo(),
@@ -139,10 +134,17 @@ const AddOnGroup = forwardRef(({ productId, groupId, productGroupAddonInfo, grou
           ],
         });
       } else {
-        setGroupAddOns({
-          ...getGroupInfo(),
-          addons: [...addons, newData],
-        });
+        if (!groupInfo.multi_selection) {
+          setGroupAddOns({
+            ...getGroupInfo(),
+            addons: [newData],
+          });
+        } else {
+          setGroupAddOns({
+            ...getGroupInfo(),
+            addons: [...addons, newData],
+          });
+        }
       }
     }
   };
@@ -202,9 +204,7 @@ const AddOnGroup = forwardRef(({ productId, groupId, productGroupAddonInfo, grou
                   <AddOnItem
                     itemData={item}
                     itemCartInfo={getAddOnItemInfo(item.id)}
-                    setItemCartInfo={(newData) => {
-                      changeAddOnData(newData);
-                    }}
+                    setItemCartInfo={changeAddOnData}
                   />
                 </Grid>
               );

@@ -20,7 +20,6 @@ const OrderAddonItem = ({ cartInfo, groupInfo, itemCartInfo, updateProductCartAc
   }));
 
   const changeQty = (addNumber) => {
-    debugger;
     const newQty = itemCartInfo.qty + addNumber;
     let groupInfoTemp;
     if (newQty === 0) {
@@ -44,13 +43,13 @@ const OrderAddonItem = ({ cartInfo, groupInfo, itemCartInfo, updateProductCartAc
       };
     }
 
-    const cartAddons = [...cartInfo.addons];
+    let productAddons;
 
     if (groupInfoTemp.addons.length === 0) {
-      cartAddons.addons = [...cartAddons.filter((item) => item.id !== groupInfoTemp.id)];
+      productAddons = [...cartInfo.addons.filter((item) => item.id !== groupInfoTemp.id)];
     } else {
-      cartAddons.addons = [
-        ...cartAddons.map((item) => {
+      productAddons = [
+        ...cartInfo.addons.map((item) => {
           if (item.id === groupInfoTemp.id) return groupInfoTemp;
           return item;
         }),
@@ -59,7 +58,7 @@ const OrderAddonItem = ({ cartInfo, groupInfo, itemCartInfo, updateProductCartAc
 
     updateProductCartAction({
       ...cartInfo,
-      addons: cartAddons,
+      addons: productAddons,
     });
   };
 
@@ -75,15 +74,14 @@ const OrderAddonItem = ({ cartInfo, groupInfo, itemCartInfo, updateProductCartAc
         <Typography className={classes.Count} variant="h3">
           {itemCartInfo.qty}
         </Typography>
-        <CartAddItemButton type="plus" />
+        <CartAddItemButton
+          type="plus"
+          onClick={() => {
+            changeQty(1);
+          }}
+        />
       </Box>
-      <Typography
-        className={classes.ItemName}
-        variant="h3"
-        onClick={() => {
-          changeQty(1);
-        }}
-      >
+      <Typography className={classes.ItemName} variant="h3">
         {itemCartInfo.name}
       </Typography>
       <Typography className={classes.Price} variant="h3">

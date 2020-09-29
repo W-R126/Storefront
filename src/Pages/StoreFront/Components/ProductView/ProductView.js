@@ -81,14 +81,16 @@ const ProductView = ({
 
   const setDefaultProductCart = (product) => {
     const addons = getAddOns(product);
-    const productTotalPrice = getProductTotalAmount(product, orderType, net_price);
-    const addonPrice = getAddOnCartPrice(addons);
+    const productTemp = { ...product };
+    delete productTemp.id;
+    delete productTemp.addons;
+    delete productTemp.prices;
     setProductCart({
       id: uuidv4(),
-      productId: productId,
-      name: product.name,
+      ...productTemp,
       qty: 1,
-      price: productTotalPrice + addonPrice,
+      productId: product.id,
+      priceInfo: getProductPriceInfo(product, orderType),
       orderType: orderType,
       addons: [...addons],
     });
@@ -143,7 +145,6 @@ const ProductView = ({
       return (
         <div className={classes.Price}>
           <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(currencyData) }}></div>
-
           {formatPrice(addOnPrice, currencyData)}
         </div>
       );
@@ -165,7 +166,7 @@ const ProductView = ({
       priceInfo.taxes.forEach((item) => {
         if (item.rate > 0) rateValue += item.rate;
       });
-      priceValue = priceValue + priceValue * (rateValue / 100) + addOnPrice;
+      priceValue += priceValue * (rateValue / 100) + addOnPrice;
       return (
         <div className={classes.Price}>
           <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(currencyData) }}></div>
@@ -398,6 +399,7 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'right',
       display: 'flex',
       flexWrap: 'nowrap',
+      whiteSpace: 'nowrap',
       '@media screen and (max-width: 768px)': {
         textAlign: 'left',
         paddingLeft: '10px',

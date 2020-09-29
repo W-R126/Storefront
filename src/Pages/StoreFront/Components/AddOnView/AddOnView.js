@@ -181,6 +181,9 @@ const useStyles = makeStyles((theme: Theme) =>
     FooterPrice: {
       color: theme.palette.primary.text,
       margin: '0 0 0 10px',
+      display: 'flex',
+      flexWrap: 'nowrap',
+      whiteSpace: 'nowrap',
     },
     AddCartButton: {
       width: '166px',

@@ -59,6 +59,7 @@ export const GET_PRODUCTS = gql`
 export const GET_PRODUCT_BY_ID = gql`
   query getProduct($id: String) {
     products(id: $id) {
+      id
       name
       bar_code
       product_code

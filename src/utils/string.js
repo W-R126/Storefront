@@ -20,8 +20,14 @@ export const formatPrice = (value, localisationInfo) => {
   const localisation = _.get(store, 'localisation', null);
   if (localisation == null) return value;
 
+  let returnValue = '0';
   if (localisation.currency_decimal) {
-    if (value === null) return '0.00';
-    return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  } else return value;
+    if (value === null) returnValue = '0.00';
+    returnValue = value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  } else returnValue = value;
+
+  if (localisation.digit_separator === ',') {
+    return returnValue.toString().replace('.', ',');
+  }
+  return returnValue;
 };

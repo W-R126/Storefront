@@ -28,9 +28,9 @@ const ProductList = ({ client, getProductPaginationAction, loading }) => {
     productLoading: state.productReducer.loading,
   }));
 
-  const { data: storeSettingData } = useQuery(GET_STORE_SETTING_PRODUCT);
-  const { data: merchantNetPrice } = useQuery(GET_MERCHANT_NET_PRICE);
-  const { data: currencyData } = useQuery(GET_CURRENCY);
+  const { data: storeSettingData, loading: storeSettingDataLoading } = useQuery(GET_STORE_SETTING_PRODUCT);
+  const { data: merchantNetPrice, loading: merchangNetPriceLoading } = useQuery(GET_MERCHANT_NET_PRICE);
+  const { data: currencyData, loading: currencyLoading } = useQuery(GET_CURRENCY);
 
   const storeId = getStoreId();
   const merchantId = getMerchantId();
@@ -85,20 +85,26 @@ const ProductList = ({ client, getProductPaginationAction, loading }) => {
     <Grid container>
       <Grid item xs={12}>
         <Grid container spacing={2}>
-          {productLoading && pageData.total_pages === 0 && renderLoadingCards()}
-          {getOrdredProducts(productList, storeSettingData).map((item, nIndex) => {
-            return (
-              <CardGrid item key={nIndex} isSidebar={getIsShowSideCategory(storeSettingData)}>
-                <ProductCard
-                  productInfo={item}
-                  currencyData={currencyData}
-                  net_price={getNetPriceStatus()}
-                  orderType={orderType}
-                  loading={false}
-                />
-              </CardGrid>
-            );
-          })}
+          {(productLoading || currencyLoading || storeSettingDataLoading || merchangNetPriceLoading) &&
+          pageData.total_pages === 0 ? (
+            <>{renderLoadingCards()}</>
+          ) : (
+            <>
+              {getOrdredProducts(productList, storeSettingData).map((item, nIndex) => {
+                return (
+                  <CardGrid item key={nIndex} isSidebar={getIsShowSideCategory(storeSettingData)}>
+                    <ProductCard
+                      productInfo={item}
+                      currencyData={currencyData}
+                      net_price={getNetPriceStatus()}
+                      orderType={orderType}
+                      loading={false}
+                    />
+                  </CardGrid>
+                );
+              })}
+            </>
+          )}
           {productLoading &&
             pageData.total_pages > 1 &&
             pageData.current_page < pageData.total_pages &&

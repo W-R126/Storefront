@@ -12,6 +12,7 @@ import CartAddItemButton from '../../../../../../SharedComponents/CartAddItemBut
 import { getCurrency } from '../../../../../../utils/store';
 import {
   getAddOnCartPrice,
+  getAddOnGroupPrice,
   getProductCart,
   getProductPriceInfo,
   getProductTotalAmount,
@@ -41,16 +42,17 @@ const ProductCard = ({ productInfo, currencyData, net_price, orderType, updatePr
 
   const renderPriceInfo = () => {
     const priceInfo = getProductPriceInfo(productInfo, orderType, net_price);
+    const addonsCartPrice = getAddOnCartPrice(getAddOns(), orderType);
     if (!priceInfo) return '';
 
     if (net_price) {
-      const netPriceNames = priceInfo.taxes.map((taxItem) => taxItem.name);
+      const netPriceNames = priceInfo.taxes.filter((item) => item.rate > 0).map((taxItem) => taxItem.name);
       const netPriceStr = netPriceNames.join(', ');
 
       return (
         <div className={classes.Price}>
           <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(currencyData) }}></div>
-          {formatPrice(priceInfo.price, currencyData)}`}
+          {formatPrice(priceInfo.price + addonsCartPrice, currencyData)}
           {netPriceNames.length > 0 && <span>+{netPriceStr}</span>}
         </div>
       );
@@ -60,7 +62,7 @@ const ProductCard = ({ productInfo, currencyData, net_price, orderType, updatePr
       priceInfo.taxes.forEach((item) => {
         if (item.rate > 0) rateValue += item.rate;
       });
-      priceValue += priceValue * (rateValue / 100);
+      priceValue += priceValue * (rateValue / 100) + addonsCartPrice;
       return (
         <div className={classes.Price}>
           <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(currencyData) }}></div>
@@ -108,14 +110,16 @@ const ProductCard = ({ productInfo, currencyData, net_price, orderType, updatePr
 
   const handleClickAddCart = () => {
     const productAddonCart = getAddOns();
+    const productTemp = { ...productInfo };
+    delete productTemp.id;
+    delete productTemp.addons;
+    delete productTemp.prices;
     setTempProductCart({
+      ...productInfo,
       id: uuidv4(),
       productId: productInfo.id,
-      name: productInfo.name,
+      priceInfo: getProductPriceInfo(productInfo, orderType),
       qty: 1,
-      price:
-        getProductTotalAmount(productInfo, orderType, net_price) +
-        getAddOnCartPrice(productAddonCart, orderType, net_price),
       orderType: orderType,
       addons: [...productAddonCart],
     });
@@ -160,14 +164,17 @@ const ProductCard = ({ productInfo, currencyData, net_price, orderType, updatePr
               handleClickAddCart();
             } else {
               const productAddonCart = getAddOns();
+              const productTemp = { ...productInfo };
+              delete productTemp.id;
+              delete productTemp.addons;
+              delete productTemp.prices;
+
               updateProductCartAction({
+                ...productTemp,
                 id: uuidv4(),
                 productId: productInfo.id,
-                name: productInfo.name,
                 qty: 1,
-                price:
-                  getProductTotalAmount(productInfo, orderType, net_price) +
-                  getAddOnCartPrice(productAddonCart, orderType, net_price),
+                priceInfo: getProductPriceInfo(productInfo, orderType),
                 orderType: orderType,
                 addons: [...productAddonCart],
               });
