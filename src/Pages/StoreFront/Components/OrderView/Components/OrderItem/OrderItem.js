@@ -1,14 +1,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { useQuery } from '@apollo/react-hooks';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Box, Typography } from '@material-ui/core';
 
 import CartAddItemButton from '../../../../../../SharedComponents/CartAddItemButton';
+import OrderAddonItem from '../OrderAddonItem';
 import { updateProductCartAction } from '../../../../../../actions/cartAction';
+import { formatPrice } from '../../../../../../utils/string';
+import { GET_CURRENCY } from '../../../../../../graphql/localisation/localisation-query';
 
 const OrderItem = ({ wrapperClass, orderInfo, updateProductCartAction }) => {
+  debugger;
   const classes = useStyles();
+  const { data: currencyData } = useQuery(GET_CURRENCY);
 
   const rootClasses = [classes.root];
   if (wrapperClass) rootClasses.push(wrapperClass);
@@ -42,9 +48,21 @@ const OrderItem = ({ wrapperClass, orderInfo, updateProductCartAction }) => {
         <Typography className={classes.ProductName} variant="h2">
           {orderInfo.name}
         </Typography>
+        {orderInfo.addons.map((item, nIndex) => {
+          return item.addons.map((itemAddon, nIndex1) => {
+            return (
+              <OrderAddonItem
+                key={`${nIndex}-${nIndex1}`}
+                cartInfo={orderInfo}
+                groupInfo={item}
+                itemCartInfo={itemAddon}
+              />
+            );
+          });
+        })}
       </Box>
       <Typography className={classes.ProductPrice} variant="h2">
-        {orderInfo.price}
+        {formatPrice(orderInfo.price * orderInfo.qty, currencyData)}
       </Typography>
     </Box>
   );
@@ -54,7 +72,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'flex-start',
       margin: '0 0 30px 0',
       width: '100%',
       '&  h1': {
@@ -88,9 +106,11 @@ const useStyles = makeStyles((theme: Theme) =>
       whiteSpace: 'nowrap',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
+      lineHeight: '30px',
     },
     ProductPrice: {
       marginLeft: 'auto',
+      lineHeight: '30px',
     },
   })
 );

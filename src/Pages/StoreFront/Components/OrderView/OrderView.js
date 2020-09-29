@@ -56,10 +56,10 @@ const OrderView = ({ hideModal, orderTypesList }) => {
 
   const setFirstOrderType = () => {
     const findDelivery = orderTypesList.find((item) => item.name.toLowerCase() === 'delivery');
-    if (storeOrderType.name === findDelivery.name) return { storeOrderType };
+    if (storeOrderType.name === findDelivery.name) return { ...storeOrderType };
 
     const findCollect = orderTypesList.find((item) => item.name.toLowerCase() === 'collection');
-    if (storeOrderType.name === findCollect.name) return { storeOrderType };
+    if (storeOrderType.name === findCollect.name) return { ...storeOrderType };
 
     return findDelivery;
   };
@@ -119,9 +119,11 @@ const OrderView = ({ hideModal, orderTypesList }) => {
         </Grid>
       </Grid>
       <Box className={classes.OrderContainer}>
-        {cartList.map((item) => {
-          return <OrderItem key={item.id} orderInfo={item} />;
-        })}
+        {cartList
+          .filter((item) => item.orderType.id === orderType.id)
+          .map((item) => {
+            return <OrderItem key={item.id} orderInfo={item} />;
+          })}
         <Typography variant="h2" className={classes.TotalPriceItem} style={{ fontWeight: 500 }}>
           TotalDue <span>55.97</span>
         </Typography>

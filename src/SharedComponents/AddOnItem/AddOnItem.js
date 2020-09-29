@@ -8,7 +8,6 @@ import CartAddItemButton from '../CartAddItemButton';
 import { formatPrice } from '../../utils/string';
 import { getCurrency } from '../../utils/store';
 
-// import PlaceHolderSvg from '../../assets/img/addon-item-placeholder.png';
 import { GET_CURRENCY } from '../../graphql/localisation/localisation-query';
 
 const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) => {
