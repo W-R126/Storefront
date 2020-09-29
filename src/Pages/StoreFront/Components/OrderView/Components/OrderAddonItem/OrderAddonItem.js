@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { useSelector } from 'react-redux';
 
 import { useQuery } from '@apollo/react-hooks';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -11,20 +10,18 @@ import { formatPrice } from '../../../../../../utils/string';
 import { GET_CURRENCY } from '../../../../../../graphql/localisation/localisation-query';
 import { updateProductCartAction } from '../../../../../../actions/cartAction';
 
+import { checkAddonItemMinsuButtonStatus, checkAddonItemPlusButtonStatus } from '../../../../../../utils/product';
+
 const OrderAddonItem = ({ cartInfo, groupInfo, itemCartInfo, updateProductCartAction }) => {
   const classes = useStyles();
   const { data: currencyData } = useQuery(GET_CURRENCY);
-
-  const { cartList } = useSelector((state) => ({
-    cartList: state.cartReducer.cartList,
-  }));
 
   const changeQty = (addNumber) => {
     const newQty = itemCartInfo.qty + addNumber;
     let groupInfoTemp;
     if (newQty === 0) {
       groupInfoTemp = {
-        ...groupInfoTemp,
+        ...groupInfo,
         addons: [...groupInfo.addons.filter((item) => item.id !== itemCartInfo.id)],
       };
     } else {
@@ -70,6 +67,7 @@ const OrderAddonItem = ({ cartInfo, groupInfo, itemCartInfo, updateProductCartAc
           onClick={() => {
             changeQty(-1);
           }}
+          disabled={!checkAddonItemMinsuButtonStatus(groupInfo, itemCartInfo)}
         />
         <Typography className={classes.Count} variant="h3">
           {itemCartInfo.qty}
@@ -79,6 +77,7 @@ const OrderAddonItem = ({ cartInfo, groupInfo, itemCartInfo, updateProductCartAc
           onClick={() => {
             changeQty(1);
           }}
+          disabled={!checkAddonItemPlusButtonStatus(groupInfo, itemCartInfo)}
         />
       </Box>
       <Typography className={classes.ItemName} variant="h3">

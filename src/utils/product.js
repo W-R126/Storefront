@@ -132,3 +132,18 @@ export const getMeasureTypStr = (measureType) => {
   else if (measureType === 'kilograms') return 'Kg';
   else return '';
 };
+
+export const checkAddonItemMinsuButtonStatus = (groupInfo, itemInfo) => {
+  if (itemInfo.qty === 1 && groupInfo.mandatory && groupInfo.addons.length === 1) return false;
+  return true;
+};
+
+export const checkAddonItemPlusButtonStatus = (groupInfo, itemInfo) => {
+  const extra = _.get(itemInfo, 'extra', -1);
+  const itemQty = _.get(itemInfo, 'qty', 0);
+
+  if (extra >= 0 && itemQty >= extra + 1) {
+    return false;
+  }
+  return true;
+};
