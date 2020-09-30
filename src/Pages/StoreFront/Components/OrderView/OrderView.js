@@ -21,6 +21,7 @@ import CloseIconButton from '../../../../SharedComponents/CloseIconButton';
 import OrderTypeSelector from './Components/OrderTypeSelector';
 import OrderDatePicker from './Components/OrderDatePicker';
 import OrderItem from './Components/OrderItem';
+import OrderAddressSelector from './Components/OrderAddressSelector';
 import CleanCartConfirmDlg from './Components/ClearnCartConfirmDlg';
 import { getAddOnCartPrice } from '../../../../utils/product';
 import { formatPrice } from '../../../../utils/string';
@@ -81,6 +82,10 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
   const [orderTimeSlot, setOrderTimeSlot] = useState({
     start: moment(new Date()),
     end: moment(new Date()).add(1, 'hours'),
+  });
+  const [addressInfo, setAddressInfo] = useState({
+    type: 'Home',
+    address: {},
   });
 
   const [paymentOption, setPaymentOption] = useState(PAYMENT_OPTIONS.CASH);
@@ -164,6 +169,7 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
   return (
     <Paper className={classes.root} ref={ref}>
       <CloseIconButton onClick={hideModal} wrapperClass={classes.CloseButtonWrapper} />
+
       <Box className={classes.TopSection}>
         <Typography variant="h4" align="center">
           Order Number
@@ -193,15 +199,7 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
           />
         </Grid>
         <Grid item className={classes.SettingItem}>
-          <Typography variant="h4">Dlivery to</Typography>
-          <Typography variant="h3">
-            <span style={{ fontWeight: 'normal' }}>Home</span>
-          </Typography>
-          <Typography variant="h3">
-            148 South Clyde Street,
-            <br />
-            Clasgow, G7 9HJ
-          </Typography>
+          <OrderAddressSelector addressInfo={addressInfo} onChange={setAddressInfo} />
         </Grid>
       </Grid>
       {cartList.filter((item) => item.orderType.id === orderType.id).length > 0 && (
