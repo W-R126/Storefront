@@ -147,3 +147,26 @@ export const checkAddonItemPlusButtonStatus = (groupInfo, itemInfo) => {
   }
   return true;
 };
+
+export const getCartTotalPrice = (cartList, orderType, netPrice) => {
+  let totalPrice = 0;
+
+  const filteredCartList = cartList.filter((item) => item.orderType.id === orderType.id);
+  if (filteredCartList.length === 0) {
+    return 0;
+  }
+
+  filteredCartList.forEach((item) => {
+    const { priceInfo } = item;
+    const addonprice = getAddOnCartPrice(item.addons);
+    if (netPrice) totalPrice += priceInfo.price * item.qty;
+    else {
+      let rateValue = 0;
+      priceInfo.taxes.forEach((item) => {
+        if (item.rate > 0) rateValue += item.rate;
+      });
+      totalPrice += (priceInfo.price + priceInfo.price * (rateValue / 100) + addonprice) * item.qty;
+    }
+  });
+  return totalPrice;
+};

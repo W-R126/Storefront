@@ -166,6 +166,18 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
     setShowCleanCartDlg(false);
   };
 
+  const checkClearCartBtnStatus = () => {
+    const filteredCartList = cartList.filter((item) => item.orderType.id === orderType.id);
+    if (filteredCartList.length === 0) return false;
+    return true;
+  };
+
+  const checkSubmitBtnStatus = () => {
+    const filteredCartList = cartList.filter((item) => item.orderType.id === orderType.id);
+    if (filteredCartList.length === 0) return false;
+    return true;
+  };
+
   return (
     <Paper className={classes.root} ref={ref}>
       <CloseIconButton onClick={hideModal} wrapperClass={classes.CloseButtonWrapper} />
@@ -250,10 +262,21 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
         </FormControl>
       </Box>
       <Box className={classes.Footer}>
-        <Button variant="contained" onClick={handleClickClearCart} className={classes.SubmitButton}>
+        <Button
+          variant="contained"
+          onClick={handleClickClearCart}
+          className={classes.SubmitButton}
+          disabled={!checkClearCartBtnStatus()}
+        >
           Clear Cart
         </Button>
-        <Button variant="contained" color="primary" className={classes.ClearButton} onClick={handleClickSubmitOrder}>
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.ClearButton}
+          onClick={handleClickSubmitOrder}
+          disabled={!checkSubmitBtnStatus()}
+        >
           Submit Order
         </Button>
       </Box>

@@ -12,22 +12,32 @@ const OrderAddressSelector = ({ addressInfo, onChange }) => {
   const [editalbe, setEditable] = useState(false);
 
   const renderAddress = () => {
-    const keyAddress1 = ['line1', 'line2'];
-    const addressArr1 = [];
-    const keyAddress2 = ['city_town', 'postcode'];
-    const addressArr2 = [];
-    const address = addressInfo.address;
+    // const keyAddress1 = ['line1', 'line2'];
+    // const addressArr1 = [];
+    // const keyAddress2 = ['city_town', 'postcode'];
+    // const addressArr2 = [];
+    // const address = addressInfo.address;
 
+    // keyAddress1.forEach((item) => {
+    //   if (address[item] && address[item].length > 0) {
+    //     addressArr1.push(address[item]);
+    //   }
+    // });
+    // keyAddress2.forEach((item) => {
+    //   if (address[item] && address[item].length > 0) {
+    //     addressArr2.push(address[item]);
+    //   }
+    // });
+
+    const keyAddress1 = ['line1', 'line2', 'city_town', 'postcode'];
+    const addressArr1 = [];
+    const address = addressInfo.address;
     keyAddress1.forEach((item) => {
       if (address[item] && address[item].length > 0) {
         addressArr1.push(address[item]);
       }
     });
-    keyAddress2.forEach((item) => {
-      if (address[item] && address[item].length > 0) {
-        addressArr2.push(address[item]);
-      }
-    });
+
     return (
       <Typography variant="h3">
         <span style={{ fontWeight: 'normal' }}>
@@ -35,8 +45,8 @@ const OrderAddressSelector = ({ addressInfo, onChange }) => {
           <br />
         </span>
         {addressArr1.join(', ')}
-        <br />
-        {addressArr2.join(', ')}
+        {/* <br />
+        {addressArr2.join(', ')} */}
       </Typography>
     );
   };

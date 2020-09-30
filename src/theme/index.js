@@ -79,9 +79,12 @@ export const THEME = createMuiTheme({
         },
       },
       contained: {
-        color: '#939da8',
         fontSize: '16px',
-        backgroundColor: '#f3f5f7',
+        '&.disabled': {
+          color: '#939da8',
+          opacity: 0.6,
+          backgroundColor: '#f3f5f7',
+        },
       },
     },
   },
