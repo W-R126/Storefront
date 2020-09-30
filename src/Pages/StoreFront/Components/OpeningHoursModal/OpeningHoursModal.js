@@ -23,8 +23,9 @@ const OpeningHoursModal = ({ open, hideModal, store_openings }) => {
         </Grid>
       </Grid>
       {store_openings
-        .filter((item) => !item.closed)
+        .filter((item) => !item?.closed)
         .map((opening_hour, nIndex) => {
+          if (!opening_hour) return null;
           return (
             <Grid container className={classes.MainContent} key={opening_hour.day}>
               <Grid item xs={4} className={classes.DayName}>

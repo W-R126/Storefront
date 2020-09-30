@@ -90,7 +90,9 @@ const StoreFrontPage = () => {
 
   const getStoreOpening = () => {
     const store = _.get(storeData, 'store', {});
-    return _.get(store, 'store_openings', []);
+    const store_openings = _.get(store, 'store_openings', []);
+    if (store_openings === null || store_openings === undefined) return [];
+    return store_openings;
   };
 
   return (
