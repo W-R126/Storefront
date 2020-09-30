@@ -8,14 +8,14 @@ export const getProductCart = (cartList, productId, orderType) => {
   return findCart;
 };
 
-export const getOrdredProducts = (productData, storeSettingData) => {
+export const getOrdredProducts = (productData, storeInfo) => {
   if (productData === undefined || productData === null) {
     return [];
   } else {
-    if (storeSettingData === undefined || storeSettingData === null) return productData;
+    if (storeInfo === undefined || storeInfo === null || Object.keys(storeInfo).length === 0) return productData;
     else {
       let orderedProducts = [];
-      const productView = getProductViewFromStoreSetting(storeSettingData);
+      const productView = getProductViewFromStoreSetting(storeInfo);
       const productsOrder = productView.products;
 
       if (productsOrder === null) {

@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect, useSelector } from 'react-redux';
 
-import _ from 'lodash';
-import { useQuery } from '@apollo/react-hooks';
+import { useLazyQuery } from '@apollo/react-hooks';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -14,16 +13,25 @@ import { getIsShowSideCategory } from '../../../../../../utils/store';
 import { updateCatgoryFilterAction } from '../../../../../../actions/productAction';
 import DropDown from '../../../../../../SharedComponents/DropDown';
 
-const CategorySideBar = ({ storeSettingData, updateCatgoryFilterAction, loading }) => {
-  const classes = useStyles();
+import { getMerchantId } from '../../../../../../constants';
 
-  const { filter } = useSelector((state) => ({
+const CategorySideBar = ({ updateCatgoryFilterAction }) => {
+  const classes = useStyles();
+  const merchantId = getMerchantId();
+  const { filter, storeInfo, storeLoading } = useSelector((state) => ({
     filter: state.productReducer.filter,
+    storeInfo: state.storeReducer.storeInfo,
+    storeLoading: state.storeReducer.storeLoading,
   }));
 
-  const { data, loading: categoryLoading, error } = useQuery(GET_CATEGORIES);
+  const [getCategories, { data, loading: categoryLoading, error }] = useLazyQuery(GET_CATEGORIES);
 
-  if (!getIsShowSideCategory(storeSettingData)) {
+  useEffect(() => {
+    if (merchantId) getCategories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [merchantId]);
+
+  if (!getIsShowSideCategory(storeInfo)) {
     return null;
   }
 
@@ -35,7 +43,7 @@ const CategorySideBar = ({ storeSettingData, updateCatgoryFilterAction, loading 
     const selectedCategory = filter.category;
     if (selectedCategory === 'all') return { id: 'all', label: 'All' };
 
-    const categoryList = getOrderedCategories(data, storeSettingData);
+    const categoryList = getOrderedCategories(data, storeInfo);
     const findOne = categoryList.find((item) => item.id === selectedCategory);
 
     if (findOne) return { id: findOne.id, label: findOne.name };
@@ -55,9 +63,9 @@ const CategorySideBar = ({ storeSettingData, updateCatgoryFilterAction, loading 
           >
             All
           </MenuItem>
-          {!loading &&
+          {!storeLoading &&
             !categoryLoading &&
-            getOrderedCategories(data, storeSettingData).map((item, nIndex) => {
+            getOrderedCategories(data, storeInfo).map((item, nIndex) => {
               return (
                 <MenuItem
                   onClick={() => {
@@ -75,7 +83,7 @@ const CategorySideBar = ({ storeSettingData, updateCatgoryFilterAction, loading 
       <DropDown
         wrapperClass={classes.MobileWrapper}
         value={getSelectedDropDownValue()}
-        menuList={getOrderedCategories(data, storeSettingData).map((item) => {
+        menuList={getOrderedCategories(data, storeInfo).map((item) => {
           return { id: item.id, label: item.name };
         })}
         onChange={(selected) => {

@@ -14,10 +14,9 @@ export const HHMMtoHHMMA = (strTime) => {
   return curMoment.format('HH:MM A');
 };
 
-export const formatPrice = (value, localisationInfo) => {
-  const store = _.get(localisationInfo, 'store', null);
-  if (store === null) return value;
-  const localisation = _.get(store, 'localisation', null);
+export const formatPrice = (value, storeInfo) => {
+  if (storeInfo === undefined || storeInfo === null || Object.keys(storeInfo).length === 0) return value;
+  const localisation = _.get(storeInfo, 'localisation', null);
   if (localisation == null) return value;
 
   let returnValue = '0';

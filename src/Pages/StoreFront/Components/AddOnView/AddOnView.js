@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { useQuery } from '@apollo/react-hooks';
 import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -12,25 +12,23 @@ import { formatPrice } from '../../../../utils/string';
 import { getCurrency } from '../../../../utils/store';
 import { getAddOnCartPrice } from '../../../../utils/product';
 import { GET_PRODUCT_ADDONS } from '../../../../graphql/products/product-query';
+import { GET_DELIVERY_ADDRESS } from '../../../../graphql/auth/auth-query';
 import { updateProductCartAction } from '../../../../actions/cartAction';
 
-const AddOnView = ({
-  open,
-  hideModal,
-  productId,
-  curProductCart,
-  currencyData,
-  productPrice,
-  updateProductCartAction,
-}) => {
+const AddOnView = ({ open, hideModal, productId, curProductCart, productPrice, updateProductCartAction }) => {
   const { loading: productAddonsLoading, data: productAddons } = useQuery(GET_PRODUCT_ADDONS, {
     variables: {
       id: productId,
     },
   });
 
+  const { loading: addressLoading, data: addressList } = useQuery(GET_DELIVERY_ADDRESS);
+
   const classes = useStyles();
   const [addonCarts, setAddonCarts] = useState([]);
+  const { storeInfo } = useSelector((state) => ({
+    storeInfo: state.storeReducer.storeInfo,
+  }));
   const groupRefs = useRef([]);
 
   const getProductAddons = () => {
@@ -86,7 +84,7 @@ const AddOnView = ({
 
   const getAddOnPrice = () => {
     const totalPrice = getAddOnCartPrice(addonCarts, null, null) + productPrice;
-    return `${getCurrency(currencyData)} ${formatPrice(totalPrice, currencyData)}`;
+    return `${getCurrency(storeInfo)} ${formatPrice(totalPrice, storeInfo)}`;
   };
 
   return (

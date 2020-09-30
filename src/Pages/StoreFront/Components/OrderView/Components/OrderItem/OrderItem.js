@@ -1,7 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
-import { useQuery } from '@apollo/react-hooks';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Box, Typography } from '@material-ui/core';
 
@@ -9,12 +8,13 @@ import CartAddItemButton from '../../../../../../SharedComponents/CartAddItemBut
 import OrderAddonItem from '../OrderAddonItem';
 import { updateProductCartAction } from '../../../../../../actions/cartAction';
 import { formatPrice } from '../../../../../../utils/string';
-import { GET_CURRENCY } from '../../../../../../graphql/localisation/localisation-query';
 import { getAddOnGroupPrice } from '../../../../../../utils/product';
 
 const OrderItem = ({ wrapperClass, orderInfo, net_price, updateProductCartAction }) => {
   const classes = useStyles();
-  const { data: currencyData } = useQuery(GET_CURRENCY);
+  const { storeInfo } = useSelector((state) => ({
+    storeInfo: state.storeReducer.storeInfo,
+  }));
 
   const rootClasses = [classes.root];
   if (wrapperClass) rootClasses.push(wrapperClass);
@@ -30,7 +30,7 @@ const OrderItem = ({ wrapperClass, orderInfo, net_price, updateProductCartAction
 
       return (
         <Typography className={classes.ProductPrice} variant="h2">
-          {formatPrice((priceInfo.price + addonsCartPrice) * orderInfo.qty, currencyData)}
+          {formatPrice((priceInfo.price + addonsCartPrice) * orderInfo.qty, storeInfo)}
           {netPriceNames.length > 0 && <span>+{netPriceStr}</span>}
         </Typography>
       );
@@ -43,7 +43,7 @@ const OrderItem = ({ wrapperClass, orderInfo, net_price, updateProductCartAction
       priceValue += priceValue * (rateValue / 100) + addonsCartPrice;
       return (
         <Typography className={classes.ProductPrice} variant="h2">
-          {formatPrice(priceValue * orderInfo.qty, currencyData)}
+          {formatPrice(priceValue * orderInfo.qty, storeInfo)}
         </Typography>
       );
     }

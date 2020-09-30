@@ -27,22 +27,15 @@ import { updateProductCartAction } from '../../../../actions/cartAction';
 
 import PlaceHolderImg from '../../../../assets/img/product-card-placeholder.png';
 
-const ProductView = ({
-  open,
-  hideModal,
-  productId,
-  currencyData,
-  net_price,
-  setShowAddonView,
-  setCurProductCart,
-  updateProductCartAction,
-}) => {
+const ProductView = ({ open, hideModal, productId, setShowAddonView, setCurProductCart, updateProductCartAction }) => {
   const classes = useStyles();
   const [productCart, setProductCart] = useState({
     qty: 1,
   });
 
-  const { orderType } = useSelector((state) => ({
+  const { storeInfo, netPrice, orderType } = useSelector((state) => ({
+    storeInfo: state.storeReducer.storeInfo,
+    netPrice: state.merchantReducer.netPrice,
     orderType: state.storeReducer.orderType,
   }));
 
@@ -138,25 +131,25 @@ const ProductView = ({
   };
 
   const renderPriceInfo = () => {
-    const priceInfo = getProductPriceInfo(getProduct(), orderType, net_price);
-    const addOnPrice = getAddOnCartPrice(productCart.addons, orderType, net_price);
+    const priceInfo = getProductPriceInfo(getProduct(), orderType, netPrice);
+    const addOnPrice = getAddOnCartPrice(productCart.addons, orderType, netPrice);
 
     if (!priceInfo)
       return (
         <div className={classes.Price}>
-          <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(currencyData) }}></div>
-          {formatPrice(addOnPrice, currencyData)}
+          <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(storeInfo) }}></div>
+          {formatPrice(addOnPrice, storeInfo)}
         </div>
       );
 
-    if (net_price) {
+    if (netPrice) {
       const netPriceNames = priceInfo.taxes.map((taxItem) => taxItem.name);
       const netPriceStr = netPriceNames.join(', ');
 
       return (
         <div className={classes.Price}>
-          <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(currencyData) }}></div>
-          {formatPrice(priceInfo.price + addOnPrice, currencyData)}
+          <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(storeInfo) }}></div>
+          {formatPrice(priceInfo.price + addOnPrice, storeInfo)}
           {netPriceNames.length > 0 && <span>+{netPriceStr}</span>}
         </div>
       );
@@ -169,8 +162,8 @@ const ProductView = ({
       priceValue += priceValue * (rateValue / 100) + addOnPrice;
       return (
         <div className={classes.Price}>
-          <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(currencyData) }}></div>
-          {formatPrice(priceValue, currencyData)}
+          <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(storeInfo) }}></div>
+          {formatPrice(priceValue, storeInfo)}
         </div>
       );
     }

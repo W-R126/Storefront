@@ -84,28 +84,27 @@ export const getOpenDayInfo = (store_openings, dayIndex) => {
   }
 };
 
-export const getProductViewFromStoreSetting = (storeSetting) => {
+export const getProductViewFromStoreSetting = (storeInfo) => {
   try {
-    const digitalFront = storeSetting.store.settings.touchpoint_settings.digital_front;
+    const digitalFront = storeInfo.settings.touchpoint_settings.digital_front;
     return digitalFront.product_view;
   } catch {
     return null;
   }
 };
 
-export const getIsShowSideCategory = (storeSetting) => {
+export const getIsShowSideCategory = (storeInfo) => {
   try {
-    const digitalFront = storeSetting.store.settings.touchpoint_settings.digital_front;
+    const digitalFront = storeInfo.settings.touchpoint_settings.digital_front;
     return digitalFront.product_view.by_category;
   } catch {
     return true;
   }
 };
 
-export const getCurrency = (localisationInfo) => {
-  const store = _.get(localisationInfo, 'store', null);
-  if (store === null) return '';
-  const localisation = _.get(store, 'localisation', null);
+export const getCurrency = (storeInfo) => {
+  if (storeInfo === null || Object.keys(storeInfo).length === 0) return '';
+  const localisation = _.get(storeInfo, 'localisation', null);
   if (localisation == null) return '';
   let symbol = _.get(localisation, 'currency_symbol', '');
   return symbol;
@@ -122,12 +121,10 @@ export const getStorePos = (storeInfo) => {
 };
 
 export const getOrderTypes = (storeInfo) => {
-  const store = _.get(storeInfo, 'store', null);
-  if (!store) return [];
-  const orderTypes = _.get(store, 'order_types', []);
+  const orderTypes = _.get(storeInfo, 'order_types', []);
   if (orderTypes.length === 0) return [];
 
-  const touchpoint_settings = storeInfo.store.settings.touchpoint_settings;
+  const touchpoint_settings = storeInfo.settings.touchpoint_settings;
   const orderIds = touchpoint_settings.digital_front.order_types;
   if (orderIds === null || orderIds.length === 0) return orderTypes;
 

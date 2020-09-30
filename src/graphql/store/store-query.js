@@ -35,6 +35,11 @@ export const GET_STORE_DATA = gql`
         name
         pricing_type
       }
+      localisation {
+        currency_symbol
+        currency_decimal
+        digit_separator
+      }
       settings {
         touchpoint_settings {
           digital_front {
@@ -86,6 +91,24 @@ export const GET_CURRENT_STORE = gql`
     currentStore @client {
       id
       name
+    }
+  }
+`;
+
+export const GET_STORE_PAYMENTS = gql`
+  query getStorePayments {
+    store {
+      payment_types {
+        id
+        name
+      }
+      settings {
+        touchpoint_settings {
+          digital_front {
+            payment_types
+          }
+        }
+      }
     }
   }
 `;

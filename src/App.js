@@ -29,7 +29,7 @@ const App = ({ client, setLocalizationAction }) => {
           <Route exact path="/guest/activate/:user_id/:code" component={EmailVerifiedPage} />
           <Route exact path="/reset/:code" component={ResetPasswordPage} />
           <Route exact path="/store/:base64" component={StoreFrontPage} />
-          <Route path="/" component={StoreFrontPage} />
+          {/* <Route path="/" component={StoreFrontPage} /> */}
         </Switch>
       </div>
     </Router>

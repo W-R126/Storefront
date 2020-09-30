@@ -6,7 +6,13 @@ export const UPDATE_USERNAME = 'Update Username';
 export const UPDATE_EMAIL = 'Update Email';
 // Cart Types
 export const UPDATE_PRODUCT_CART = 'Update product cart';
+export const CLEAR_PRODUCT_ORDERTYPE_CART = 'Clear product cart with order type';
+// Merchant
+export const UPDATE_MERCHANT_NET_PRICE = 'Update merchant net price';
+export const UPDATE_MERCHANT_LOADING = 'Update mechant loading';
 // Store
+export const UPDATE_STORE_INFO = 'Update store info';
+export const UPDATE_STORE_LOADING = 'Update store loading';
 export const UPDATE_TRANS_TYPE = 'Update Trans Type';
 
 // Product

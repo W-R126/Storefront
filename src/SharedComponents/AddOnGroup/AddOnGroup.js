@@ -203,6 +203,7 @@ const AddOnGroup = forwardRef(({ productId, groupId, productGroupAddonInfo, grou
                 <Grid item className={classes.AddOnGridItem} key={item.id}>
                   <AddOnItem
                     itemData={item}
+                    groupInfo={groupAddOns}
                     itemCartInfo={getAddOnItemInfo(item.id)}
                     setItemCartInfo={changeAddOnData}
                   />

@@ -1,33 +1,56 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useParams, useHistory } from 'react-router-dom';
 
 import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { useQuery } from '@apollo/react-hooks';
+import { useLazyQuery } from '@apollo/react-hooks';
 
 import Header from './Components/Header';
 import StoreInfo from './Components/StoreInfo';
 import ProductContainer from './Components/ProductContainer';
 import Footer from '../../SharedComponents/Footer';
 import OpeningHoursModal from './Components/OpeningHoursModal';
+import BannerPlaceHolder from '../../assets/img/store-banner-placeholder.png';
+import { GET_MERCHANT_NET_PRICE } from '../../graphql/merchant/merchant-query';
 import { GET_STORE_DATA } from '../../graphql/store/store-query';
 import { getOrderTypes } from '../../utils/store';
-import { getStoreId } from '../../constants';
-import BannerPlaceHolder from '../../assets/img/store-banner-placeholder.png';
-import { base64ToMerchantStoreId, TESTBASE64_URL } from '../../constants';
+import { UPDATE_MERCHANT_NET_PRICE, UPDATE_STORE_INFO } from '../../actions/actionTypes';
+import { base64ToMerchantStoreId } from '../../constants';
+
 const StoreFrontPage = () => {
   const { base64 } = useParams();
+  const history = useHistory();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (base64) base64ToMerchantStoreId(base64);
-    else base64ToMerchantStoreId(TESTBASE64_URL);
-  }, [base64]);
+    if (base64) {
+      const getMerchantStoreId = async () => {
+        const res = await base64ToMerchantStoreId(base64);
+        if (res) {
+          loadMerchantData();
+          loadStoreData({
+            variables: {
+              id: res.storeId,
+            },
+          });
+        } else {
+          history.push('/');
+        }
+      };
+      getMerchantStoreId();
+    } else history.push('/');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [base64, history]);
 
   const classes = useStyles();
   const [showOpeningHourModal, setShowOpeningHourModal] = useState(false);
-  const { loading: storeLoading, error: storeError, data: storeData } = useQuery(GET_STORE_DATA, {
-    variables: { id: getStoreId() },
+  const [loadStoreData, { loading: storeLoading, error: storeError, data: storeData }] = useLazyQuery(GET_STORE_DATA, {
     onCompleted(d) {
+      dispatch({
+        type: UPDATE_STORE_INFO,
+        payload: d.store,
+      });
       if (d.store.merchant.tname) {
         document.title = `${d.store.merchant.tname} | Storefront | Myda`;
       }
@@ -41,6 +64,18 @@ const StoreFrontPage = () => {
       }
     },
   });
+
+  const [loadMerchantData, { data: merchantNetPrice, loading: merchangNetPriceLoading }] = useLazyQuery(
+    GET_MERCHANT_NET_PRICE,
+    {
+      onCompleted(d) {
+        dispatch({
+          type: UPDATE_MERCHANT_NET_PRICE,
+          payload: d.merchantSettings.products.net_price,
+        });
+      },
+    }
+  );
 
   const getBannerImg = () => {
     const store = _.get(storeData, 'store', null);
@@ -62,13 +97,8 @@ const StoreFrontPage = () => {
 
       <div className={classes.TopBanner} style={{ backgroundImage: `url(${getBannerImg()})` }}></div>
 
-      <StoreInfo
-        loading={storeLoading}
-        error={storeError}
-        store={_.get(storeData, 'store', {})}
-        showOpeningHours={() => setShowOpeningHourModal(true)}
-      />
-      <ProductContainer />
+      <StoreInfo showOpeningHours={() => setShowOpeningHourModal(true)} />
+      <ProductContainer storeLoading={storeLoading} />
       <Footer />
       <OpeningHoursModal
         open={showOpeningHourModal}

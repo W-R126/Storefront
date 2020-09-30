@@ -12,9 +12,6 @@ import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 export const OrderDatePicker = ({ date, onChange }) => {
   const classes = useStyles();
   const [editalbe, setEditable] = useState(false);
-  // const handleDateChange = (date) => {
-  //   setSelectedDate(date);
-  // };
 
   return (
     <>
@@ -53,18 +50,29 @@ export const OrderDatePicker = ({ date, onChange }) => {
             margin="normal"
             id="date-picker-inline"
             label="Date"
-            value={date}
-            onChange={onChange}
+            value={date.start}
+            onChange={(d) => {
+              onChange({
+                ...date,
+                start: d,
+              });
+            }}
             KeyboardButtonProps={{
               'aria-label': 'change date',
             }}
+            disablePast={true}
           />
           <KeyboardTimePicker
             margin="normal"
             id="time-picker-start"
             label="Start Time"
-            value={date}
-            onChange={onChange}
+            value={date.start}
+            onChange={(d) => {
+              onChange({
+                ...date,
+                start: d,
+              });
+            }}
             KeyboardButtonProps={{
               'aria-label': 'change time',
             }}
@@ -73,8 +81,13 @@ export const OrderDatePicker = ({ date, onChange }) => {
             margin="normal"
             id="time-picker-end"
             label="End Time"
-            value={date}
-            onChange={onChange}
+            value={date.end}
+            onChange={(d) => {
+              onChange({
+                ...date,
+                end: d,
+              });
+            }}
             KeyboardButtonProps={{
               'aria-label': 'change time',
             }}
@@ -84,11 +97,10 @@ export const OrderDatePicker = ({ date, onChange }) => {
         <>
           <Typography variant="h3">
             <span style={{ fontWeight: 'normal' }}>
-              10:00 - 11:00
-              {/* {moment.format('HH:mm')} */}
+              {`${date.start.format('HH:mm')} - ${date.end.format('HH:mm')}`}
             </span>
           </Typography>
-          <Typography variant="h3">{moment(date).format('DD MMMM YYYY')}</Typography>
+          <Typography variant="h3">{date.start.format('DD MMMM YYYY')}</Typography>
         </>
       )}
     </>

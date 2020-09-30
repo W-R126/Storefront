@@ -1,13 +1,14 @@
 import _ from 'lodash';
 import { getProductViewFromStoreSetting } from './store';
 
-export const getOrderedCategories = (categoryData, storeSettingData) => {
+export const getOrderedCategories = (categoryData, storeInfo) => {
   if (categoryData === undefined || categoryData === null) {
     return [];
   } else {
-    if (storeSettingData === undefined || storeSettingData === null) return _.get(categoryData, 'categories', []);
+    if (storeInfo === undefined || storeInfo === null || Object.keys(storeInfo).length === 0)
+      return _.get(categoryData, 'categories', []);
     else {
-      const productView = getProductViewFromStoreSetting(storeSettingData);
+      const productView = getProductViewFromStoreSetting(storeInfo);
       const categoryOrders = _.get(productView, 'categories', []);
       const categories = _.get(categoryData, 'categories', []);
       let orderedCategories = [];

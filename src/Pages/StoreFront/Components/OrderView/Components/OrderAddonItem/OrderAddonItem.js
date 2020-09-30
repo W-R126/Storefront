@@ -1,20 +1,20 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
-import { useQuery } from '@apollo/react-hooks';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Box, Typography } from '@material-ui/core';
 
 import CartAddItemButton from '../../../../../../SharedComponents/CartAddItemButton';
 import { formatPrice } from '../../../../../../utils/string';
-import { GET_CURRENCY } from '../../../../../../graphql/localisation/localisation-query';
 import { updateProductCartAction } from '../../../../../../actions/cartAction';
 
 import { checkAddonItemMinsuButtonStatus, checkAddonItemPlusButtonStatus } from '../../../../../../utils/product';
 
 const OrderAddonItem = ({ cartInfo, groupInfo, itemCartInfo, updateProductCartAction }) => {
   const classes = useStyles();
-  const { data: currencyData } = useQuery(GET_CURRENCY);
+  const { storeInfo } = useSelector((state) => ({
+    storeInfo: state.storeReducer.storeInfo,
+  }));
 
   const changeQty = (addNumber) => {
     const newQty = itemCartInfo.qty + addNumber;
@@ -84,7 +84,7 @@ const OrderAddonItem = ({ cartInfo, groupInfo, itemCartInfo, updateProductCartAc
         {itemCartInfo.name}
       </Typography>
       <Typography className={classes.Price} variant="h3">
-        {formatPrice(itemCartInfo.fixed_price, currencyData)}
+        {formatPrice(itemCartInfo.fixed_price, storeInfo)}
       </Typography>
     </Box>
   );

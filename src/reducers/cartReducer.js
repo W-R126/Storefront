@@ -1,4 +1,4 @@
-import { UPDATE_PRODUCT_CART } from '../actions/actionTypes';
+import { UPDATE_PRODUCT_CART, CLEAR_PRODUCT_ORDERTYPE_CART } from '../actions/actionTypes';
 import initialState from './initialState';
 
 export default (state = initialState.cart, action) => {
@@ -23,6 +23,12 @@ export default (state = initialState.cart, action) => {
       return {
         ...state,
         cartList: [...updatedCart],
+      };
+    }
+    case CLEAR_PRODUCT_ORDERTYPE_CART: {
+      return {
+        ...state,
+        cartList: [...state.cartList.filter((item) => item.orderType.id !== action.payload.id)],
       };
     }
     default:

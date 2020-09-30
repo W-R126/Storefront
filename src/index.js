@@ -24,6 +24,7 @@ const uploadLink = createUploadLink({
 
 const errorLink = onError(({ graphQLErrors, networkError, forward, operation }) => {
   if (graphQLErrors) {
+    debugger;
     // eslint-disable-next-line array-callback-return
     graphQLErrors.map(({ message, locations, path, extensions }: any) => {
       if (extensions && extensions.code === 'UNAUTHENTICATED') {

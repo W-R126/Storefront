@@ -23,10 +23,28 @@ import * as types from '../../../../actions/actionTypes';
 import { getUserAvatar, getUserName, getMerchantName, checkUserMerchantRole } from '../../../../utils/auth';
 
 import LogoSvg from '../../../../assets/img/logo.svg';
+import { getOrderTypes } from '../../../../utils/store';
 
-const Header = ({ children, orderTypesList }) => {
+const Header = ({ children }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+
+  const [orderTypesList, setOrderTypesList] = useState([]);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showUserDetail, setShowUserDetail] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(false);
+  const [showResetPassowrdModal, setShowResetPassword] = useState(false);
+
+  const { authInfo, orderType, storeInfo } = useSelector((state) => ({
+    authInfo: state.authReducer.userInfo,
+    orderType: state.storeReducer.orderType,
+    storeInfo: state.storeReducer.storeInfo,
+  }));
+
+  useEffect(() => {
+    setOrderTypesList([...getOrderTypes(storeInfo)]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storeInfo]);
 
   useEffect(() => {
     if (orderTypesList.length > 0)
@@ -34,17 +52,8 @@ const Header = ({ children, orderTypesList }) => {
         type: types.UPDATE_TRANS_TYPE,
         payload: orderTypesList[0],
       });
-  }, [dispatch, orderTypesList]);
-
-  const [showLogin, setShowLogin] = useState(false);
-  const [showUserDetail, setShowUserDetail] = useState(false);
-  const [showSignUp, setShowSignUp] = useState(false);
-  const [showResetPassowrdModal, setShowResetPassword] = useState(false);
-
-  const { authInfo, orderType } = useSelector((state) => ({
-    authInfo: state.authReducer.userInfo,
-    orderType: state.storeReducer.orderType,
-  }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orderTypesList]);
 
   const checkIsLogin = () => {
     const uesrID = _.get(authInfo, 'id', null);

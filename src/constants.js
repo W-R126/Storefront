@@ -49,25 +49,28 @@ export const getStoreId = () => {
 };
 
 export const base64ToMerchantStoreId = (base64) => {
-  if (!base64) return '';
-  try {
-    const identifier = 'myda.app/';
-    const identifierIndex = base64.indexOf(identifier);
+  return new Promise((resolve, reject) => {
+    if (!base64) reject(null);
+    try {
+      const identifier = 'myda.app/';
+      const identifierIndex = base64.indexOf(identifier);
 
-    let encodedUrl;
-    if (identifierIndex >= 0)
-      encodedUrl = base64.substring(base64.indexOf(identifier) + identifier.length, base64.length);
-    else encodedUrl = base64;
-    const decodeUrl = atob(encodedUrl);
+      let encodedUrl;
+      if (identifierIndex >= 0)
+        encodedUrl = base64.substring(base64.indexOf(identifier) + identifier.length, base64.length);
+      else encodedUrl = base64;
+      const decodeUrl = atob(encodedUrl);
 
-    const index = decodeUrl.indexOf('/');
-    const merchantId = decodeUrl.substring(0, index);
-    setMerchantId(merchantId);
-    const storeId = decodeUrl.substring(index + 1, decodeUrl.length);
-    setStoreId(storeId);
-  } catch (err) {
-    console.log(err);
-  }
+      const index = decodeUrl.indexOf('/');
+      const merchantId = decodeUrl.substring(0, index);
+      setMerchantId(merchantId);
+      const storeId = decodeUrl.substring(index + 1, decodeUrl.length);
+      setStoreId(storeId);
+      resolve({ storeId: storeId, merchantId: merchantId });
+    } catch (err) {
+      reject(null);
+    }
+  });
 };
 
 export const PRODUCT_PAGE_LIMIT = 100;

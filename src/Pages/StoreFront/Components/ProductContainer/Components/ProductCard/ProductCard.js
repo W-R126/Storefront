@@ -12,7 +12,6 @@ import CartAddItemButton from '../../../../../../SharedComponents/CartAddItemBut
 import { getCurrency } from '../../../../../../utils/store';
 import {
   getAddOnCartPrice,
-  getAddOnGroupPrice,
   getProductCart,
   getProductPriceInfo,
   getProductTotalAmount,
@@ -23,11 +22,13 @@ import { updateProductCartAction } from '../../../../../../actions/cartAction';
 import ProductPlaceHolderImg from '../../../../../../assets/img/product-card-placeholder.png';
 import { getMeasureTypStr } from '../../../../../../utils/product';
 
-const ProductCard = ({ productInfo, currencyData, net_price, orderType, updateProductCartAction, loading }) => {
+const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading }) => {
   const classes = useStyles();
 
-  const { cartInfo } = useSelector((state) => ({
+  const { storeInfo, cartInfo, netPrice } = useSelector((state) => ({
+    storeInfo: state.storeReducer.storeInfo,
     cartInfo: state.cartReducer.cartList,
+    netPrice: state.merchantReducer.netPrice,
   }));
 
   const [showProductView, setShowProductView] = useState(false);
@@ -41,18 +42,18 @@ const ProductCard = ({ productInfo, currencyData, net_price, orderType, updatePr
   };
 
   const renderPriceInfo = () => {
-    const priceInfo = getProductPriceInfo(productInfo, orderType, net_price);
+    const priceInfo = getProductPriceInfo(productInfo, orderType, netPrice);
     const addonsCartPrice = getAddOnCartPrice(getAddOns(), orderType);
     if (!priceInfo) return '';
 
-    if (net_price) {
+    if (netPrice) {
       const netPriceNames = priceInfo.taxes.filter((item) => item.rate > 0).map((taxItem) => taxItem.name);
       const netPriceStr = netPriceNames.join(', ');
 
       return (
         <div className={classes.Price}>
-          <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(currencyData) }}></div>
-          {formatPrice(priceInfo.price + addonsCartPrice, currencyData)}
+          <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(storeInfo) }}></div>
+          {formatPrice(priceInfo.price + addonsCartPrice, storeInfo)}
           {netPriceNames.length > 0 && <span>+{netPriceStr}</span>}
         </div>
       );
@@ -65,8 +66,8 @@ const ProductCard = ({ productInfo, currencyData, net_price, orderType, updatePr
       priceValue += priceValue * (rateValue / 100) + addonsCartPrice;
       return (
         <div className={classes.Price}>
-          <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(currencyData) }}></div>
-          {formatPrice(priceValue, currencyData)}
+          <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(storeInfo) }}></div>
+          {formatPrice(priceValue, storeInfo)}
         </div>
       );
     }
@@ -256,9 +257,6 @@ const ProductCard = ({ productInfo, currencyData, net_price, orderType, updatePr
             setShowProductView(false);
           }}
           productId={productInfo.id}
-          // productId="1fe204f7-3051-4aca-9543-ac47c9deea6e"
-          currencyData={currencyData}
-          net_price={net_price}
           setCurProductCart={(cartOne) => {
             setTempProductCart({ ...cartOne });
           }}
@@ -275,8 +273,7 @@ const ProductCard = ({ productInfo, currencyData, net_price, orderType, updatePr
           }}
           productId={productInfo.id}
           curProductCart={tempProductCart}
-          currencyData={currencyData}
-          productPrice={getProductTotalAmount(productInfo, orderType, net_price)}
+          productPrice={getProductTotalAmount(productInfo, orderType, netPrice)}
         />
       )}
     </>

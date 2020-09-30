@@ -31,3 +31,21 @@ export const CHECK_ACTIVATIONS = gql`
     }
   }
 `;
+
+export const GET_DELIVERY_ADDRESS = gql`
+  {
+    currentUser {
+      id
+      addresses {
+        id
+        type
+        line1
+        line2
+        city_town
+        postcode
+        lat
+        lng
+      }
+    }
+  }
+`;

@@ -1,18 +1,18 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
-import { useQuery } from '@apollo/react-hooks';
 import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { ListItem, Box, Typography } from '@material-ui/core';
 import CartAddItemButton from '../CartAddItemButton';
 import { formatPrice } from '../../utils/string';
 import { getCurrency } from '../../utils/store';
+import { checkAddonItemMinsuButtonStatus, checkAddonItemPlusButtonStatus } from '../../utils/product';
 
-import { GET_CURRENCY } from '../../graphql/localisation/localisation-query';
-
-const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) => {
-  const { data: currencyData } = useQuery(GET_CURRENCY);
-
+const AddOnItem = ({ wrapperClass, itemData, groupInfo, itemCartInfo, setItemCartInfo }) => {
+  const { storeInfo } = useSelector((state) => ({
+    storeInfo: state.storeReducer.storeInfo,
+  }));
   const classes = useStyles();
 
   const getItemImage = () => {
@@ -45,22 +45,6 @@ const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) =>
     return _.get(itemCartInfo, 'qty', 0);
   };
 
-  const getMinusButtonStatus = () => {
-    const mandatory = _.get(itemData, 'mandatory', false);
-    const qty = _.get(itemCartInfo, 'qty', 0);
-    if (mandatory && qty <= 1) return false;
-    return true;
-  };
-
-  const getPlusButtonStatus = () => {
-    const qty = _.get(itemCartInfo, 'qty', 0);
-    const extra = _.get(itemData, 'extra', -1);
-    if (extra >= 0 && qty >= extra + 1) {
-      return false;
-    }
-    return true;
-  };
-
   const renderCartControl = () => {
     const qty = _.get(itemCartInfo, 'qty', 0);
     if (itemCartInfo && qty > 0) {
@@ -75,7 +59,7 @@ const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) =>
               });
             }}
             type="minus"
-            disabled={!getMinusButtonStatus()}
+            disabled={!checkAddonItemMinsuButtonStatus(groupInfo, itemCartInfo)}
           />
           <Typography variant="h2" className={classes.Count}>
             {getCurrentQty()}
@@ -89,7 +73,7 @@ const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) =>
               });
             }}
             type="plus"
-            disabled={!getPlusButtonStatus()}
+            disabled={!checkAddonItemPlusButtonStatus(groupInfo, itemCartInfo)}
           />
         </Box>
       );
@@ -103,12 +87,10 @@ const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) =>
 
   return (
     <ListItem
-      button={!(getCurrentQty() > 0)}
+      // button={!(getCurrentQty() > 0)}
       className={rootClass.join(' ')}
       onClick={(e) => {
-        setTimeout(() => {
-          handleClickItem(e);
-        }, 300);
+        handleClickItem(e);
       }}
     >
       <Box className={classes.ImgBox} style={{ ...getBackImgStyle() }}></Box>
@@ -117,8 +99,8 @@ const AddOnItem = ({ wrapperClass, itemData, itemCartInfo, setItemCartInfo }) =>
         {itemData.name}
       </Typography>
       <Typography variant="h3" className={classes.Price}>
-        <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(currencyData) }}></div>
-        {formatPrice(itemData.fixed_price, currencyData)}
+        <div style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(storeInfo) }}></div>
+        {formatPrice(itemData.fixed_price, storeInfo)}
       </Typography>
     </ListItem>
   );
@@ -136,6 +118,9 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: 0,
       '&:hover': {
         backgroundColor: 'rgba(186, 195, 201, 0.2)',
+      },
+      '&.MuiListItem-button': {
+        transitionDuration: '50ms',
       },
     },
     NoSelect: {

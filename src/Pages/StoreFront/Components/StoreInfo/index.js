@@ -1,6 +1,7 @@
 import React from 'react';
-import _ from 'lodash';
+import { useSelector } from 'react-redux';
 
+import _ from 'lodash';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
@@ -12,13 +13,18 @@ import StoreMap from '../StoreMap';
 import OrderTypesDiv from '../OrderTypesDiv';
 import LogoPlaceHolderImg from '../../../../assets/img/product-card-placeholder.png';
 
-const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
+const StoreInfo = ({ showOpeningHours }) => {
   const classes = useStyles();
+
+  const { storeInfo, storeInfoLoading } = useSelector((state) => ({
+    storeInfo: state.storeReducer.storeInfo,
+    storeInfoLoading: state.storeReducer.storeLoading,
+  }));
 
   const getFullAddress = () => {
     let address = '';
     const addressKeys = ['line1', 'line2', 'city_town', 'postcode'];
-    const addresses = _.get(store, 'address', {});
+    const addresses = _.get(storeInfo, 'address', {});
 
     addressKeys.forEach((item, nIndex) => {
       const strValue = _.get(addresses, item, '');
@@ -31,7 +37,7 @@ const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
   };
 
   const renderHoursStatus = () => {
-    const storeOpenStatus = getStoreOpenStatus(store.store_openings);
+    const storeOpenStatus = getStoreOpenStatus(storeInfo.store_openings);
 
     return (
       <>
@@ -50,14 +56,14 @@ const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
   };
 
   const getLogoImg = () => {
-    if (loading) return LogoPlaceHolderImg;
-    if (!store || !store.merchant) return LogoPlaceHolderImg;
-    const url = _.get(store.merchant.logo, 'url', null);
+    if (storeInfoLoading) return LogoPlaceHolderImg;
+    if (!storeInfo || !storeInfo.merchant) return LogoPlaceHolderImg;
+    const url = _.get(storeInfo.merchant.logo, 'url', null);
     if (url === null || url.length === 0) return LogoPlaceHolderImg;
     return url;
   };
 
-  if (loading) {
+  if (storeInfoLoading) {
     return (
       <Grid container className={classes.root}>
         <Grid item md={6} xs={12} className={classes.MainInfo}>
@@ -124,12 +130,12 @@ const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
           <Grid item xs={12} className={classes.StoreLogoInfo}>
             <Avatar className={classes.StoreLogo} src={getLogoImg()} alt="store logo" />
             <div className={classes.TitleContent}>
-              <h4>{store.name}</h4>
-              <p>{_.get(_.get(store, 'merchant', {}), 'business_type', '')}</p>
+              <h4>{storeInfo.name}</h4>
+              <p>{_.get(_.get(storeInfo, 'merchant', {}), 'business_type', '')}</p>
             </div>
           </Grid>
           <Grid item xs={12} className={classes.Description}>
-            {store.about_story}
+            {storeInfo.about_story}
           </Grid>
           <Grid item xs={12}>
             <div className={classes.DetailInfoItem}>
@@ -142,17 +148,17 @@ const StoreInfo = ({ loading, error, store, showOpeningHours }) => {
             </div>
             <div className={classes.DetailInfoItem}>
               <div className={classes.LableName}>Phone:</div>
-              <div className={classes.LabelValue}>{store.phone}</div>
+              <div className={classes.LabelValue}>{storeInfo.phone}</div>
             </div>
             <div className={classes.DetailInfoItem}>
               <div className={classes.LableName}>Orders:</div>
-              <OrderTypesDiv warpperClassname={classes.LabelValue} orderTypes={_.get(store, 'order_types', [])} />
+              <OrderTypesDiv warpperClassname={classes.LabelValue} orderTypes={_.get(storeInfo, 'order_types', [])} />
             </div>
           </Grid>
         </Grid>
       </Grid>
       <Grid item md={6} xs={12} className={classes.MapGrid}>
-        {getStorePos(store) !== null && <StoreMap mapCenter={getStorePos(store)} />}
+        {getStorePos(storeInfo) !== null && <StoreMap mapCenter={getStorePos(storeInfo)} />}
         <Box className={classes.MapOverlay}></Box>
       </Grid>
     </Grid>

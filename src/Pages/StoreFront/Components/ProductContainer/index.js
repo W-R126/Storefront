@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { useQuery } from '@apollo/react-hooks';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
@@ -11,19 +10,15 @@ import CategorySideBar from './Components/CategorySideBar';
 import ProductList from './Components/ProductList';
 
 import { getIsShowSideCategory } from '../../../../utils/store';
-import { GET_STORE_SETTING_PRODUCT } from '../../../../graphql/store/store-query';
 import { updateProducdtPageDataAction } from '../../../../actions/productAction';
 
-const ProductContainer = ({ updateProducdtPageDataAction }) => {
+const ProductContainer = ({ storeLoading, updateProducdtPageDataAction }) => {
   const classes = useStyles();
 
-  const { pageData } = useSelector((state) => ({
+  const { pageData, storeInfo } = useSelector((state) => ({
     pageData: state.productReducer.pageData,
+    storeInfo: state.storeReducer.storeInfo,
   }));
-
-  const { loading: storeSettingLoading, data: storeSettingData, error: storeSetingError } = useQuery(
-    GET_STORE_SETTING_PRODUCT
-  );
 
   const showLoadMore = () => {
     if (!pageData) return false;
@@ -44,17 +39,17 @@ const ProductContainer = ({ updateProducdtPageDataAction }) => {
     <div className={classes.root}>
       <Grid container className={classes.MainContent}>
         <Grid item md={12} xs={12} style={{ display: 'flex' }}>
-          {getIsShowSideCategory(storeSettingData) && !storeSetingError && (
+          {getIsShowSideCategory(storeInfo) && (
             <Box className={classes.MobileCategoryWrapper}>
-              <CategorySideBar storeSettingData={storeSettingData} loading={storeSettingLoading} />
+              <CategorySideBar />
             </Box>
           )}
           <SearchBar />
         </Grid>
         <Grid item md={12} xs={12} className={classes.ProductContent}>
-          {getIsShowSideCategory(storeSettingData) && !storeSetingError && (
+          {getIsShowSideCategory(storeInfo) && (
             <Box className={classes.DesktopCateggoryWrapper}>
-              <CategorySideBar storeSettingData={storeSettingData} loading={storeSettingLoading} />
+              <CategorySideBar />
             </Box>
           )}
           <ProductList />

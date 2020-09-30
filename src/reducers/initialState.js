@@ -7,8 +7,13 @@ export default {
   cart: {
     cartList: [],
   },
+  merchant: {
+    netPrice: false,
+    loading: true,
+  },
   store: {
     storeInfo: {},
+    storeLoading: true,
     orderType: {},
   },
   product: {
