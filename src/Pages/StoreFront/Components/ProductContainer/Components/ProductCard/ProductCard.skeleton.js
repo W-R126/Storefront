@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     SkelotonProductImg: {
       flex: '0 0 95px',
-      height: '100%',
+      height: '116px',
       transform: 'scale(1, 1)',
     },
     ProductContent: {

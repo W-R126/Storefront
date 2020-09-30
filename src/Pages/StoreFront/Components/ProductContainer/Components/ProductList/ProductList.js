@@ -112,9 +112,19 @@ const ProductList = ({ client, getProductPaginationAction }) => {
 const CardGrid = styled(Grid)`
   ${(props) => {
     if (props.isSidebar) {
-      return 'max-width: 100%; flex-basis: 100%; @media screen and (min-width: 1100px) {max-width: 50%; flex-basis: 50%}; @media screen and (min-width: 1440px) {max-width: 33.33%; flex-basis: 33.33%}; @media screen and (min-width: 1900px) {max-width: 25%; flex-basis: 25%};';
+      return (
+        'max-width: 25%; flex-basis: 25%; ' +
+        '@media screen and (max-width: 2000px) {max-width: 33.33%; flex-basis: 33.33%}; ' +
+        '@media screen and (max-width: 1700px) {max-width: 50%; flex-basis: 50%}; ' +
+        '@media screen and (max-width: 1200px) {max-width: 100%; flex-basis: 100%}; '
+      );
     } else {
-      return 'max-width: 100%; flex-basis: 100%; @media screen and (min-width: 768px) {max-width: 50%; flex-basis: 50%}; @media screen and (min-width: 1100px) {max-width: 33.33%; flex-basis: 33.33%}; @media screen and (min-width: 1600px) {max-width: 25%; flex-basis: 25%};';
+      return (
+        'max-width: 25%; flex-basis: 25%; ' +
+        '@media screen and (max-width: 1800px) {max-width: 33.33%; flex-basis: 33.33%}; ' +
+        '@media screen and (max-width: 1440px) {max-width: 50%; flex-basis: 50%}; ' +
+        '@media screen and (max-width: 1100px) {max-width: 100%; flex-basis: 100%}; '
+      );
     }
   }}
 `;

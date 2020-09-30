@@ -231,7 +231,7 @@ const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading 
               {renderQtySection().length > 0 && <div className={classes.ProductLabel}>{renderQtySection()}</div>}
             </div>
             <div className={classes.ProductContent}>
-              <div className={classes.TopSection}>
+              {/* <div className={classes.TopSection}>
                 <div className={classes.LeftInfo}>
                   <div className={classes.Title}>{productInfo.name}</div>
                   {_.get(productInfo, 'stocked', false) && (
@@ -242,7 +242,20 @@ const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading 
                   {renderPriceInfo()}
                   <div className={classes.Stock}>{`${getStock()} in stock`}</div>
                 </div>
+              </div> */}
+              <div className={classes.TopSection}>
+                <div className={classes.Title}>{productInfo.name}</div>
+                {renderPriceInfo()}
               </div>
+              <div className={classes.TopSection}>
+                {_.get(productInfo, 'stocked', false) && (
+                  <div className={classes.Status}>Code: {productInfo.bar_code}</div>
+                )}
+                <div className={classes.Value}>
+                  <div className={classes.Stock}>{`${getStock()} in stock`}</div>
+                </div>
+              </div>
+
               <div className={classes.Description}>{productInfo.short_description}</div>
               <div className={classes.Bottom}>{renderBottom()}</div>
             </div>
@@ -286,7 +299,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       padding: '5px',
       boxSizing: 'border-box',
-      height: '129px',
+      minHeight: '132px',
       boxShadow: '0 1px 6px 0 rgba(0, 0, 0, 0.05)',
       border: 'solid 0.5px rgba(186, 195, 201, 0.5)',
       color: theme.palette.primary.text,
@@ -331,6 +344,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
       padding: '5px 17px 11px 10px',
+      overflow: 'hidden',
     },
     TopSection: {
       display: 'flex',
@@ -346,6 +360,9 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: '4px',
       minWidth: '100px',
       fontSize: '14px',
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
     },
     Status: {
       fontSize: '12px',
@@ -368,6 +385,7 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingTop: '2px',
       display: 'flex',
       flexWrap: 'nowrap',
+      marginLeft: '15px',
       '& span': {
         fontSize: '12px',
         fontWeight: 300,
@@ -378,12 +396,20 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '13px',
       fontWeight: 300,
       lineHeight: '18px',
+      display: 'flex',
+      justifyContent: 'flex-end',
+      whiteSpace: 'nowrap',
     },
     Description: {
       fontSize: '12px',
       fontWeight: 300,
       lineHeight: '18px',
       margin: '5px 0 0 0',
+      display: '-webkit-box',
+      '-webkit-line-clamp': 2,
+      '-webkit-box-orient': 'vertical',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
     },
     Bottom: {
       display: 'flex',
