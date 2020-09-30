@@ -1,38 +1,70 @@
 import React from 'react';
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Dialog, Box, Button, Typography } from '@material-ui/core';
+import { Paper, Box, Button, Typography } from '@material-ui/core';
 
 const CleanCartConfirmDlg = ({ hideModal, confirm }) => {
   const classes = useStyles();
 
   return (
-    <Dialog className={classes.root} onClose={hideModal} aria-labelledby="simple-dialog-title" open={true}>
-      <Typography variant="h1" className={classes.Title}>
-        Please confirm
-      </Typography>
-      <Box>
-        <Button variant="contained" onClick={hideModal}>
-          Cancel
-        </Button>
-        <Button variant="contained" onClick={confirm} color="primary" style={{ marginLeft: '40px' }}>
-          Ok
-        </Button>
-      </Box>
-    </Dialog>
+    <Paper className={classes.root}>
+      <Paper className={classes.MainModal} aria-labelledby="simple-dialog-title" open={true}>
+        <Typography variant="h1" className={classes.Title}>
+          Are you sure want to clear your cart?
+        </Typography>
+        <Box style={{ display: 'flex', justifyContent: 'space-between', marginTop: 'auto' }}>
+          <Button variant="contained" onClick={hideModal} className={classes.CancelButton}>
+            Cancel
+          </Button>
+          <Button variant="contained" onClick={confirm} color="primary" className={classes.Confirmbutton}>
+            Clear Cart
+          </Button>
+        </Box>
+      </Paper>
+    </Paper>
   );
 };
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      '& .MuiDialog-paper': {
-        padding: '30px',
-      },
+      left: 0,
+      top: 0,
+      width: '100%',
+      height: '100%',
+      background: 'rgba(186, 195, 201, 0.5)',
+      position: 'absolute',
+    },
+    MainModal: {
+      position: 'absolute',
+      right: '65px',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      width: '100%',
+      maxWidth: '570px',
+      height: '194px',
+      borderRadius: '10px',
+      boxShadow: '0 1px 4px 0 rgba(186, 195, 201, 0.5)',
+      border: 'solid 1px rgba(186, 195, 201, 0.5)',
+      backgroundColor: '#fff',
+      padding: '40px 30px',
+      display: 'flex',
+      justifyContent: 'center',
+      margin: 0,
+      flexDirection: 'column',
     },
     Title: {
       textAlign: 'center',
-      margin: '20px',
+      fontSize: '20px',
+      color: theme.palette.primary.text,
+    },
+    Confirmbutton: {
+      width: '223px',
+      height: '50px',
+    },
+    CancelButton: {
+      width: '223px',
+      height: '50px',
     },
   })
 );

@@ -133,6 +133,9 @@ const useStyles = makeStyles((theme: Theme) =>
       whiteSpace: 'nowrap',
       flexWrap: 'nowrap',
       color: 'white',
+      '@media screen and (max-width: 500px)': {
+        display: 'none',
+      },
     },
   })
 );
