@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { connect, useSelector } from 'react-redux';
-import ReactDOM from 'react-dom';
 
 import moment from 'moment';
 import { useQuery } from '@apollo/react-hooks';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
-  Paper,
+  Dialog,
   Box,
   Grid,
   Typography,
@@ -47,25 +46,8 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
 
   const { data: paymentData, loading: paymentLoading, error: paymentError } = useQuery(GET_STORE_PAYMENTS);
 
-  const ref = useRef(null);
-
-  // return focus to the button when we transitioned from !open -> open
-  // useEffect(() => {
-  //   const handleDocumentClick = (event) => {
-  //     if (ref.current) {
-  //       if (!ReactDOM.findDOMNode(ref.current).contains(event.target)) {
-  //         hideModal();
-  //       }
-  //     }
-  //   };
-
-  //   document.addEventListener('click', handleDocumentClick, false);
-
-  //   return () => {
-  //     document.removeEventListener('click', handleDocumentClick, false);
-  //   };
-  // }, [hideModal, ref]);
-
+  console.log('*******');
+  console.log(paymentData);
   // temp function
   const setFirstOrderType = () => {
     const findDelivery = orderTypesList.find((item) => item.name.toLowerCase() === 'delivery');
@@ -86,6 +68,11 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
   const [addressInfo, setAddressInfo] = useState({
     type: 'Home',
     address: {},
+  });
+  // collect status
+  const [collectTime, setCollectTime] = useState({
+    start: moment(new Date()),
+    end: moment(new Date()).add(1, 'hours'),
   });
 
   const [paymentOption, setPaymentOption] = useState(PAYMENT_OPTIONS.CASH);
@@ -178,8 +165,13 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
     return true;
   };
 
+  const getSettingStyle = () => {
+    if (orderType.name.toLowerCase() === 'collection') return { justifyContent: 'center' };
+    return {};
+  };
+
   return (
-    <Paper className={classes.root} ref={ref}>
+    <Dialog className={classes.root} onClose={hideModal} open={true}>
       <CloseIconButton onClick={hideModal} wrapperClass={classes.CloseButtonWrapper} />
 
       <Box className={classes.TopSection}>
@@ -190,7 +182,7 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
           110620-01
         </Typography>
       </Box>
-      <Grid className={classes.SettingSection} container spacing={2}>
+      <Grid className={classes.SettingSection} container spacing={2} style={getSettingStyle()}>
         <Grid item className={classes.SettingItem}>
           <OrderTypeSelector
             orderType={orderType}
@@ -200,19 +192,39 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
             }}
           />
         </Grid>
-        <Grid item className={classes.SettingItem}>
-          <OrderDatePicker
-            date={orderTimeSlot}
-            onChange={(value) => {
-              setOrderTimeSlot({
-                ...value,
-              });
-            }}
-          />
-        </Grid>
-        <Grid item className={classes.SettingItem}>
-          <OrderAddressSelector addressInfo={addressInfo} onChange={setAddressInfo} />
-        </Grid>
+        {orderType.name.toLowerCase() === 'delivery' && (
+          <>
+            <Grid item className={classes.SettingItem}>
+              <OrderDatePicker
+                title="Delivery Slot"
+                date={orderTimeSlot}
+                onChange={(value) => {
+                  setOrderTimeSlot({
+                    ...value,
+                  });
+                }}
+              />
+            </Grid>
+            <Grid item className={classes.SettingItem}>
+              <OrderAddressSelector addressInfo={addressInfo} onChange={setAddressInfo} />
+            </Grid>
+          </>
+        )}
+        {orderType.name.toLowerCase() === 'collection' && (
+          <>
+            <Grid item className={classes.SettingItem}>
+              <OrderDatePicker
+                title="Collection Time"
+                date={collectTime}
+                onChange={(value) => {
+                  setCollectTime({
+                    ...value,
+                  });
+                }}
+              />
+            </Grid>
+          </>
+        )}
       </Grid>
       {cartList.filter((item) => item.orderType.id === orderType.id).length > 0 && (
         <Box className={classes.OrderContainer}>
@@ -281,23 +293,29 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
         </Button>
       </Box>
       {showCleanCartDlg && <CleanCartConfirmDlg hideModal={() => setShowCleanCartDlg(false)} confirm={clearnCart} />}
-    </Paper>
+    </Dialog>
   );
 };
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      position: 'fixed',
-      right: 0,
-      top: '80px',
-      width: '100%',
-      maxWidth: '700px',
-      borderRadius: '10px',
-      boxShadow: '0 1px 4px 0 rgba(186, 195, 201, 0.5)',
-      border: 'solid 1px rgba(186, 195, 201, 0.5)',
-      backgroundColor: '#fff',
-      padding: '25px 30px 60px',
+      '& .MuiDialog-paper': {
+        position: 'absolute',
+        right: 0,
+        top: '80px',
+        width: '100%',
+        maxWidth: '700px',
+        borderRadius: '10px',
+        boxShadow: '0 1px 4px 0 rgba(186, 195, 201, 0.5)',
+        border: 'solid 1px rgba(186, 195, 201, 0.5)',
+        backgroundColor: '#fff',
+        padding: '25px 30px 60px',
+        margin: 0,
+      },
+      '& .MuiBackdrop-root': {
+        backgroundColor: 'transparent',
+      },
       '& h1': {
         color: theme.palette.primary.text,
       },

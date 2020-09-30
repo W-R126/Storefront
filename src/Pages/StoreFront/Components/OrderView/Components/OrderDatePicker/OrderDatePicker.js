@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
 
+import moment from 'moment';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
-import moment from 'moment';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
 import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from '@material-ui/pickers';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 
-export const OrderDatePicker = ({ date, onChange }) => {
+export const OrderDatePicker = ({ title, date, onChange }) => {
   const classes = useStyles();
   const [editalbe, setEditable] = useState(false);
-
   return (
     <>
       <Typography variant="h4" className={classes.Title}>
-        Delivery slot
+        {title}
         {editalbe ? (
           <IconButton
             className={classes.EditButton}
@@ -54,7 +53,7 @@ export const OrderDatePicker = ({ date, onChange }) => {
             onChange={(d) => {
               onChange({
                 ...date,
-                start: d,
+                start: moment(d),
               });
             }}
             KeyboardButtonProps={{
@@ -70,7 +69,7 @@ export const OrderDatePicker = ({ date, onChange }) => {
             onChange={(d) => {
               onChange({
                 ...date,
-                start: d,
+                start: moment(d),
               });
             }}
             KeyboardButtonProps={{
@@ -85,7 +84,7 @@ export const OrderDatePicker = ({ date, onChange }) => {
             onChange={(d) => {
               onChange({
                 ...date,
-                end: d,
+                end: moment(d),
               });
             }}
             KeyboardButtonProps={{

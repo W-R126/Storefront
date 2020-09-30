@@ -23,7 +23,7 @@ export const formatPrice = (value, storeInfo) => {
   if (localisation.currency_decimal) {
     if (value === null) returnValue = '0.00';
     returnValue = value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  } else returnValue = value;
+  } else returnValue = parseInt(value);
 
   if (localisation.digit_separator === ',') {
     return returnValue.toString().replace('.', ',');

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Dialog, DialogTitle, Box, Button, Typography } from '@material-ui/core';
+import { Dialog, Box, Button, Typography } from '@material-ui/core';
 
 const CleanCartConfirmDlg = ({ hideModal, confirm }) => {
   const classes = useStyles();
