@@ -114,33 +114,58 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       justifyContent: 'space-between',
       width: '104px',
+      '@media screen and (max-width: 550px)': {
+        width: '65px',
+      },
     },
     QtyCount: {
       flex: '1 1 100%',
       textAlign: 'center',
       color: theme.palette.primary.text,
+      '@media screen and (max-width: 550px)': {
+        fontSize: '16px',
+        lineHeight: '20px',
+      },
     },
     ProdcutCartButton: {
       width: '30px',
       height: '30px',
       flex: '0 0 30px',
+      '@media screen and (max-width: 550px)': {
+        width: '20px',
+        height: '20px',
+        flex: '0 0 20px',
+      },
     },
     ProductContent: {
       flex: '1 1 250px',
       maxWidth: '250px',
       marginLeft: '50px',
+      '@media screen and (max-width: 550px)': {
+        flex: '1 1 208px',
+        maxWidth: '208px',
+        marginLeft: '20px',
+      },
     },
     ProductName: {
       whiteSpace: 'nowrap',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       lineHeight: '30px',
+      '@media screen and (max-width: 550px)': {
+        fontSize: '15px',
+        lineHeight: '19px',
+      },
     },
     ProductPrice: {
       display: 'flex',
       marginLeft: 'auto',
       lineHeight: '30px',
       whiteSpace: 'nowrap',
+      '@media screen and (max-width: 550px)': {
+        fontSize: '15px',
+        lineHeight: '19px',
+      },
     },
   })
 );

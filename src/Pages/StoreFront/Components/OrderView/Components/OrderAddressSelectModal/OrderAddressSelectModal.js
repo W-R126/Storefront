@@ -45,56 +45,74 @@ const OrderAddressSelectModal = ({ hideModal, propAddressInfo, onChange }) => {
     return classes.StaticAddressBox;
   };
 
+  const renderHomeAddress = () => {
+    const addresses = getAddressList();
+    const findOne = addresses.find((item) => item.name && item.name.toLowerCase() === 'home');
+    if (findOne)
+      return (
+        <Box className={getAddressBoxClasses('Home')}>
+          <FormControlLabel
+            value="Home"
+            control={
+              <Radio
+                className={classes.AddressRadio}
+                checked={addressInfo.type === 'Home'}
+                onChange={() =>
+                  setAddressInfo({
+                    type: 'Home',
+                    address: findOne,
+                  })
+                }
+              />
+            }
+            label="Home"
+          />
+          <Typography variant="h3" className={classes.StaticAddress}>
+            Test Home Address
+          </Typography>
+        </Box>
+      );
+    return null;
+  };
+
+  const renderOfficeAddress = () => {
+    const addresses = getAddressList();
+    const findOne = addresses.find((item) => item.name && item.name.toLowerCase() === 'office');
+    if (findOne)
+      return (
+        <Box className={getAddressBoxClasses('Office')}>
+          <FormControlLabel
+            value="Office"
+            control={
+              <Radio
+                className={classes.AddressRadio}
+                checked={addressInfo.type === 'Office'}
+                onChange={() =>
+                  setAddressInfo({
+                    type: 'Office',
+                    address: addressInfo.address,
+                  })
+                }
+              />
+            }
+            label="Office"
+          />
+          <Typography variant="h3" className={classes.StaticAddress}>
+            Test Office Address
+          </Typography>
+        </Box>
+      );
+    return null;
+  };
+
   return (
     <Paper className={classes.root}>
       <CloseIconButton onClick={hideModal} wrapperClass={classes.CloseIconWrapper} />
       <Typography className={classes.Title} variant="h2">
         Enter your delivery Address
       </Typography>
-
-      <Box className={getAddressBoxClasses('Home')}>
-        <FormControlLabel
-          value="Home"
-          control={
-            <Radio
-              className={classes.AddressRadio}
-              checked={addressInfo.type === 'Home'}
-              onChange={() =>
-                setAddressInfo({
-                  type: 'Home',
-                  address: addressInfo.address,
-                })
-              }
-            />
-          }
-          label="Home"
-        />
-        <Typography variant="h3" className={classes.StaticAddress}>
-          Test Home Address
-        </Typography>
-      </Box>
-
-      <Box className={getAddressBoxClasses('Office')}>
-        <FormControlLabel
-          value="Office"
-          control={
-            <Radio
-              className={classes.AddressRadio}
-              checked={addressInfo.type === 'Office'}
-              onChange={() =>
-                setAddressInfo({
-                  type: 'Office',
-                  address: addressInfo.address,
-                })
-              }
-            />
-          }
-          label="Office"
-        />
-        <Typography variant="h3" className={classes.StaticAddress}>
-          Test Office Address
-        </Typography>
-      </Box>
+      {renderHomeAddress()}
+      {renderOfficeAddress()}
 
       <Box className={getAddressBoxClasses('New Address')}>
         <FormControlLabel

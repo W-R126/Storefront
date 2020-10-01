@@ -48,15 +48,15 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
 
   const { data: paymentData, loading: paymentLoading, error: paymentError } = useQuery(GET_STORE_PAYMENTS);
 
-  console.log('*******');
-  console.log(paymentData);
+  // console.log('*******');
+  // console.log(paymentData);
   // temp function
   const setFirstOrderType = () => {
     const findDelivery = orderTypesList.find((item) => item.name.toLowerCase() === 'delivery');
-    if (storeOrderType.name === findDelivery.name) return { ...storeOrderType };
+    if (findDelivery) if (storeOrderType.name === findDelivery.name) return { ...storeOrderType };
 
     const findCollect = orderTypesList.find((item) => item.name.toLowerCase() === 'collection');
-    if (storeOrderType.name === findCollect.name) return { ...storeOrderType };
+    if (findCollect) if (storeOrderType.name === findCollect.name) return { ...storeOrderType };
 
     return findDelivery;
   };
@@ -289,7 +289,7 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
         <Button
           variant="contained"
           onClick={handleClickClearCart}
-          className={classes.SubmitButton}
+          className={classes.ClearButton}
           disabled={!checkClearCartBtnStatus()}
         >
           Clear Cart
@@ -297,7 +297,7 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
         <Button
           variant="contained"
           color="primary"
-          className={classes.ClearButton}
+          className={classes.SubmitButton}
           onClick={handleClickSubmitOrder}
           disabled={!checkSubmitBtnStatus()}
         >
@@ -366,7 +366,7 @@ const useStyles = makeStyles((theme: Theme) =>
     PaymentOptions: {
       display: 'flex',
       flexDirection: 'column',
-      margin: '56px 0 58px 0',
+      margin: '56px 0 28px 0',
       '& h3': {
         fontWeight: 'normal',
         color: theme.palette.primary.text,
@@ -387,17 +387,23 @@ const useStyles = makeStyles((theme: Theme) =>
     Footer: {
       display: 'flex',
       justifyContent: 'space-between',
-      marginTop: '20px',
+      marginTop: '30px',
     },
     SubmitButton: {
       width: '50%',
       height: '50px',
       maxWidth: '223px',
+      '@media screen and (max-width: 550px)': {
+        width: '45%',
+      },
     },
     ClearButton: {
       width: '50%',
       height: '50px',
       maxWidth: '223px',
+      '@media screen and (max-width: 550px)': {
+        width: '40%',
+      },
     },
     TotalPriceItem: {
       margin: '10px 0 0 0',
@@ -407,6 +413,9 @@ const useStyles = makeStyles((theme: Theme) =>
       flexWrap: 'nowrap',
       '& span': {
         marginLeft: 'auto',
+      },
+      '@media screen and (max-width: 550px)': {
+        paddingLeft: '87px',
       },
     },
   })
