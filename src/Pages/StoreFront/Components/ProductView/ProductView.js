@@ -13,12 +13,7 @@ import AllergyBox from './Components/AllergyBox';
 import IngredientsBox from './Components/IngredientsBox';
 import ProductViewSkeleton from './ProductView.skeleton';
 
-import {
-  getAddOnCartPrice,
-  getProductPriceInfo,
-  getProductTotalAmount,
-  getMeasureTypStr,
-} from '../../../../utils/product';
+import { getAddOnCartPrice, getProductPriceInfo, getMeasureTypStr } from '../../../../utils/product';
 import { formatPrice } from '../../../../utils/string';
 import { getCurrency } from '../../../../utils/store';
 

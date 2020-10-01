@@ -31,6 +31,7 @@ const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading 
     netPrice: state.merchantReducer.netPrice,
   }));
 
+  const [isNewProductCart, setIsNewProductCart] = useState(false);
   const [showProductView, setShowProductView] = useState(false);
   const [showAddOnView, setShowAddOnView] = useState(false);
   const [tempProductCart, setTempProductCart] = useState();
@@ -115,6 +116,7 @@ const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading 
     delete productTemp.id;
     delete productTemp.addons;
     delete productTemp.prices;
+    setIsNewProductCart(true);
     setTempProductCart({
       ...productInfo,
       id: uuidv4(),
@@ -137,6 +139,14 @@ const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading 
     const addOns = _.get(productInfo, 'addons', []);
     if (addOns.length > 0) return true;
     return false;
+  };
+
+  const getAddonViewProductCart = () => {
+    if (isNewProductCart) return tempProductCart;
+    else {
+      const productCart = getProductCart(cartInfo, productInfo.id, orderType);
+      return productCart[productCart.length - 1];
+    }
   };
 
   const renderQtySection = () => {
@@ -206,7 +216,10 @@ const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading 
           <CartAddItemButton
             onClick={(e) => {
               e.stopPropagation();
-              updateCarts(1);
+              if (getAddOnPossible()) {
+                setIsNewProductCart(false);
+                setShowAddOnView(true);
+              } else updateCarts(-1);
             }}
             type="plus"
           />
@@ -285,8 +298,9 @@ const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading 
             setShowAddOnView(false);
           }}
           productId={productInfo.id}
-          curProductCart={tempProductCart}
+          curProductCart={getAddonViewProductCart()}
           productPrice={getProductTotalAmount(productInfo, orderType, netPrice)}
+          isNew={isNewProductCart}
         />
       )}
     </>

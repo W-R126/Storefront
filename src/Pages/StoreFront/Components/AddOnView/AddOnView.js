@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { useQuery } from '@apollo/react-hooks';
+
+import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Dialog, Box, Button, Typography } from '@material-ui/core';
-
 import AddOnGroup from '../../../../SharedComponents/AddOnGroup';
 import CloseIconButton from '../../../../SharedComponents/CloseIconButton';
 import AddOnViewSkeleton from './AddOnView.skeleton';
@@ -15,7 +16,7 @@ import { GET_PRODUCT_ADDONS } from '../../../../graphql/products/product-query';
 import { GET_DELIVERY_ADDRESS } from '../../../../graphql/auth/auth-query';
 import { updateProductCartAction } from '../../../../actions/cartAction';
 
-const AddOnView = ({ open, hideModal, productId, curProductCart, productPrice, updateProductCartAction }) => {
+const AddOnView = ({ open, hideModal, productId, curProductCart, productPrice, updateProductCartAction, isNew }) => {
   const { loading: productAddonsLoading, data: productAddons } = useQuery(GET_PRODUCT_ADDONS, {
     variables: {
       id: productId,
@@ -30,6 +31,10 @@ const AddOnView = ({ open, hideModal, productId, curProductCart, productPrice, u
     storeInfo: state.storeReducer.storeInfo,
   }));
   const groupRefs = useRef([]);
+
+  useEffect(() => {
+    if (!isNew) setAddonCarts([...curProductCart.addons]);
+  }, [curProductCart.addons, isNew]);
 
   const getProductAddons = () => {
     const products = _.get(productAddons, 'products', []);
@@ -68,6 +73,26 @@ const AddOnView = ({ open, hideModal, productId, curProductCart, productPrice, u
     return findOne;
   };
 
+  const checkAddonChanges = () => {
+    const prevAddons = curProductCart.addons.sort((a, b) => a.id - b.id);
+    const curAddons = addonCarts.sort((a, b) => a.id - b.id);
+
+    if (prevAddons.length !== curAddons.length) return true;
+
+    for (let i = 0; i < prevAddons.length; i++) {
+      if (prevAddons[i].id !== curAddons[i].id) return true;
+      const prevGroupAddons = prevAddons[i].addons.sort((a, b) => a.id - b.id);
+      const curGroupAddons = curAddons[i].addons.sort((a, b) => a.id - b.id);
+      if (prevGroupAddons.length !== curGroupAddons.length) return true;
+      for (let j = 0; j < prevGroupAddons.length; j++) {
+        if (prevGroupAddons[j].id !== curGroupAddons[j].id || prevGroupAddons[j].qty !== curGroupAddons[j].qty)
+          return true;
+      }
+    }
+
+    return false;
+  };
+
   const handleClickAddCart = () => {
     let validate = true;
     groupRefs.current.forEach((item) => {
@@ -75,10 +100,21 @@ const AddOnView = ({ open, hideModal, productId, curProductCart, productPrice, u
       if (!groupValidate) validate = groupValidate;
     });
     if (!validate) return;
-    updateProductCartAction({
-      ...curProductCart,
-      addons: [...addonCarts],
-    });
+
+    if (isNew || checkAddonChanges()) {
+      updateProductCartAction({
+        ...curProductCart,
+        id: uuidv4(),
+        qty: 1,
+        addons: [...addonCarts],
+      });
+    } else {
+      updateProductCartAction({
+        ...curProductCart,
+        qty: curProductCart.qty + 1,
+        addons: [...addonCarts],
+      });
+    }
     hideModal();
   };
 
@@ -108,6 +144,7 @@ const AddOnView = ({ open, hideModal, productId, curProductCart, productPrice, u
                 setGroupAddOns={(groupAddOns) => {
                   changeAddOns(groupAddOns);
                 }}
+                isNew={isNew}
                 ref={(el) => (groupRefs.current[nIndex] = el)}
               />
             );

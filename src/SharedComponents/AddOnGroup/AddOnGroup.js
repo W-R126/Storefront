@@ -11,211 +11,213 @@ import AddOnGroupSkeleton from './AddOnGroup.skeleton';
 
 import { GET_ADDON_GROUPS } from '../../graphql/products/product-query';
 
-const AddOnGroup = forwardRef(({ productId, groupId, productGroupAddonInfo, groupAddOns, setGroupAddOns }, ref) => {
-  const classes = useStyles();
+const AddOnGroup = forwardRef(
+  ({ productId, groupId, productGroupAddonInfo, groupAddOns, setGroupAddOns, isNew }, ref) => {
+    const classes = useStyles();
 
-  const { orderType, cartList } = useSelector((state) => ({
-    orderType: state.storeReducer.orderType,
-    cartList: state.cartReducer.cartList,
-  }));
+    const { orderType, cartList } = useSelector((state) => ({
+      orderType: state.storeReducer.orderType,
+      cartList: state.cartReducer.cartList,
+    }));
 
-  const [groupValidate, setGroupValidate] = useState({
-    validate: true,
-    errorMsg: '',
-  });
-
-  const { loading, data: addonGroups } = useQuery(GET_ADDON_GROUPS, {
-    variables: {
-      id: groupId,
-    },
-  });
-
-  const getGroupInfo = () => {
-    const addonGroupsTemp = _.get(addonGroups, 'addonGroups', []);
-    if (!addonGroupsTemp || addonGroupsTemp.length === 0) return null;
-
-    const tempInfo = { ...productGroupAddonInfo };
-    delete tempInfo.options;
-
-    // caluclate
-    const options = productGroupAddonInfo.options;
-    const addons = addonGroupsTemp[0].addons;
-    const mergeAddons = _.map(addons, (item) => {
-      return _.assign(item, _.find(options, ['id', item.id]));
+    const [groupValidate, setGroupValidate] = useState({
+      validate: true,
+      errorMsg: '',
     });
 
-    return {
-      ...addonGroupsTemp[0],
-      ...tempInfo,
-      ...productGroupAddonInfo,
-      addons: [...mergeAddons],
-    };
-  };
+    const { loading, data: addonGroups } = useQuery(GET_ADDON_GROUPS, {
+      variables: {
+        id: groupId,
+      },
+    });
 
-  useEffect(() => {
-    const groupInfo = getGroupInfo();
-    const findProductCart = cartList.find((item) => item.id === productId && item.orderType.name === orderType.name);
-    if (!groupInfo || !groupInfo.addons || groupInfo.addons.length === 0) return;
-    if (!findProductCart) {
-      if (_.get(groupInfo, 'default_all', false)) {
-        setGroupAddOns({
-          ...groupInfo,
-          addons: [
-            ...groupInfo.addons.map((item) => {
-              return { ...item, qty: 1 };
-            }),
-          ],
-        });
-      } else {
-        const filterDefault = groupInfo.addons.filter((item) => item.default);
-        if (filterDefault.length > 0)
+    const getGroupInfo = () => {
+      const addonGroupsTemp = _.get(addonGroups, 'addonGroups', []);
+      if (!addonGroupsTemp || addonGroupsTemp.length === 0) return null;
+
+      const tempInfo = { ...productGroupAddonInfo };
+      delete tempInfo.options;
+
+      // caluclate
+      const options = productGroupAddonInfo.options;
+      const addons = addonGroupsTemp[0].addons;
+      const mergeAddons = _.map(addons, (item) => {
+        return _.assign(item, _.find(options, ['id', item.id]));
+      });
+
+      return {
+        ...addonGroupsTemp[0],
+        ...tempInfo,
+        ...productGroupAddonInfo,
+        addons: [...mergeAddons],
+      };
+    };
+
+    useEffect(() => {
+      const groupInfo = getGroupInfo();
+      const findProductCart = cartList.find((item) => item.id === productId && item.orderType.name === orderType.name);
+      if (!isNew || !groupInfo || !groupInfo.addons || groupInfo.addons.length === 0) return;
+      if (!findProductCart) {
+        if (_.get(groupInfo, 'default_all', false)) {
           setGroupAddOns({
             ...groupInfo,
             addons: [
-              ...filterDefault.map((item) => {
+              ...groupInfo.addons.map((item) => {
                 return { ...item, qty: 1 };
               }),
             ],
           });
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addonGroups]);
-
-  useImperativeHandle(ref, () => ({
-    checkValidate() {
-      const groupInfo = getGroupInfo();
-      const groupAddons = _.get(groupInfo, 'addons', []);
-      const addonCarts = _.get(groupAddOns, 'addons', []);
-      let tempGroupValidate = {
-        validate: true,
-        errorMsg: '',
-      };
-      if (groupAddons && groupAddons.length > 0) {
-        if (groupInfo.mandatory) {
-          if (!addonCarts || addonCarts.length === 0)
-            tempGroupValidate = {
-              validate: false,
-              errorMsg: 'Select an at least one option',
-            };
+        } else {
+          const filterDefault = groupInfo.addons.filter((item) => item.default);
+          if (filterDefault.length > 0)
+            setGroupAddOns({
+              ...groupInfo,
+              addons: [
+                ...filterDefault.map((item) => {
+                  return { ...item, qty: 1 };
+                }),
+              ],
+            });
         }
       }
-      setGroupValidate({
-        ...tempGroupValidate,
-      });
-      return tempGroupValidate.validate;
-    },
-  }));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [addonGroups]);
 
-  const getAddOnItemInfo = (optionId) => {
-    const addons = _.get(groupAddOns, 'addons', []);
-    return addons.find((item) => item.id === optionId);
-  };
+    useImperativeHandle(ref, () => ({
+      checkValidate() {
+        const groupInfo = getGroupInfo();
+        const groupAddons = _.get(groupInfo, 'addons', []);
+        const addonCarts = _.get(groupAddOns, 'addons', []);
+        let tempGroupValidate = {
+          validate: true,
+          errorMsg: '',
+        };
+        if (groupAddons && groupAddons.length > 0) {
+          if (groupInfo.mandatory) {
+            if (!addonCarts || addonCarts.length === 0)
+              tempGroupValidate = {
+                validate: false,
+                errorMsg: 'Select an at least one option',
+              };
+          }
+        }
+        setGroupValidate({
+          ...tempGroupValidate,
+        });
+        return tempGroupValidate.validate;
+      },
+    }));
 
-  const changeAddOnData = (newData) => {
-    const groupInfo = getGroupInfo();
-    const addons = _.get(groupAddOns, 'addons', []);
+    const getAddOnItemInfo = (optionId) => {
+      const addons = _.get(groupAddOns, 'addons', []);
+      return addons.find((item) => item.id === optionId);
+    };
 
-    if (newData.qty === 0) {
-      setGroupAddOns({
-        ...getGroupInfo(),
-        addons: [...addons.filter((item) => item.id !== newData.id)],
-      });
-    } else {
-      const findOne = addons.find((item) => item.id === newData.id);
-      if (findOne) {
+    const changeAddOnData = (newData) => {
+      const groupInfo = getGroupInfo();
+      const addons = _.get(groupAddOns, 'addons', []);
+
+      if (newData.qty === 0) {
         setGroupAddOns({
           ...getGroupInfo(),
-          addons: [
-            ...addons.map((item) => {
-              if (item.id === newData.id) return newData;
-              return item;
-            }),
-          ],
+          addons: [...addons.filter((item) => item.id !== newData.id)],
         });
       } else {
-        if (!groupInfo.multi_selection) {
+        const findOne = addons.find((item) => item.id === newData.id);
+        if (findOne) {
           setGroupAddOns({
             ...getGroupInfo(),
-            addons: [newData],
+            addons: [
+              ...addons.map((item) => {
+                if (item.id === newData.id) return newData;
+                return item;
+              }),
+            ],
           });
         } else {
-          setGroupAddOns({
-            ...getGroupInfo(),
-            addons: [...addons, newData],
-          });
+          if (!groupInfo.multi_selection) {
+            setGroupAddOns({
+              ...getGroupInfo(),
+              addons: [newData],
+            });
+          } else {
+            setGroupAddOns({
+              ...getGroupInfo(),
+              addons: [...addons, newData],
+            });
+          }
         }
       }
-    }
-  };
+    };
 
-  const getOrderedItems = () => {
-    const groupInfo = getGroupInfo();
-    const addons = _.get(groupInfo, 'addons', []);
+    const getOrderedItems = () => {
+      const groupInfo = getGroupInfo();
+      const addons = _.get(groupInfo, 'addons', []);
 
-    const positioned = addons.filter((item) => item.position && item.position >= 0);
-    const nonPositioned = addons.filter((item) => !item.position || item.position < 0);
-    return [
-      ...positioned.sort((a, b) => a.position - b.position),
-      ...nonPositioned.sort((a, b) => a.name.toLowerCase() - b.name.toLowerCase()),
-    ];
-  };
+      const positioned = addons.filter((item) => item.position && item.position >= 0);
+      const nonPositioned = addons.filter((item) => !item.position || item.position < 0);
+      return [
+        ...positioned.sort((a, b) => a.position - b.position),
+        ...nonPositioned.sort((a, b) => a.name.toLowerCase() - b.name.toLowerCase()),
+      ];
+    };
 
-  const getGroupTitle = () => {
-    const group = _.get(getGroupInfo(), 'group', '');
+    const getGroupTitle = () => {
+      const group = _.get(getGroupInfo(), 'group', '');
 
-    const allow_free = _.get(getGroupInfo(), 'allow_free', 0);
-    if (allow_free > 0) {
-      return `${group} (${allow_free} for free)`;
-    }
-    return group;
-  };
+      const allow_free = _.get(getGroupInfo(), 'allow_free', 0);
+      if (allow_free > 0) {
+        return `${group} (${allow_free} for free)`;
+      }
+      return group;
+    };
 
-  const renderDescription = () => {
-    const description = _.get(getGroupInfo(), 'description', '');
+    const renderDescription = () => {
+      const description = _.get(getGroupInfo(), 'description', '');
+      return (
+        <Typography className={classes.Description} variant="h3">
+          {description}
+        </Typography>
+      );
+    };
+
     return (
-      <Typography className={classes.Description} variant="h3">
-        {description}
-      </Typography>
-    );
-  };
-
-  return (
-    <Box className={classes.root}>
-      {loading ? (
-        <AddOnGroupSkeleton />
-      ) : (
-        <>
-          <Box className={classes.TitleBox}>
-            <Typography variant="h2" className={classes.GroupTitle}>
-              {getGroupTitle()}
-            </Typography>
-            <Zoom in={!groupValidate.validate}>
-              <Typography variant="h3" className={classes.ErrorMsg}>
-                {groupValidate.errorMsg}
+      <Box className={classes.root}>
+        {loading ? (
+          <AddOnGroupSkeleton />
+        ) : (
+          <>
+            <Box className={classes.TitleBox}>
+              <Typography variant="h2" className={classes.GroupTitle}>
+                {getGroupTitle()}
               </Typography>
-            </Zoom>
-          </Box>
-          {renderDescription()}
-          <Grid container spacing={3}>
-            {getOrderedItems().map((item) => {
-              return (
-                <Grid item className={classes.AddOnGridItem} key={item.id}>
-                  <AddOnItem
-                    itemData={item}
-                    groupInfo={groupAddOns}
-                    itemCartInfo={getAddOnItemInfo(item.id)}
-                    setItemCartInfo={changeAddOnData}
-                  />
-                </Grid>
-              );
-            })}
-          </Grid>
-        </>
-      )}
-    </Box>
-  );
-});
+              <Zoom in={!groupValidate.validate}>
+                <Typography variant="h3" className={classes.ErrorMsg}>
+                  {groupValidate.errorMsg}
+                </Typography>
+              </Zoom>
+            </Box>
+            {renderDescription()}
+            <Grid container spacing={3}>
+              {getOrderedItems().map((item) => {
+                return (
+                  <Grid item className={classes.AddOnGridItem} key={item.id}>
+                    <AddOnItem
+                      itemData={item}
+                      groupInfo={groupAddOns}
+                      itemCartInfo={getAddOnItemInfo(item.id)}
+                      setItemCartInfo={changeAddOnData}
+                    />
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </>
+        )}
+      </Box>
+    );
+  }
+);
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
