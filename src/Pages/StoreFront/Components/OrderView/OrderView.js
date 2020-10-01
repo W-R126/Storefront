@@ -15,6 +15,7 @@ import {
   FormControlLabel,
   FormControl,
   Button,
+  CircularProgress,
 } from '@material-ui/core';
 
 import CloseIconButton from '../../../../SharedComponents/CloseIconButton';
@@ -61,6 +62,8 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
     return findDelivery;
   };
 
+  // status variables
+  const [loading, setLoading] = useState(false);
   const [orderType, setOrderType] = useState({ ...setFirstOrderType() });
   const [showCleanCartDlg, setShowCleanCartDlg] = useState(false);
   const [orderTimeSlot, setOrderTimeSlot] = useState({
@@ -214,7 +217,6 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
   return (
     <Dialog className={classes.root} onClose={hideModal} open={true}>
       <CloseIconButton onClick={hideModal} wrapperClass={classes.CloseButtonWrapper} />
-
       <Box className={classes.TopSection}>
         <Typography variant="h4" align="center">
           Order Number
@@ -223,87 +225,101 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
           110620-01
         </Typography>
       </Box>
-      <Grid className={classes.SettingSection} container spacing={2} style={getSettingStyle()}>
-        <Grid item className={classes.SettingItem}>
-          <OrderTypeSelector
-            orderType={orderType}
-            orderTypesList={orderTypesList}
-            onChange={(value) => {
-              setOrderType(value);
-            }}
-          />
-        </Grid>
-        {orderType.name.toLowerCase() === 'delivery' && (
-          <>
-            <Grid item className={classes.SettingItem}>
-              <OrderDatePicker
-                title="Delivery Slot"
-                date={orderTimeSlot}
-                onChange={(value) => {
-                  setOrderTimeSlot({
-                    ...value,
-                  });
-                }}
-              />
-            </Grid>
-            {checkIsLogin() && (
-              <Grid item className={classes.SettingItem}>
-                <OrderAddressSelector addressInfo={addressInfo} onChange={setAddressInfo} />
-              </Grid>
-            )}
-          </>
-        )}
-        {orderType.name.toLowerCase() === 'collection' && (
-          <>
-            <Grid item className={classes.SettingItem}>
-              <OrderDatePicker
-                title="Collection Time"
-                date={collectTime}
-                onChange={(value) => {
-                  setCollectTime({
-                    ...value,
-                  });
-                }}
-              />
-            </Grid>
-          </>
-        )}
-      </Grid>
-      {cartList.filter((item) => item.orderType.id === orderType.id).length > 0 && (
-        <Box className={classes.OrderContainer}>
-          {cartList
-            .filter((item) => item.orderType.id === orderType.id)
-            .map((item) => {
-              return <OrderItem key={item.id} orderInfo={item} net_price={netPrice} />;
-            })}
-          <Typography variant="h2" className={classes.TotalPriceItem} style={{ fontWeight: 500 }}>
-            TotalDue
-            <span style={{ marginRight: '5px' }} dangerouslySetInnerHTML={{ __html: getCurrency(storeInfo) }}></span>
-            {formatPrice(calculateTotalPrice(), storeInfo)}
+      {loading ? (
+        <Box className={classes.SpinnerContainer}>
+          <CircularProgress className={classes.LoadingSpinner} />
+          <Typography className={classes.LoadingTxt} variant="h1">
+            Connecting you to storename store
           </Typography>
-          {renderTaxes()}
         </Box>
+      ) : (
+        <>
+          <Grid className={classes.SettingSection} container spacing={2} style={getSettingStyle()}>
+            <Grid item className={classes.SettingItem}>
+              <OrderTypeSelector
+                orderType={orderType}
+                orderTypesList={orderTypesList}
+                onChange={(value) => {
+                  setOrderType(value);
+                }}
+              />
+            </Grid>
+            {orderType.name.toLowerCase() === 'delivery' && (
+              <>
+                <Grid item className={classes.SettingItem}>
+                  <OrderDatePicker
+                    title="Delivery Slot"
+                    date={orderTimeSlot}
+                    onChange={(value) => {
+                      setOrderTimeSlot({
+                        ...value,
+                      });
+                    }}
+                  />
+                </Grid>
+                {checkIsLogin() && (
+                  <Grid item className={classes.SettingItem}>
+                    <OrderAddressSelector addressInfo={addressInfo} onChange={setAddressInfo} />
+                  </Grid>
+                )}
+              </>
+            )}
+            {orderType.name.toLowerCase() === 'collection' && (
+              <>
+                <Grid item className={classes.SettingItem}>
+                  <OrderDatePicker
+                    title="Collection Time"
+                    date={collectTime}
+                    onChange={(value) => {
+                      setCollectTime({
+                        ...value,
+                      });
+                    }}
+                  />
+                </Grid>
+              </>
+            )}
+          </Grid>
+          {cartList.filter((item) => item.orderType.id === orderType.id).length > 0 && (
+            <Box className={classes.OrderContainer}>
+              {cartList
+                .filter((item) => item.orderType.id === orderType.id)
+                .map((item) => {
+                  return <OrderItem key={item.id} orderInfo={item} net_price={netPrice} />;
+                })}
+              <Typography variant="h2" className={classes.TotalPriceItem} style={{ fontWeight: 500 }}>
+                TotalDue
+                <span
+                  style={{ marginRight: '5px' }}
+                  dangerouslySetInnerHTML={{ __html: getCurrency(storeInfo) }}
+                ></span>
+                {formatPrice(calculateTotalPrice(), storeInfo)}
+              </Typography>
+              {renderTaxes()}
+            </Box>
+          )}
+          {renderPayments()}
+          <Box className={classes.Footer}>
+            <Button
+              variant="contained"
+              onClick={handleClickClearCart}
+              className={classes.ClearButton}
+              disabled={!checkClearCartBtnStatus()}
+            >
+              Clear Cart
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.SubmitButton}
+              onClick={handleClickSubmitOrder}
+              disabled={!checkSubmitBtnStatus()}
+            >
+              Submit Order
+            </Button>
+          </Box>
+        </>
       )}
-      {renderPayments()}
-      <Box className={classes.Footer}>
-        <Button
-          variant="contained"
-          onClick={handleClickClearCart}
-          className={classes.ClearButton}
-          disabled={!checkClearCartBtnStatus()}
-        >
-          Clear Cart
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          className={classes.SubmitButton}
-          onClick={handleClickSubmitOrder}
-          disabled={!checkSubmitBtnStatus()}
-        >
-          Submit Order
-        </Button>
-      </Box>
       {showCleanCartDlg && <CleanCartConfirmDlg hideModal={() => setShowCleanCartDlg(false)} confirm={clearnCart} />}
     </Dialog>
   );
@@ -324,6 +340,7 @@ const useStyles = makeStyles((theme: Theme) =>
         backgroundColor: '#fff',
         padding: '25px 30px 60px',
         margin: 0,
+        minHeight: '756px',
       },
       '& .MuiBackdrop-root': {
         backgroundColor: 'transparent',
@@ -395,6 +412,7 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: '223px',
       '@media screen and (max-width: 550px)': {
         width: '45%',
+        minWidth: '150px',
       },
     },
     ClearButton: {
@@ -416,6 +434,34 @@ const useStyles = makeStyles((theme: Theme) =>
       },
       '@media screen and (max-width: 550px)': {
         paddingLeft: '87px',
+      },
+    },
+    SpinnerContainer: {
+      position: 'absolute',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      left: 0,
+      top: 0,
+      width: '100%',
+      height: '100%',
+    },
+    LoadingSpinner: {
+      width: '70px !important',
+      height: '70px !important',
+      '@media screen and (max-width: 550px)': {
+        width: '40px !important',
+        height: '40px !important',
+      },
+    },
+    LoadingTxt: {
+      fontWeight: 'normal',
+      margin: '37px 0 0 0',
+      color: `${theme.palette.primary.main} !important`,
+      '@media screen and (max-width: 550px)': {
+        margin: '17px 0 0 0',
+        fontSize: '16px',
       },
     },
   })
