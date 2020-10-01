@@ -33,4 +33,7 @@ export default {
   localization: {
     countryCode: 'GB',
   },
+  modalStatus: {
+    curModal: 'Productview Modal',
+  },
 };

@@ -19,26 +19,23 @@ import SignUpModal from '../../../../SharedComponents/SignUpModal';
 import ResetPassword from '../../../../SharedComponents/ResetPasswordModal';
 import CartButton from './Components/CartButton';
 
-import * as types from '../../../../actions/actionTypes';
+import { UPDATE_TRANS_TYPE, SET_CUR_MODAL } from '../../../../actions/actionTypes';
 import { getUserAvatar, getUserName, getMerchantName, checkUserMerchantRole } from '../../../../utils/auth';
+import { getOrderTypes } from '../../../../utils/store';
+import { MODAL_STATUS } from '../../../../constants';
 
 import LogoSvg from '../../../../assets/img/logo.svg';
-import { getOrderTypes } from '../../../../utils/store';
 
 const Header = ({ children }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
   const [orderTypesList, setOrderTypesList] = useState([]);
-  const [showLogin, setShowLogin] = useState(false);
-  const [showUserDetail, setShowUserDetail] = useState(false);
-  const [showSignUp, setShowSignUp] = useState(false);
-  const [showResetPassowrdModal, setShowResetPassword] = useState(false);
-
-  const { authInfo, orderType, storeInfo } = useSelector((state) => ({
+  const { authInfo, orderType, storeInfo, curModal } = useSelector((state) => ({
     authInfo: state.authReducer.userInfo,
     orderType: state.storeReducer.orderType,
     storeInfo: state.storeReducer.storeInfo,
+    curModal: state.modalStatusReducer.curModal,
   }));
 
   useEffect(() => {
@@ -49,7 +46,7 @@ const Header = ({ children }) => {
   useEffect(() => {
     if (orderTypesList.length > 0)
       dispatch({
-        type: types.UPDATE_TRANS_TYPE,
+        type: UPDATE_TRANS_TYPE,
         payload: orderTypesList[0],
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,7 +93,7 @@ const Header = ({ children }) => {
           wrapperClass={classes.OrderTypeDropDown}
           onChange={(selected) => {
             dispatch({
-              type: types.UPDATE_TRANS_TYPE,
+              type: UPDATE_TRANS_TYPE,
               payload: { id: selected.id, name: selected.label, pricing_type: selected.pricing_type },
             });
           }}
@@ -112,7 +109,12 @@ const Header = ({ children }) => {
               className={classes.UserAvatar}
               src={getUserAvatar(authInfo)}
               role="button"
-              onClick={() => setShowUserDetail(true)}
+              onClick={() =>
+                dispatch({
+                  type: SET_CUR_MODAL,
+                  payload: MODAL_STATUS.USERDETAIL,
+                })
+              }
             />
             {renderUserInfo()}
           </>
@@ -121,8 +123,12 @@ const Header = ({ children }) => {
             <button
               className={classes.SignUpButton}
               onClick={() => {
-                setShowSignUp(true);
-                setShowLogin(false);
+                // setShowSignUp(true);
+                // setShowLogin(false);
+                dispatch({
+                  type: SET_CUR_MODAL,
+                  payload: MODAL_STATUS.SIGNUP,
+                });
               }}
             >
               Signup
@@ -130,8 +136,12 @@ const Header = ({ children }) => {
             <button
               className={classes.LoginButton}
               onClick={() => {
-                setShowLogin(true);
-                setShowSignUp(false);
+                dispatch({
+                  type: SET_CUR_MODAL,
+                  payload: MODAL_STATUS.LOGIN,
+                });
+                // setShowLogin(true);
+                // setShowSignUp(false);
               }}
             >
               Login
@@ -139,7 +149,11 @@ const Header = ({ children }) => {
             <MDIconButton
               wrapperClass={classes.IconLoginButton}
               onClick={() => {
-                setShowLogin(true);
+                // setShowLogin(true);
+                dispatch({
+                  type: SET_CUR_MODAL,
+                  payload: MODAL_STATUS.LOGIN,
+                });
               }}
             >
               <ExitToAppIcon />
@@ -147,40 +161,79 @@ const Header = ({ children }) => {
           </>
         )}
       </Toolbar>
-      {showLogin && (
+      {curModal === MODAL_STATUS.LOGIN && (
         <LoginModal
-          isShow={showLogin}
+          isShow={curModal === MODAL_STATUS.LOGIN}
           hideModal={() => {
-            setShowLogin(false);
+            // setShowLogin(false);
+            dispatch({
+              type: SET_CUR_MODAL,
+              payload: MODAL_STATUS.NONE,
+            });
           }}
           gotoSignUp={() => {
-            setShowLogin(false);
-            setShowSignUp(true);
+            // setShowLogin(false);
+            // setShowSignUp(true);
+            dispatch({
+              type: SET_CUR_MODAL,
+              payload: MODAL_STATUS.SIGNUP,
+            });
           }}
           gotoForgotPassword={() => {
-            setShowLogin(false);
-            setShowResetPassword(true);
+            // setShowLogin(false);
+            // setShowResetPassword(true);
+            dispatch({
+              type: SET_CUR_MODAL,
+              payload: MODAL_STATUS.PASSWORD_RESET,
+            });
           }}
         />
       )}
-      {showUserDetail && <UserDialog hideModal={() => setShowUserDetail(false)} />}
-      {showSignUp && (
+      {curModal === MODAL_STATUS.USERDETAIL && (
+        <UserDialog
+          hideModal={() => {
+            // setShowUserDetail(false)
+            dispatch({
+              type: SET_CUR_MODAL,
+              payload: MODAL_STATUS.NONE,
+            });
+          }}
+        />
+      )}
+      {curModal === MODAL_STATUS.SIGNUP && (
         <SignUpModal
-          hideModal={() => setShowSignUp(false)}
+          hideModal={() =>
+            dispatch({
+              type: SET_CUR_MODAL,
+              payload: MODAL_STATUS.NONE,
+            })
+          }
           gotoLogin={() => {
-            setShowSignUp(false);
-            setShowLogin(true);
+            // setShowSignUp(false);
+            // setShowLogin(true);
+            dispatch({
+              type: SET_CUR_MODAL,
+              payload: MODAL_STATUS.LOGIN,
+            });
           }}
         />
       )}
-      {showResetPassowrdModal && (
+      {curModal === MODAL_STATUS.PASSWORD_RESET && (
         <ResetPassword
           hideModal={() => {
-            setShowResetPassword(false);
+            // setShowResetPassword(false);
+            dispatch({
+              type: SET_CUR_MODAL,
+              payload: MODAL_STATUS.NONE,
+            });
           }}
           gotoLogin={() => {
-            setShowResetPassword(false);
-            setShowLogin(true);
+            // setShowResetPassword(false);
+            // setShowLogin(true);
+            dispatch({
+              type: SET_CUR_MODAL,
+              payload: MODAL_STATUS.LOGIN,
+            });
           }}
         />
       )}

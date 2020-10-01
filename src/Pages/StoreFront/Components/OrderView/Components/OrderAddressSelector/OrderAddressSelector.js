@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
@@ -7,8 +8,13 @@ import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import OrderAddressSelectModal from '../OrderAddressSelectModal';
 
-const OrderAddressSelector = ({ addressInfo, onChange }) => {
+import { SET_CUR_MODAL } from '../../../../../../actions/actionTypes';
+import { MODAL_STATUS } from '../../../../../../constants';
+
+const OrderAddressSelector = ({ addressInfo, onChange, isUserLogin, hideModal }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
   const [editalbe, setEditable] = useState(false);
 
   const renderAddress = () => {
@@ -71,7 +77,15 @@ const OrderAddressSelector = ({ addressInfo, onChange }) => {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              setEditable(true);
+              if (isUserLogin) {
+                setEditable(true);
+              } else {
+                hideModal();
+                dispatch({
+                  type: SET_CUR_MODAL,
+                  payload: MODAL_STATUS.LOGIN,
+                });
+              }
             }}
           >
             <CreateOutlinedIcon className={classes.ControlIcon} />

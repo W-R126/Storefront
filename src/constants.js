@@ -1297,3 +1297,13 @@ export const getDialCodeWithCode = (code) => {
   if (findOne) return findOne.dial_code;
   else return '';
 };
+
+export const MODAL_STATUS = {
+  NONE: '',
+  LOGIN: 'Login Modal',
+  SIGNUP: 'Signup Modal',
+  PASSWORD_RESET: 'Password reset',
+  USERDETAIL: 'User details Modal',
+  ORDERVIEW: 'Orderview Modal',
+  PRODUCTVIEW: 'Productview Modal',
+};

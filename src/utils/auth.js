@@ -52,3 +52,9 @@ export const getMerchantName = (userInfo) => {
   if (findStore) return findMerchant.tname;
   else return '';
 };
+
+export const checkUserIsLogin = (authInfo) => {
+  const uesrID = _.get(authInfo, 'id', null);
+  if (uesrID === null) return false;
+  return true;
+};

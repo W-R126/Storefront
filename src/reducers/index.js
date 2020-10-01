@@ -5,6 +5,7 @@ import cartReducer from './cartReducer';
 import merchantReducer from './merchantReducer';
 import storeReducer from './storeReducer';
 import productReducer from './productReducer';
+import modalStatusReducer from './modalStatusReducer';
 
 export default combineReducers({
   localizationReducer,
@@ -13,4 +14,5 @@ export default combineReducers({
   merchantReducer,
   storeReducer,
   productReducer,
+  modalStatusReducer,
 });

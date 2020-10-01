@@ -22,3 +22,6 @@ export const UPDATE_PRODUCT_LIST = 'Update product list';
 // filter
 export const UPDATE_PRODUCT_CATEGORY_FIILTER = 'Update product category filter';
 export const UPDATE_PRODUCT_SEARCH_STR_FILTER = 'Update product search string filter';
+
+//set current showing modal
+export const SET_CUR_MODAL = 'Set current showing modal';

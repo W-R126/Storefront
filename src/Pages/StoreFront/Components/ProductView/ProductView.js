@@ -101,9 +101,13 @@ const ProductView = ({ open, hideModal, productId, setShowAddonView, setCurProdu
 
   const getProductLabel = () => {
     const productInfo = getProduct();
-    if (productInfo.pack_qty > 1) {
-      return `${productInfo.pack_qty} x ${productInfo.pack_item.measure_amount}${getMeasureTypStr(
-        productInfo.pack_item.measure_type
+    const pack_qty = _.get(productInfo, 'pack_qty', 0);
+
+    if (pack_qty > 1) {
+      const packItem = _.get(productInfo, 'pack_item', {});
+
+      return `${pack_qty} x ${_.get(packItem, 'measure_amount', '')}${getMeasureTypStr(
+        _.get(packItem, 'measure_type', '')
       )}`;
     } else {
       if (!productInfo.measure_amount || !productInfo.measure_type) return '';

@@ -4,6 +4,18 @@ export const GET_CURRENT_USER = gql`
   query currentUser {
     currentUser {
       id
+      first_name
+      last_name
+      addresses {
+        name
+        id
+        line1
+        line2
+        city_town
+        postcode
+        lat
+        lng
+      }
     }
   }
 `;
@@ -36,16 +48,30 @@ export const GET_DELIVERY_ADDRESS = gql`
   {
     currentUser {
       id
+      first_name
+      last_name
       addresses {
+        name
         id
-        type
         line1
         line2
         city_town
+        country
         postcode
         lat
         lng
       }
+      # id
+      # addresses {
+      #   id
+      #   type
+      #   line1
+      #   line2
+      #   city_town
+      #   postcode
+      #   lat
+      #   lng
+      # }
     }
   }
 `;

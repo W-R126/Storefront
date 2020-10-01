@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect, useSelector, useDispatch } from 'react-redux';
 
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
@@ -21,14 +21,19 @@ import { updateProductCartAction } from '../../../../../../actions/cartAction';
 
 import ProductPlaceHolderImg from '../../../../../../assets/img/product-card-placeholder.png';
 import { getMeasureTypStr } from '../../../../../../utils/product';
+import { MODAL_STATUS } from '../../../../../../constants';
+import { SET_CUR_MODAL } from '../../../../../../actions/actionTypes';
 
 const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading }) => {
   const classes = useStyles();
 
-  const { storeInfo, cartInfo, netPrice } = useSelector((state) => ({
+  const dispatch = useDispatch();
+
+  const { storeInfo, cartInfo, netPrice, curModal } = useSelector((state) => ({
     storeInfo: state.storeReducer.storeInfo,
     cartInfo: state.cartReducer.cartList,
     netPrice: state.merchantReducer.netPrice,
+    curModal: state.modalStatusReducer.curModal,
   }));
 
   const [isNewProductCart, setIsNewProductCart] = useState(false);
@@ -111,6 +116,11 @@ const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading 
   };
 
   const handleClickAddCart = () => {
+    dispatch({
+      type: SET_CUR_MODAL,
+      payload: MODAL_STATUS.NONE,
+    });
+
     const productAddonCart = getAddOns();
     const productTemp = { ...productInfo };
     delete productTemp.id;
@@ -233,6 +243,10 @@ const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading 
         className={classes.root}
         role="button"
         onClick={() => {
+          dispatch({
+            type: SET_CUR_MODAL,
+            payload: MODAL_STATUS.NONE,
+          });
           setShowProductView(true);
         }}
       >
@@ -278,7 +292,7 @@ const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading 
 
       {showProductView && (
         <ProductView
-          open={showProductView}
+          open={true}
           hideModal={() => {
             setShowProductView(false);
           }}
@@ -293,7 +307,7 @@ const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading 
       )}
       {showAddOnView && (
         <AddOnView
-          open={showAddOnView}
+          open={true}
           hideModal={() => {
             setShowAddOnView(false);
           }}

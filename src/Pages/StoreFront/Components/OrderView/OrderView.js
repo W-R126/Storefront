@@ -16,6 +16,7 @@ import {
   FormControl,
   Button,
   CircularProgress,
+  TextareaAutosize,
 } from '@material-ui/core';
 
 import CloseIconButton from '../../../../SharedComponents/CloseIconButton';
@@ -24,17 +25,12 @@ import OrderDatePicker from './Components/OrderDatePicker';
 import OrderItem from './Components/OrderItem';
 import OrderAddressSelector from './Components/OrderAddressSelector';
 import CleanCartConfirmDlg from './Components/ClearnCartConfirmDlg';
+import { GET_STORE_PAYMENTS } from '../../../../graphql/store/store-query';
+import { clearProductCartAction } from '../../../../actions/cartAction';
 import { getAddOnCartPrice } from '../../../../utils/product';
 import { formatPrice } from '../../../../utils/string';
 import { getCurrency } from '../../../../utils/store';
-import { GET_STORE_PAYMENTS } from '../../../../graphql/store/store-query';
-import { clearProductCartAction } from '../../../../actions/cartAction';
-const PAYMENT_OPTIONS = {
-  CASH: 'CASH',
-  VISA: 'Visa ending with 4787',
-  NEWCARD: 'New Card',
-  SQQR: 'SQ QR',
-};
+import { checkUserIsLogin } from '../../../../utils/auth';
 
 const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
   const classes = useStyles();
@@ -49,8 +45,6 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
 
   const { data: paymentData, loading: paymentLoading, error: paymentError } = useQuery(GET_STORE_PAYMENTS);
 
-  // console.log('*******');
-  // console.log(paymentData);
   // temp function
   const setFirstOrderType = () => {
     const findDelivery = orderTypesList.find((item) => item.name.toLowerCase() === 'delivery');
@@ -66,24 +60,42 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
   const [loading, setLoading] = useState(false);
   const [orderType, setOrderType] = useState({ ...setFirstOrderType() });
   const [showCleanCartDlg, setShowCleanCartDlg] = useState(false);
-  const [orderTimeSlot, setOrderTimeSlot] = useState({
-    start: moment(new Date()),
-    end: moment(new Date()).add(1, 'hours'),
-  });
-  const [addressInfo, setAddressInfo] = useState({
-    type: 'New Address',
-    address: {},
-  });
-  // collect status
-  const [collectTime, setCollectTime] = useState({
-    start: moment(new Date()),
-    end: moment(new Date()).add(1, 'hours'),
-  });
 
-  const [paymentOption, setPaymentOption] = useState(PAYMENT_OPTIONS.CASH);
+  const [orderSettingInfo, setOrderSettingInfo] = useState({
+    delivery: {
+      addressInfo: {
+        type: '',
+        address: {},
+      },
+      transferTime: {
+        start: moment(new Date()),
+        end: moment(new Date()).add(1, 'hours'),
+      },
+      paymentOption: '',
+      notes: {
+        show: false,
+        value: '',
+      },
+    },
+    collection: {
+      transferTime: {
+        start: moment(new Date()),
+        end: moment(new Date()).add(1, 'hours'),
+      },
+      paymentOption: '',
+      notes: {
+        show: false,
+        value: '',
+      },
+    },
+  });
 
   const handleChangePaymentOptions = (event) => {
-    setPaymentOption(event.target.value);
+    const tempData = { ...orderSettingInfo };
+    tempData[orderType.name.toLowerCase()].paymentOption = event.target.value;
+    setOrderSettingInfo({
+      ...tempData,
+    });
   };
 
   const calculateTotalPrice = () => {
@@ -167,7 +179,7 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
   const checkSubmitBtnStatus = () => {
     const filteredCartList = cartList.filter((item) => item.orderType.id === orderType.id);
     if (filteredCartList.length === 0) return false;
-    if (!checkIsLogin()) return false;
+    if (!checkUserIsLogin(authInfo)) return false;
     return true;
   };
 
@@ -176,10 +188,16 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
     return {};
   };
 
-  const checkIsLogin = () => {
-    const uesrID = _.get(authInfo, 'id', null);
-    if (uesrID === null) return false;
-    return true;
+  const handleClickNotes = () => {
+    const temp = { ...orderSettingInfo };
+    temp[orderType.name.toLowerCase()].notes.show = true;
+    setOrderSettingInfo({ ...temp });
+  };
+
+  const handleChangeNotes = (e) => {
+    const temp = { ...orderSettingInfo };
+    temp[orderType.name.toLowerCase()].notes.value = e.target.value;
+    setOrderSettingInfo({ ...temp });
   };
 
   const renderPayments = () => {
@@ -196,7 +214,7 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
           <RadioGroup
             aria-label="payment-options"
             name="payment-options"
-            value={paymentOption}
+            value={orderSettingInfo[orderType.name.toLowerCase()].paymentOption}
             onChange={handleChangePaymentOptions}
           >
             {paymentTypes.map((item) => {
@@ -249,19 +267,36 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
                 <Grid item className={classes.SettingItem}>
                   <OrderDatePicker
                     title="Delivery Slot"
-                    date={orderTimeSlot}
+                    date={orderSettingInfo.delivery.transferTime}
                     onChange={(value) => {
-                      setOrderTimeSlot({
-                        ...value,
+                      setOrderSettingInfo({
+                        ...orderSettingInfo,
+                        delivery: {
+                          ...orderSettingInfo.delivery,
+                          transferTime: {
+                            ...value,
+                          },
+                        },
                       });
                     }}
                   />
                 </Grid>
-                {checkIsLogin() && (
-                  <Grid item className={classes.SettingItem}>
-                    <OrderAddressSelector addressInfo={addressInfo} onChange={setAddressInfo} />
-                  </Grid>
-                )}
+                <Grid item className={classes.SettingItem}>
+                  <OrderAddressSelector
+                    addressInfo={orderSettingInfo.delivery.addressInfo}
+                    onChange={(value) => {
+                      setOrderSettingInfo({
+                        ...orderSettingInfo,
+                        delivery: {
+                          ...orderSettingInfo.delivery,
+                          addressInfo: { ...value },
+                        },
+                      });
+                    }}
+                    isUserLogin={checkUserIsLogin(authInfo)}
+                    hideModal={hideModal}
+                  />
+                </Grid>
               </>
             )}
             {orderType.name.toLowerCase() === 'collection' && (
@@ -269,10 +304,14 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
                 <Grid item className={classes.SettingItem}>
                   <OrderDatePicker
                     title="Collection Time"
-                    date={collectTime}
+                    date={orderSettingInfo.collection.transferTime}
                     onChange={(value) => {
-                      setCollectTime({
-                        ...value,
+                      setOrderSettingInfo({
+                        ...orderSettingInfo,
+                        collection: {
+                          ...orderSettingInfo.collection,
+                          transferTime: { ...value },
+                        },
                       });
                     }}
                   />
@@ -280,6 +319,26 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
               </>
             )}
           </Grid>
+          {orderSettingInfo[orderType.name.toLowerCase()].notes.show ? (
+            <>
+              <Typography className={classes.NotesLabel} variant="h4">
+                Notes
+              </Typography>
+              <TextareaAutosize
+                className={classes.Notes}
+                aria-label="minimum height"
+                rowsMin={3}
+                rowsMax={3}
+                placeholder=""
+                value={orderSettingInfo[orderType.name.toLowerCase()].notes.value}
+                onChange={handleChangeNotes}
+              />
+            </>
+          ) : (
+            <Typography className={classes.NotesBtn} variant="h3" onClick={handleClickNotes}>
+              Add Notes
+            </Typography>
+          )}
           {cartList.filter((item) => item.orderType.id === orderType.id).length > 0 && (
             <Box className={classes.OrderContainer}>
               {cartList
@@ -373,6 +432,36 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '33.33%',
       '@media screen and (max-width: 600px)': {
         width: '50%',
+      },
+    },
+    NotesBtn: {
+      cursor: 'pointer',
+      margin: '30px 0 0 0',
+    },
+    NotesLabel: {
+      opacity: 0.5,
+      margin: '30px 0 6px',
+    },
+    Notes: {
+      resize: 'none',
+      margin: '0',
+      color: theme.palette.primary.text,
+      fontSize: '14px',
+      '&:focus': {
+        border: `1px solid ${theme.palette.primary.main}`,
+        outlineColor: theme.palette.primary.main,
+        outlineOffset: 0,
+        outlineStyle: 'auto',
+        outlineWidth: '1.11111px',
+        overflowWrap: 'break-word',
+      },
+      '&:active': {
+        border: `1px solid ${theme.palette.primary.main}`,
+        outlineColor: theme.palette.primary.main,
+        outlineOffset: 0,
+        outlineStyle: 'auto',
+        outlineWidth: '1.11111px',
+        overflowWrap: 'break-word',
       },
     },
     OrderContainer: {
