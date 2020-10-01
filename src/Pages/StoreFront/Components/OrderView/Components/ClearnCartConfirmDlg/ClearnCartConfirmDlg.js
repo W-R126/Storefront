@@ -34,12 +34,16 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '100%',
       background: 'rgba(186, 195, 201, 0.5)',
       position: 'absolute',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      '@media screen and (max-width: 550px)': {
+        paddingLeft: '15px',
+        paddingRight: '15px',
+      },
     },
     MainModal: {
       position: 'absolute',
-      right: '65px',
-      top: '50%',
-      transform: 'translateY(-50%)',
       width: '100%',
       maxWidth: '570px',
       height: '194px',
@@ -61,10 +65,16 @@ const useStyles = makeStyles((theme: Theme) =>
     Confirmbutton: {
       width: '223px',
       height: '50px',
+      '@media screen and (max-width: 550px)': {
+        width: '120px',
+      },
     },
     CancelButton: {
       width: '223px',
       height: '50px',
+      '@media screen and (max-width: 550px)': {
+        width: '120px',
+      },
     },
   })
 );
