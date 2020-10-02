@@ -139,3 +139,18 @@ export const GET_STORE_SETTING_PRODUCT = gql`
     }
   }
 `;
+
+export const GET_ORDERTYPE_STATUS = gql`
+  {
+    orderTypes {
+      name
+      workflow {
+        stages {
+          id
+          order
+          name
+        }
+      }
+    }
+  }
+`;

@@ -47,8 +47,6 @@ const StoreFrontPage = () => {
   const [showOpeningHourModal, setShowOpeningHourModal] = useState(false);
   const [loadStoreData, { loading: storeLoading, error: storeError, data: storeData }] = useLazyQuery(GET_STORE_DATA, {
     onCompleted(d) {
-      console.log('*****');
-      console.log(d);
       dispatch({
         type: UPDATE_STORE_INFO,
         payload: d.store,

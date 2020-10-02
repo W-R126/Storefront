@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { useMutation, useLazyQuery } from '@apollo/react-hooks';
-import _ from 'lodash';
 import AuthModal from '../AuthModal';
 import PhoneInputView from './Components/PhoneInputView';
 import ContactView from './Components/ContactView';

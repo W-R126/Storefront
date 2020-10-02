@@ -151,7 +151,7 @@ const OrderAddressSelectModal = ({ hideModal, propAddressInfo, onChange }) => {
           {getAddressList().map((item) => {
             if (renderAddress(item).length === 0) return null;
             return (
-              <MenuItem className={classes.AddressMenuItem} value={item.id}>
+              <MenuItem className={classes.AddressMenuItem} value={item.id} key={item.id}>
                 {renderAddress(item)}
               </MenuItem>
             );

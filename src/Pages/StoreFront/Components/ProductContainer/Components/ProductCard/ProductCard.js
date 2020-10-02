@@ -229,7 +229,7 @@ const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading 
               if (getAddOnPossible()) {
                 setIsNewProductCart(false);
                 setShowAddOnView(true);
-              } else updateCarts(-1);
+              } else updateCarts(1);
             }}
             type="plus"
           />

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 
+import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import moment from 'moment';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
   Dialog,
@@ -25,7 +26,8 @@ import OrderDatePicker from './Components/OrderDatePicker';
 import OrderItem from './Components/OrderItem';
 import OrderAddressSelector from './Components/OrderAddressSelector';
 import CleanCartConfirmDlg from './Components/ClearnCartConfirmDlg';
-import { GET_STORE_PAYMENTS } from '../../../../graphql/store/store-query';
+import { GET_STORE_PAYMENTS, GET_ORDERTYPE_STATUS } from '../../../../graphql/store/store-query';
+import { ADD_ORDER } from '../../../../graphql/products/product-mutation';
 import { clearProductCartAction } from '../../../../actions/cartAction';
 import { getAddOnCartPrice } from '../../../../utils/product';
 import { formatPrice } from '../../../../utils/string';
@@ -35,16 +37,21 @@ import { checkUserIsLogin } from '../../../../utils/auth';
 const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
   const classes = useStyles();
 
-  const { storeInfo, storeOrderType, cartList, netPrice, authInfo } = useSelector((state) => ({
+  const { storeInfo, storeOrderType, cartList, netPrice, userInfo } = useSelector((state) => ({
     storeInfo: state.storeReducer.storeInfo,
     storeOrderType: state.storeReducer.orderType,
     cartList: state.cartReducer.cartList,
     netPrice: state.merchantReducer.netPrice,
-    authInfo: state.authReducer.userInfo,
+    userInfo: state.authReducer.userInfo,
   }));
 
   const { data: paymentData, loading: paymentLoading, error: paymentError } = useQuery(GET_STORE_PAYMENTS);
-
+  const { data: orderTypesStatus, loading: orderTypesStatusLoading, error: orderTypesStatusError } = useQuery(
+    GET_ORDERTYPE_STATUS
+  );
+  const [addOrderMutation, { data: addedOrderData, loading: addOrderLoading, error: addOrderError }] = useMutation(
+    ADD_ORDER
+  );
   // temp function
   const setFirstOrderType = () => {
     const findDelivery = orderTypesList.find((item) => item.name.toLowerCase() === 'delivery');
@@ -68,8 +75,8 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
         address: {},
       },
       transferTime: {
-        start: moment(new Date()),
-        end: moment(new Date()).add(1, 'hours'),
+        start: moment(new Date()).add(10, 'minutes'),
+        end: moment(new Date()).add(70, 'minutes'),
       },
       paymentOption: '',
       notes: {
@@ -79,8 +86,8 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
     },
     collection: {
       transferTime: {
-        start: moment(new Date()),
-        end: moment(new Date()).add(1, 'hours'),
+        start: moment(new Date()).add(10, 'minutes'),
+        end: moment(new Date()).add(70, 'minutes'),
       },
       paymentOption: '',
       notes: {
@@ -121,25 +128,28 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
     return totalPrice;
   };
 
-  const renderTaxes = () => {
-    const returnArr = [];
+  const reduceTaxes = () => {
     const taxKind = [];
     const filteredCartList = cartList.filter((item) => item.orderType.id === orderType.id);
     filteredCartList.forEach((item) => {
       const { priceInfo } = item;
       priceInfo.taxes.forEach((itemTax) => {
         if (itemTax.rate > 0) {
-          const indexOf = taxKind.indexOf(itemTax.name);
-          if (indexOf <= 0) taxKind.push(itemTax.name.toLowerCase());
+          const indexOf = taxKind.find((itemFind) => itemFind.id === itemTax.id);
+          if (indexOf <= 0)
+            taxKind.push({
+              id: itemTax.id,
+              name: itemTax.name,
+            });
         }
       });
     });
 
-    const getTotalTaxValue = (taxName) => {
+    const getTotalTaxValue = (taxId) => {
       let totalValue = 0;
       filteredCartList.forEach((item) => {
         const { priceInfo } = item;
-        const filterTax = priceInfo.taxes.find((itemTax) => itemTax.name.toLowerCase() === taxName);
+        const filterTax = priceInfo.taxes.find((itemTax) => itemTax.id === taxId);
         if (filterTax && filterTax.rate > 0) {
           totalValue += (priceInfo.price * filterTax.rate) / 100;
         }
@@ -147,19 +157,152 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
       return totalValue;
     };
 
+    return taxKind.map((item) => {
+      return {
+        ...item,
+        amount: getTotalTaxValue(item.id),
+      };
+    });
+  };
+
+  const renderTaxes = () => {
+    const returnArr = [];
+    const taxKind = reduceTaxes();
+
     taxKind.forEach((item) => {
-      const taxPrice = getTotalTaxValue(item);
       returnArr.push(
         <Typography variant="h2" className={classes.TotalPriceItem}>
           {`${item.toUpperCase()} ${netPrice ? ' (Include)' : ''}`}
-          <span>{formatPrice(calculateTotalPrice(taxPrice, storeInfo))}</span>
+          <span>{formatPrice(calculateTotalPrice(item.amount, storeInfo))}</span>
         </Typography>
       );
     });
     return returnArr;
   };
 
-  const handleClickSubmitOrder = () => {};
+  const getOrderTypesStatus = () => {
+    if (!orderTypesStatus) return null;
+    const findOne = orderTypesStatus.orderTypes.find(
+      (item) => item.name.toLowerCase() === orderType.name.toLowerCase()
+    );
+    return {
+      id: findOne.workflow.stages[0].id,
+      order: findOne.workflow.stages[0].order,
+      name: findOne.workflow.stages[0].name,
+    };
+  };
+
+  const handleClickSubmitOrder = () => {
+    const order_id = uuidv4();
+    const selectedInfo = orderSettingInfo[orderType.name.toLowerCase()];
+    const getProductAddons = (product) => {
+      const addons = [];
+      product.addons.forEach((item) => {
+        item.addons.forEach((itemOne) => {
+          addons.push({
+            addon_id: itemOne.id,
+            name: itemOne.name,
+            group: item.group,
+            price: {
+              amount: itemOne.price,
+              quantity: itemOne.qty,
+              measure: itemOne.measure_amount,
+              measure_type: itemOne.measure_type,
+              taxes: [],
+            },
+          });
+        });
+      });
+      return addons;
+    };
+    const items = cartList.map((item) => {
+      return {
+        is_manual: false,
+        bar_code: item.bar_code,
+        notes: [],
+        category: {
+          id: item.category.id,
+          name: item.category.name,
+        },
+        product_id: item.productId,
+        name: item.name,
+        price: {
+          amount: item.price,
+          quantity: item.qty,
+          measure: item.measure_amount,
+          measure_type: item.measure_type,
+          taxes: {
+            id: item.priceInfo.taxes.id,
+            name: item.priceInfo.taxes.name,
+            rate: item.priceInfo.taxes.rate,
+          },
+        },
+        addons: getProductAddons(item),
+      };
+    });
+    // get payment types
+    const paymentType = getPaymentTypes().find((item) => item.id === selectedInfo.paymentOption);
+    const inputJson = {
+      id: order_id,
+      order_id: order_id,
+      order_no: '',
+      notes: [
+        {
+          content: selectedInfo.notes.value,
+        },
+      ],
+      delivery: {
+        address: {
+          line1: selectedInfo.addressInfo.address.line1,
+          line2: selectedInfo.addressInfo.address.line2,
+          city_town: selectedInfo.addressInfo.address.city_town,
+          country: selectedInfo.addressInfo.address.country,
+          postcode: selectedInfo.addressInfo.address.postcode,
+        },
+        name: `${userInfo.first_name} ${userInfo.last_name}`,
+        mobile: '',
+      },
+      shopper: {
+        id: userInfo.id,
+        first_name: userInfo.first_name,
+        last_name: userInfo.last_name,
+      },
+      statuses: {
+        ...getOrderTypesStatus(),
+      },
+      order_type: {
+        id: orderType.id,
+        type: orderType.pricing_type,
+        name: orderType.name,
+      },
+      items: [...items],
+      total_price: {
+        amount: calculateTotalPrice(),
+        taxes: reduceTaxes(),
+      },
+      payments: [
+        {
+          payment_type: {
+            id: paymentType.id,
+            name: paymentType.name,
+          },
+          change_due: 0,
+          amount: calculateTotalPrice(),
+          status: 'pre-auth',
+          reference: 'resource',
+        },
+      ],
+    };
+    try {
+      addOrderMutation({
+        variables: {
+          input: inputJson,
+        },
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleClickClearCart = () => {
     setShowCleanCartDlg(true);
@@ -177,9 +320,9 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
   };
 
   const checkSubmitBtnStatus = () => {
-    const filteredCartList = cartList.filter((item) => item.orderType.id === orderType.id);
-    if (filteredCartList.length === 0) return false;
-    if (!checkUserIsLogin(authInfo)) return false;
+    // const filteredCartList = cartList.filter((item) => item.orderType.id === orderType.id);
+    // if (filteredCartList.length === 0) return false;
+    // if (!checkUserIsLogin(userInfo)) return false;
     return true;
   };
 
@@ -200,11 +343,17 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
     setOrderSettingInfo({ ...temp });
   };
 
-  const renderPayments = () => {
+  const getPaymentTypes = () => {
     const store = _.get(paymentData, 'store', null);
     if (!store) return null;
 
     const paymentTypes = _.get(store, 'payment_types', []);
+    if (!paymentTypes || paymentTypes.length === 0) return null;
+    return paymentTypes;
+  };
+
+  const renderPayments = () => {
+    const paymentTypes = getPaymentTypes();
     if (!paymentTypes || paymentTypes.length === 0) return null;
 
     return (
@@ -217,9 +366,10 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
             value={orderSettingInfo[orderType.name.toLowerCase()].paymentOption}
             onChange={handleChangePaymentOptions}
           >
-            {paymentTypes.map((item) => {
+            {paymentTypes.map((item, nIndex) => {
               return (
                 <FormControlLabel
+                  key={nIndex}
                   value={item.id}
                   control={<Radio className={classes.PaymentOptionRadio} />}
                   label={item.name}
@@ -243,7 +393,7 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
           110620-01
         </Typography>
       </Box>
-      {loading ? (
+      {addOrderLoading ? (
         <Box className={classes.SpinnerContainer}>
           <CircularProgress className={classes.LoadingSpinner} />
           <Typography className={classes.LoadingTxt} variant="h1">
@@ -293,7 +443,7 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
                         },
                       });
                     }}
-                    isUserLogin={checkUserIsLogin(authInfo)}
+                    isUserLogin={checkUserIsLogin(userInfo)}
                     hideModal={hideModal}
                   />
                 </Grid>
@@ -399,7 +549,7 @@ const useStyles = makeStyles((theme: Theme) =>
         backgroundColor: '#fff',
         padding: '25px 30px 60px',
         margin: 0,
-        minHeight: '756px',
+        minHeight: '556px',
       },
       '& .MuiBackdrop-root': {
         backgroundColor: 'transparent',

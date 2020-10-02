@@ -4,14 +4,35 @@ import moment from 'moment';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Typography, IconButton } from '@material-ui/core';
-import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from '@material-ui/pickers';
+import { Typography, IconButton, TextField } from '@material-ui/core';
+import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 
 export const OrderDatePicker = ({ title, date, onChange }) => {
   const classes = useStyles();
   const [editalbe, setEditable] = useState(false);
+
+  const getHoursFromHHMM = (strHHMM) => {
+    return parseInt(strHHMM.substr(0, 2));
+  };
+
+  const getMinutesFromHHMM = (strHHMM) => {
+    return parseInt(strHHMM.substr(3, 2));
+  };
+
+  const getStartTimeValidate = () => {
+    const curValue = new Date().valueOf();
+    if (curValue > date.start.valueOf()) return "Start time can't be past time.";
+    if (date.start.valueOf() >= date.end.valueOf()) return 'Start time should be before the end time.';
+    return '';
+  };
+
+  const getEndTimeValidate = () => {
+    if (date.end.valueOf() < date.start.valueOf()) return 'End time should be after the start time.';
+    return '';
+  };
+
   return (
     <>
       <Typography variant="h4" className={classes.Title}>
@@ -61,35 +82,54 @@ export const OrderDatePicker = ({ title, date, onChange }) => {
             }}
             disablePast={true}
           />
-          <KeyboardTimePicker
-            margin="normal"
-            id="time-picker-start"
+          <TextField
+            className={classes.StartTime}
+            id="start-time"
             label="Start Time"
-            value={date.start}
-            onChange={(d) => {
+            type="time"
+            value={date.start.format('HH:mm')}
+            onChange={(e) => {
               onChange({
                 ...date,
-                start: moment(d),
+                start: date.start.set({
+                  hour: getHoursFromHHMM(e.target.value),
+                  minute: getMinutesFromHHMM(e.target.value),
+                }),
               });
             }}
-            KeyboardButtonProps={{
-              'aria-label': 'change time',
+            InputLabelProps={{
+              shrink: true,
             }}
+            inputProps={{
+              step: 300, // 5 min
+            }}
+            error={getStartTimeValidate().length > 0 ? true : false}
+            helperText={getStartTimeValidate()}
           />
-          <KeyboardTimePicker
-            margin="normal"
-            id="time-picker-end"
+
+          <TextField
+            id="end-time"
+            className={classes.EndTime}
             label="End Time"
-            value={date.end}
-            onChange={(d) => {
+            type="time"
+            value={date.end.format('HH:mm')}
+            onChange={(e) => {
               onChange({
                 ...date,
-                end: moment(d),
+                end: date.end.set({
+                  hour: getHoursFromHHMM(e.target.value),
+                  minute: getMinutesFromHHMM(e.target.value),
+                }),
               });
             }}
-            KeyboardButtonProps={{
-              'aria-label': 'change time',
+            InputLabelProps={{
+              shrink: true,
             }}
+            inputProps={{
+              step: 300, // 5 min
+            }}
+            error={getEndTimeValidate().length > 0 ? true : false}
+            helperText={getEndTimeValidate()}
           />
         </MuiPickersUtilsProvider>
       ) : (
@@ -120,6 +160,14 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '18px',
       height: '18px',
       color: theme.palette.primary.title,
+    },
+    StartTime: {
+      width: '100%',
+      margin: '10px 0 0 0',
+    },
+    EndTime: {
+      width: '100%',
+      margin: '20px 0 0 0',
     },
   })
 );
