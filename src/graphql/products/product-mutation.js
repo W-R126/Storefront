@@ -100,7 +100,7 @@ interface OrderInput {
   delivery: Delivery;
   shopper: Shopper;
   statuses: Statuses;
-  device?: Device;
+  device?: Device | null;
   order_type: OrderType;
   items: Item[];
   total_price: TotalPrice;

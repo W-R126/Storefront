@@ -4,7 +4,7 @@ import { connect, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import moment from 'moment';
-import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
   Dialog,
@@ -26,6 +26,7 @@ import OrderDatePicker from './Components/OrderDatePicker';
 import OrderItem from './Components/OrderItem';
 import OrderAddressSelector from './Components/OrderAddressSelector';
 import CleanCartConfirmDlg from './Components/ClearnCartConfirmDlg';
+import AddOrderSuccessDlg from './Components/AddOrderSuccessDlg';
 import { GET_STORE_PAYMENTS, GET_ORDERTYPE_STATUS } from '../../../../graphql/store/store-query';
 import { ADD_ORDER } from '../../../../graphql/products/product-mutation';
 import { clearProductCartAction } from '../../../../actions/cartAction';
@@ -65,6 +66,7 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
 
   // status variables
   const [loading, setLoading] = useState(false);
+  const [showSuccessDlg, setShowSuccessDlg] = useState(false);
   const [orderType, setOrderType] = useState({ ...setFirstOrderType() });
   const [showCleanCartDlg, setShowCleanCartDlg] = useState(false);
 
@@ -227,15 +229,17 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
         product_id: item.productId,
         name: item.name,
         price: {
-          amount: item.price,
+          amount: item.priceInfo.price,
           quantity: item.qty,
           measure: item.measure_amount,
           measure_type: item.measure_type,
-          taxes: {
-            id: item.priceInfo.taxes.id,
-            name: item.priceInfo.taxes.name,
-            rate: item.priceInfo.taxes.rate,
-          },
+          taxes: item.priceInfo.taxes.map((itemOne) => {
+            return {
+              id: itemOne.id,
+              name: itemOne.name,
+              rate: itemOne.rate,
+            };
+          }),
         },
         addons: getProductAddons(item),
       };
@@ -270,6 +274,10 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
       statuses: {
         ...getOrderTypesStatus(),
       },
+      device: {
+        device_id: '',
+        device_name: '',
+      },
       order_type: {
         id: orderType.id,
         type: orderType.pricing_type,
@@ -285,6 +293,7 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
           payment_type: {
             id: paymentType.id,
             name: paymentType.name,
+            type: paymentType.type,
           },
           change_due: 0,
           amount: calculateTotalPrice(),
@@ -298,7 +307,13 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
         variables: {
           input: inputJson,
         },
-      });
+      })
+        .then((res) => {
+          setShowSuccessDlg(true);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } catch (err) {
       console.log(err);
     }
@@ -320,9 +335,9 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
   };
 
   const checkSubmitBtnStatus = () => {
-    // const filteredCartList = cartList.filter((item) => item.orderType.id === orderType.id);
-    // if (filteredCartList.length === 0) return false;
-    // if (!checkUserIsLogin(userInfo)) return false;
+    const filteredCartList = cartList.filter((item) => item.orderType.id === orderType.id);
+    if (filteredCartList.length === 0) return false;
+    if (!checkUserIsLogin(userInfo)) return false;
     return true;
   };
 
@@ -530,6 +545,14 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
         </>
       )}
       {showCleanCartDlg && <CleanCartConfirmDlg hideModal={() => setShowCleanCartDlg(false)} confirm={clearnCart} />}
+      {showSuccessDlg && (
+        <AddOrderSuccessDlg
+          hideModal={() => {
+            clearnCart();
+            hideModal();
+          }}
+        />
+      )}
     </Dialog>
   );
 };

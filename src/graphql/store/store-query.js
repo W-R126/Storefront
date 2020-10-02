@@ -101,6 +101,7 @@ export const GET_STORE_PAYMENTS = gql`
       payment_types {
         id
         name
+        type
       }
       settings {
         touchpoint_settings {
