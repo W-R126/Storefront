@@ -22,7 +22,7 @@
     "apollo-upload-client": "^14.1.1",
     "axios": "^0.20.0",
     "classnames": "^2.2.6",
-    "date-fns": "^2.0.0-beta.5",
+    "date-fns": "^2.16.1",
     "dotenv": "^8.2.0",
     "formik": "^2.1.5",
     "graphql": "^15.3.0",
@@ -48,7 +48,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "deploy:staging": "scotty --spa --source ./build --bucket myda-storefront-staging --region eu-west-1",
+    "deploy:staging": "scotty --spa --source ./build --bucket myda-storefront-staging --region eu-west-1 -f",
     "deploy:preProd": "scotty --spa --source ./build --bucket myda-storefront-preProd --region eu-west-1",
     "deploy:production": "scotty --spa --source ./build --bucket myda-storefront --region eu-west-1",
     "test": "react-scripts test",
