@@ -77,8 +77,8 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
         address: {},
       },
       transferTime: {
-        start: moment(new Date()).add(10, 'minutes'),
-        end: moment(new Date()).add(70, 'minutes'),
+        when: 'Now',
+        value: 6,
       },
       paymentOption: '',
       notes: {
@@ -88,8 +88,8 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
     },
     collection: {
       transferTime: {
-        start: moment(new Date()).add(10, 'minutes'),
-        end: moment(new Date()).add(70, 'minutes'),
+        when: 'Now',
+        value: 6,
       },
       paymentOption: '',
       notes: {
@@ -432,7 +432,7 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
                 <Grid item className={classes.SettingItem}>
                   <OrderDatePicker
                     title="Delivery Slot"
-                    date={orderSettingInfo.delivery.transferTime}
+                    dateInfo={orderSettingInfo.delivery.transferTime}
                     onChange={(value) => {
                       setOrderSettingInfo({
                         ...orderSettingInfo,
@@ -469,7 +469,7 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
                 <Grid item className={classes.SettingItem}>
                   <OrderDatePicker
                     title="Collection Time"
-                    date={orderSettingInfo.collection.transferTime}
+                    dateInfo={orderSettingInfo.collection.transferTime}
                     onChange={(value) => {
                       setOrderSettingInfo({
                         ...orderSettingInfo,
