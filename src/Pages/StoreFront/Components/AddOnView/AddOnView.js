@@ -13,7 +13,6 @@ import { formatPrice } from '../../../../utils/string';
 import { getCurrency } from '../../../../utils/store';
 import { getAddOnCartPrice } from '../../../../utils/product';
 import { GET_PRODUCT_ADDONS } from '../../../../graphql/products/product-query';
-import { GET_DELIVERY_ADDRESS } from '../../../../graphql/auth/auth-query';
 import { updateProductCartAction } from '../../../../actions/cartAction';
 
 const AddOnView = ({ open, hideModal, productId, curProductCart, productPrice, updateProductCartAction, isNew }) => {
@@ -22,8 +21,6 @@ const AddOnView = ({ open, hideModal, productId, curProductCart, productPrice, u
       id: productId,
     },
   });
-
-  const { loading: addressLoading, data: addressList } = useQuery(GET_DELIVERY_ADDRESS);
 
   const classes = useStyles();
   const [addonCarts, setAddonCarts] = useState([]);
