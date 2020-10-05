@@ -161,11 +161,11 @@ const useStyles = makeStyles((theme: Theme) =>
     Price: {
       margin: '0 13px 0 auto',
       flex: '1 0 auto',
-      textAlign: 'right',
       whiteSpace: 'nowrap',
       overflow: 'hidden',
       display: 'flex',
       flexWrap: 'nowrap',
+      justifyContent: 'flex-end',
     },
   })
 );

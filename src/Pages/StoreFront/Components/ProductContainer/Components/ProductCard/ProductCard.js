@@ -265,7 +265,7 @@ const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading 
               <div className={classes.TopSection}>
                 {_.get(productInfo, 'stocked', false) && (
                   <>
-                    <div className={classes.Status}>Code: {productInfo.product_code}</div>
+                    <div className={classes.Status}>Code: {productInfo.product_code || 'N/A'}</div>
                     <div className={classes.Value}>
                       <div className={classes.Stock}>{`${getStock()} in stock`}</div>
                     </div>

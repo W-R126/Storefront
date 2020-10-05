@@ -83,7 +83,11 @@ const StoreFrontPage = () => {
       return BannerPlaceHolder;
     }
     if (storeLoading) return BannerPlaceHolder;
-    return store.settings.touchpoint_settings.digital_front.banner.url;
+    try {
+      return store.settings.touchpoint_settings.digital_front.banner.url || BannerPlaceHolder;
+    } catch (err) {
+      return BannerPlaceHolder;
+    }
   };
 
   const getStoreOpening = () => {

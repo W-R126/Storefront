@@ -226,6 +226,9 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
       margin: '30px 0 0 0',
       position: 'relative',
+      '&:first-child': {
+        marginTop: 0,
+      },
     },
     TitleBox: {
       display: 'flex',

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect, useSelector } from 'react-redux';
-// import { useQuery } from '@apollo/react-hooks';
 
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
@@ -8,20 +7,12 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Dialog, Box, Button, Typography } from '@material-ui/core';
 import AddOnGroup from '../../../../SharedComponents/AddOnGroup';
 import CloseIconButton from '../../../../SharedComponents/CloseIconButton';
-// import AddOnViewSkeleton from './AddOnView.skeleton';
 import { formatPrice } from '../../../../utils/string';
 import { getCurrency } from '../../../../utils/store';
 import { getAddOnCartPrice } from '../../../../utils/product';
-// import { GET_PRODUCT_ADDONS } from '../../../../graphql/products/product-query';
 import { updateProductCartAction } from '../../../../actions/cartAction';
 
 const AddOnView = ({ open, hideModal, productInfo, curProductCart, productPrice, updateProductCartAction, isNew }) => {
-  // const { loading: productAddonsLoading, data: productAddons } = useQuery(GET_PRODUCT_ADDONS, {
-  //   variables: {
-  //     id: productId,
-  //   },
-  // });
-
   const classes = useStyles();
   const [addonCarts, setAddonCarts] = useState([]);
   const { storeInfo } = useSelector((state) => ({
@@ -34,8 +25,6 @@ const AddOnView = ({ open, hideModal, productInfo, curProductCart, productPrice,
   }, [curProductCart.addons, isNew]);
 
   const getProductAddons = () => {
-    // const products = _.get(productAddons, 'products', []);
-    // if (!products || products.length === 0) return [];
     return _.get(productInfo, 'addons', []);
   };
 
@@ -86,7 +75,6 @@ const AddOnView = ({ open, hideModal, productInfo, curProductCart, productPrice,
           return true;
       }
     }
-
     return false;
   };
 
@@ -123,29 +111,27 @@ const AddOnView = ({ open, hideModal, productInfo, curProductCart, productPrice,
   return (
     <Dialog open={open} onClose={hideModal} fullWidth={true} maxWidth="md" className={classes.root}>
       <CloseIconButton onClick={hideModal} wrapperClass={classes.CloseButtonWrapper} />
-      {/* {productAddonsLoading ? (
-        <AddOnViewSkeleton />
-      ) : (
-        <> */}
       <Typography variant="h1" className={classes.Title}>
         Select Options
       </Typography>
-      {getProductAddons().map((item, nIndex) => {
-        return (
-          <AddOnGroup
-            key={item.id}
-            productId={productInfo.id}
-            groupId={item.id}
-            productGroupAddonInfo={item}
-            groupAddOns={getAddOnOptions(item.id)}
-            setGroupAddOns={(groupAddOns) => {
-              changeAddOns(groupAddOns);
-            }}
-            isNew={isNew}
-            ref={(el) => (groupRefs.current[nIndex] = el)}
-          />
-        );
-      })}
+      <Box className={classes.MainBody}>
+        {getProductAddons().map((item, nIndex) => {
+          return (
+            <AddOnGroup
+              key={item.id}
+              productId={productInfo.id}
+              groupId={item.id}
+              productGroupAddonInfo={item}
+              groupAddOns={getAddOnOptions(item.id)}
+              setGroupAddOns={(groupAddOns) => {
+                changeAddOns(groupAddOns);
+              }}
+              isNew={isNew}
+              ref={(el) => (groupRefs.current[nIndex] = el)}
+            />
+          );
+        })}
+      </Box>
       <Box className={classes.Footer}>
         <Typography variant="h1" className={classes.FooterPriceLabel}>
           Price:
@@ -159,8 +145,6 @@ const AddOnView = ({ open, hideModal, productInfo, curProductCart, productPrice,
           Add to cart
         </Button>
       </Box>
-      {/* </>
-      )} */}
     </Dialog>
   );
 };
@@ -177,7 +161,10 @@ const useStyles = makeStyles((theme: Theme) =>
         border: 'solid 1px rgba(186, 195, 201, 0.5)',
         backgroundColor: '#ffffff',
         position: 'relative',
-        maxHeight: '80vh',
+        height: '80vh',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
         '@media screen and (max-width: 768px)': {
           paddingLeft: '15px',
           paddingRight: '15px',
@@ -195,6 +182,14 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     Title: {
       fontWeight: 500,
+    },
+    MainBody: {
+      flex: '1 1 100%',
+      display: 'flex',
+      overflowX: 'hidden',
+      overflowY: 'auto',
+      flexDirection: 'column',
+      margin: '30px 0 0 0',
     },
     Footer: {
       display: 'flex',
