@@ -99,7 +99,7 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
   const { data: paymentData, loading: paymentLoading, error: paymentError } = useQuery(GET_STORE_PAYMENTS, {
     onCompleted(d) {
       const paymentList = getPaymentTypes(d);
-      handleChangePaymentOptions(paymentList[0].id);
+      if (paymentList && paymentList.length > 0) handleChangePaymentOptions(paymentList[0].id);
     },
   });
 
