@@ -3,7 +3,17 @@ import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import { useQuery } from '@apollo/react-hooks';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Paper, Box, Typography, Select, MenuItem, Button, Radio, FormControlLabel } from '@material-ui/core';
+import {
+  Paper,
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  Button,
+  Radio,
+  FormControlLabel,
+  CircularProgress,
+} from '@material-ui/core';
 import CloseIconButton from '../../../../../../SharedComponents/CloseIconButton';
 import { GET_DELIVERY_ADDRESS } from '../../../../../../graphql/auth/auth-query';
 
@@ -107,73 +117,81 @@ const OrderAddressSelectModal = ({ hideModal, propAddressInfo, onChange }) => {
 
   return (
     <Paper className={classes.root}>
-      <CloseIconButton onClick={hideModal} wrapperClass={classes.CloseIconWrapper} />
-      <Typography className={classes.Title} variant="h2">
-        Enter your delivery Address
-      </Typography>
-      {renderHomeAddress()}
-      {renderOfficeAddress()}
+      <Paper className={classes.MainModal}>
+        <CloseIconButton onClick={hideModal} wrapperClass={classes.CloseIconWrapper} />
+        <Typography className={classes.Title} variant="h2">
+          Enter your delivery Address
+        </Typography>
+        {renderHomeAddress()}
+        {renderOfficeAddress()}
 
-      <Box className={getAddressBoxClasses('New Address')}>
-        <FormControlLabel
-          value="Office"
-          control={
-            <Radio
-              className={classes.AddressRadio}
-              checked={addressInfo.type === 'New Address'}
-              onChange={() =>
-                setAddressInfo({
-                  type: 'New Address',
-                  address: addressInfo.address,
-                })
-              }
-            />
-          }
-          label="New Address"
-        />
-        <Select
-          className={classes.AddressSelect}
-          MenuProps={{
-            getContentAnchorEl: null,
-            anchorOrigin: {
-              vertical: 'bottom',
-              horizontal: 'left',
-            },
-          }}
-          value={_.get(addressInfo.address, 'id', '')}
-          onChange={(value) => {
-            setAddressInfo({
-              type: 'New Address',
-              address: getSelectedAddress(value),
-            });
-          }}
-        >
-          {getAddressList().map((item) => {
-            if (renderAddress(item).length === 0) return null;
-            return (
-              <MenuItem className={classes.AddressMenuItem} value={item.id} key={item.id}>
-                {renderAddress(item)}
-              </MenuItem>
-            );
-          })}
-        </Select>
-      </Box>
-      <Box className={classes.Footer}>
-        <Button className={classes.CancelButton} variant="contained" onClick={hideModal}>
-          Cancel
-        </Button>
-        <Button
-          className={classes.ConfirmButton}
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            onChange(addressInfo);
-            hideModal();
-          }}
-        >
-          Ok
-        </Button>
-      </Box>
+        <Box className={getAddressBoxClasses('New Address')}>
+          <FormControlLabel
+            value="Office"
+            control={
+              <Radio
+                className={classes.AddressRadio}
+                checked={addressInfo.type === 'New Address'}
+                onChange={() =>
+                  setAddressInfo({
+                    type: 'New Address',
+                    address: addressInfo.address,
+                  })
+                }
+              />
+            }
+            label="New Address"
+          />
+          <Select
+            className={classes.AddressSelect}
+            MenuProps={{
+              getContentAnchorEl: null,
+              anchorOrigin: {
+                vertical: 'bottom',
+                horizontal: 'left',
+              },
+            }}
+            value={_.get(addressInfo.address, 'id', '')}
+            onChange={(value) => {
+              setAddressInfo({
+                type: 'New Address',
+                address: getSelectedAddress(value),
+              });
+            }}
+            disabled={addressInfo.type !== 'New Address'}
+          >
+            {getAddressList().map((item) => {
+              if (renderAddress(item).length === 0) return null;
+              return (
+                <MenuItem className={classes.AddressMenuItem} value={item.id} key={item.id}>
+                  {renderAddress(item)}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </Box>
+        <Box className={classes.Footer}>
+          <Button className={classes.CancelButton} variant="contained" onClick={hideModal}>
+            Cancel
+          </Button>
+          <Button
+            className={classes.ConfirmButton}
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              onChange(addressInfo);
+              hideModal();
+            }}
+          >
+            Ok
+          </Button>
+        </Box>
+        {addressLoading && (
+          <Box className={classes.LoadingContinaer}>
+            <CircularProgress className={classes.LoadingSpinner} />
+          </Box>
+        )}
+      </Paper>
     </Paper>
   );
 };
@@ -181,6 +199,18 @@ const OrderAddressSelectModal = ({ hideModal, propAddressInfo, onChange }) => {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
+      left: 0,
+      top: 0,
+      width: '100%',
+      height: '100%',
+      background: 'rgba(186, 195, 201, 0.5)',
+      position: 'absolute',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1,
+    },
+    MainModal: {
       width: '561px',
       height: '398px',
       borderRadius: '10px',
@@ -260,6 +290,26 @@ const useStyles = makeStyles((theme: Theme) =>
     ConfirmButton: {
       width: '200px',
       height: '50px',
+    },
+    LoadingContinaer: {
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1,
+      background: 'rgba(255, 255, 255, 0.5)',
+    },
+    LoadingSpinner: {
+      width: '70px !important',
+      height: '70px !important',
+      '@media screen and (max-width: 550px)': {
+        width: '40px !important',
+        height: '40px !important',
+      },
     },
   })
 );
