@@ -23,10 +23,20 @@ export const formatPrice = (value, storeInfo) => {
   if (localisation.currency_decimal) {
     if (value === null) returnValue = '0.00';
     returnValue = value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  } else returnValue = parseInt(value);
-
-  if (localisation.digit_separator === ',') {
-    return returnValue.toString().replace('.', ',');
+    if (localisation.digit_separator === '.') {
+      const strArr = returnValue.split('').map((item) => {
+        if (item === ',') return '.';
+        else if (item === '.') return ',';
+        return item;
+      });
+      returnValue = strArr.join('');
+    }
+  } else {
+    returnValue = parseInt(value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    if (localisation.digit_separator === '.') {
+      returnValue = returnValue.toString().replace(',', '.');
+    }
   }
+
   return returnValue;
 };
