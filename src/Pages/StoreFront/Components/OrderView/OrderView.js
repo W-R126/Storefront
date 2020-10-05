@@ -3,7 +3,6 @@ import { connect, useSelector } from 'react-redux';
 
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
-import moment from 'moment';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
@@ -46,7 +45,6 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
     userInfo: state.authReducer.userInfo,
   }));
 
-  const { data: paymentData, loading: paymentLoading, error: paymentError } = useQuery(GET_STORE_PAYMENTS);
   const { data: orderTypesStatus, loading: orderTypesStatusLoading, error: orderTypesStatusError } = useQuery(
     GET_ORDERTYPE_STATUS
   );
@@ -65,7 +63,6 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
   };
 
   // status variables
-  const [loading, setLoading] = useState(false);
   const [showSuccessDlg, setShowSuccessDlg] = useState(false);
   const [orderType, setOrderType] = useState({ ...setFirstOrderType() });
   const [showCleanCartDlg, setShowCleanCartDlg] = useState(false);
@@ -99,9 +96,16 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
     },
   });
 
-  const handleChangePaymentOptions = (event) => {
+  const { data: paymentData, loading: paymentLoading, error: paymentError } = useQuery(GET_STORE_PAYMENTS, {
+    onCompleted(d) {
+      const paymentList = getPaymentTypes(d);
+      handleChangePaymentOptions(paymentList[0].id);
+    },
+  });
+
+  const handleChangePaymentOptions = (value) => {
     const tempData = { ...orderSettingInfo };
-    tempData[orderType.name.toLowerCase()].paymentOption = event.target.value;
+    tempData[orderType.name.toLowerCase()].paymentOption = value;
     setOrderSettingInfo({
       ...tempData,
     });
@@ -358,8 +362,8 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
     setOrderSettingInfo({ ...temp });
   };
 
-  const getPaymentTypes = () => {
-    const store = _.get(paymentData, 'store', null);
+  const getPaymentTypes = (paymentDataParam) => {
+    const store = _.get(paymentDataParam, 'store', null);
     if (!store) return null;
 
     const paymentTypes = _.get(store, 'payment_types', []);
@@ -368,7 +372,7 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
   };
 
   const renderPayments = () => {
-    const paymentTypes = getPaymentTypes();
+    const paymentTypes = getPaymentTypes(paymentData);
     if (!paymentTypes || paymentTypes.length === 0) return null;
 
     return (
@@ -379,7 +383,7 @@ const OrderView = ({ hideModal, orderTypesList, clearProductCartAction }) => {
             aria-label="payment-options"
             name="payment-options"
             value={orderSettingInfo[orderType.name.toLowerCase()].paymentOption}
-            onChange={handleChangePaymentOptions}
+            onChange={(e) => handleChangePaymentOptions(e.target.value)}
           >
             {paymentTypes.map((item, nIndex) => {
               return (
