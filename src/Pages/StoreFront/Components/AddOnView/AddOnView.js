@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect, useSelector } from 'react-redux';
-import { useQuery } from '@apollo/react-hooks';
+// import { useQuery } from '@apollo/react-hooks';
 
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
@@ -8,19 +8,19 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Dialog, Box, Button, Typography } from '@material-ui/core';
 import AddOnGroup from '../../../../SharedComponents/AddOnGroup';
 import CloseIconButton from '../../../../SharedComponents/CloseIconButton';
-import AddOnViewSkeleton from './AddOnView.skeleton';
+// import AddOnViewSkeleton from './AddOnView.skeleton';
 import { formatPrice } from '../../../../utils/string';
 import { getCurrency } from '../../../../utils/store';
 import { getAddOnCartPrice } from '../../../../utils/product';
-import { GET_PRODUCT_ADDONS } from '../../../../graphql/products/product-query';
+// import { GET_PRODUCT_ADDONS } from '../../../../graphql/products/product-query';
 import { updateProductCartAction } from '../../../../actions/cartAction';
 
-const AddOnView = ({ open, hideModal, productId, curProductCart, productPrice, updateProductCartAction, isNew }) => {
-  const { loading: productAddonsLoading, data: productAddons } = useQuery(GET_PRODUCT_ADDONS, {
-    variables: {
-      id: productId,
-    },
-  });
+const AddOnView = ({ open, hideModal, productInfo, curProductCart, productPrice, updateProductCartAction, isNew }) => {
+  // const { loading: productAddonsLoading, data: productAddons } = useQuery(GET_PRODUCT_ADDONS, {
+  //   variables: {
+  //     id: productId,
+  //   },
+  // });
 
   const classes = useStyles();
   const [addonCarts, setAddonCarts] = useState([]);
@@ -34,16 +34,16 @@ const AddOnView = ({ open, hideModal, productId, curProductCart, productPrice, u
   }, [curProductCart.addons, isNew]);
 
   const getProductAddons = () => {
-    const products = _.get(productAddons, 'products', []);
-    if (!products || products.length === 0) return [];
-    return _.get(products[0], 'addons', []);
+    // const products = _.get(productAddons, 'products', []);
+    // if (!products || products.length === 0) return [];
+    return _.get(productInfo, 'addons', []);
   };
 
   useEffect(() => {
     groupRefs.current = new Array(getProductAddons().length);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productAddons]);
+  }, [productInfo.addons]);
 
   const changeAddOns = (groupAddOns) => {
     const findOne = addonCarts.find((item) => item.id === groupAddOns.id);
@@ -123,44 +123,44 @@ const AddOnView = ({ open, hideModal, productId, curProductCart, productPrice, u
   return (
     <Dialog open={open} onClose={hideModal} fullWidth={true} maxWidth="md" className={classes.root}>
       <CloseIconButton onClick={hideModal} wrapperClass={classes.CloseButtonWrapper} />
-      {productAddonsLoading ? (
+      {/* {productAddonsLoading ? (
         <AddOnViewSkeleton />
       ) : (
-        <>
-          <Typography variant="h1" className={classes.Title}>
-            Select Options
-          </Typography>
-          {getProductAddons().map((item, nIndex) => {
-            return (
-              <AddOnGroup
-                key={item.id}
-                productId={productId}
-                groupId={item.id}
-                productGroupAddonInfo={item}
-                groupAddOns={getAddOnOptions(item.id)}
-                setGroupAddOns={(groupAddOns) => {
-                  changeAddOns(groupAddOns);
-                }}
-                isNew={isNew}
-                ref={(el) => (groupRefs.current[nIndex] = el)}
-              />
-            );
-          })}
-          <Box className={classes.Footer}>
-            <Typography variant="h1" className={classes.FooterPriceLabel}>
-              Price:
-            </Typography>
-            <Typography
-              variant="h1"
-              className={classes.FooterPrice}
-              dangerouslySetInnerHTML={{ __html: getAddOnPrice() }}
-            ></Typography>
-            <Button variant="contained" color="primary" className={classes.AddCartButton} onClick={handleClickAddCart}>
-              Add to cart
-            </Button>
-          </Box>
-        </>
-      )}
+        <> */}
+      <Typography variant="h1" className={classes.Title}>
+        Select Options
+      </Typography>
+      {getProductAddons().map((item, nIndex) => {
+        return (
+          <AddOnGroup
+            key={item.id}
+            productId={productInfo.id}
+            groupId={item.id}
+            productGroupAddonInfo={item}
+            groupAddOns={getAddOnOptions(item.id)}
+            setGroupAddOns={(groupAddOns) => {
+              changeAddOns(groupAddOns);
+            }}
+            isNew={isNew}
+            ref={(el) => (groupRefs.current[nIndex] = el)}
+          />
+        );
+      })}
+      <Box className={classes.Footer}>
+        <Typography variant="h1" className={classes.FooterPriceLabel}>
+          Price:
+        </Typography>
+        <Typography
+          variant="h1"
+          className={classes.FooterPrice}
+          dangerouslySetInnerHTML={{ __html: getAddOnPrice() }}
+        ></Typography>
+        <Button variant="contained" color="primary" className={classes.AddCartButton} onClick={handleClickAddCart}>
+          Add to cart
+        </Button>
+      </Box>
+      {/* </>
+      )} */}
     </Dialog>
   );
 };

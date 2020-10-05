@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { useSelector } from 'react-redux';
+
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
@@ -8,7 +9,6 @@ import Box from '@material-ui/core/Box';
 import SearchBar from './Components/SearchBar';
 import CategorySideBar from './Components/CategorySideBar';
 import ProductList from './Components/ProductList';
-
 import { getIsShowSideCategory } from '../../../../utils/store';
 import { updateProducdtPageDataAction } from '../../../../actions/productAction';
 

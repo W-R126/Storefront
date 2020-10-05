@@ -12,20 +12,25 @@ export const GET_PRODUCTS = gql`
     products(filter: $filter, category_id: $category_id, touchpoint_type: $touchpoint_type) {
       id
       name
+      bar_code
+      product_code
+      stocked
       images {
         id
         url
         thumbnail
       }
-      bar_code
-      stocked
       short_description
+      description
       measure_amount
       measure_type
       pack_qty
       pack_item {
         measure_amount
         measure_type
+      }
+      stocks {
+        current_stock
       }
       category {
         id
@@ -40,17 +45,51 @@ export const GET_PRODUCTS = gql`
           price
           taxes {
             id
-            name
             rate
+            name
           }
         }
       }
-      stocks {
-        current_stock
+      allergies {
+        id
+        name
+        image {
+          id
+          url
+        }
+      }
+      ingredients {
+        name
+        measure {
+          id
+          amount
+          measure_type
+        }
       }
       addons {
         id
         group
+        description
+        parent
+        allow_free
+        mandatory
+        multi_selection
+        default_all
+        options {
+          inventory_id
+          #product_id
+          id
+          name
+          force_charge
+          default
+          mandatory
+          position
+          extra
+          override_price
+          price {
+            fixed_price
+          }
+        }
       }
     }
   }

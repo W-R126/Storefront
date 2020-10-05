@@ -258,29 +258,19 @@ const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading 
               {renderQtySection().length > 0 && <div className={classes.ProductLabel}>{renderQtySection()}</div>}
             </div>
             <div className={classes.ProductContent}>
-              {/* <div className={classes.TopSection}>
-                <div className={classes.LeftInfo}>
-                  <div className={classes.Title}>{productInfo.name}</div>
-                  {_.get(productInfo, 'stocked', false) && (
-                    <div className={classes.Status}>Code: {productInfo.bar_code}</div>
-                  )}
-                </div>
-                <div className={classes.Value}>
-                  {renderPriceInfo()}
-                  <div className={classes.Stock}>{`${getStock()} in stock`}</div>
-                </div>
-              </div> */}
               <div className={classes.TopSection}>
                 <div className={classes.Title}>{productInfo.name}</div>
                 {renderPriceInfo()}
               </div>
               <div className={classes.TopSection}>
                 {_.get(productInfo, 'stocked', false) && (
-                  <div className={classes.Status}>Code: {productInfo.bar_code}</div>
+                  <>
+                    <div className={classes.Status}>Code: {productInfo.product_code}</div>
+                    <div className={classes.Value}>
+                      <div className={classes.Stock}>{`${getStock()} in stock`}</div>
+                    </div>
+                  </>
                 )}
-                <div className={classes.Value}>
-                  <div className={classes.Stock}>{`${getStock()} in stock`}</div>
-                </div>
               </div>
 
               <div className={classes.Description}>{productInfo.short_description}</div>
@@ -296,7 +286,7 @@ const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading 
           hideModal={() => {
             setShowProductView(false);
           }}
-          productId={productInfo.id}
+          productInfo={productInfo}
           setCurProductCart={(cartOne) => {
             setTempProductCart({ ...cartOne });
           }}
@@ -311,7 +301,7 @@ const ProductCard = ({ productInfo, orderType, updateProductCartAction, loading 
           hideModal={() => {
             setShowAddOnView(false);
           }}
-          productId={productInfo.id}
+          productInfo={productInfo}
           curProductCart={getAddonViewProductCart()}
           productPrice={getProductTotalAmount(productInfo, orderType, netPrice)}
           isNew={isNewProductCart}
@@ -396,13 +386,14 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '12px',
       lineHeight: '18px',
       fontWeight: 300,
+      marginRight: '15px',
     },
     Value: {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'flex-start',
       alignItems: 'flex-end',
-      marginLeft: '15px',
+      marginLeft: 'auto',
       lineHeight: '18px',
       fontSize: '12px',
     },
